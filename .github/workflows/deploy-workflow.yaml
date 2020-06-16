@@ -3,7 +3,7 @@ name: Deploy to GH Pages
 on:
   push:
     branches:
-      - update-deploy-workflow
+      - master
 
 jobs:
   deploy-to-pages:
@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '12.x'
       - run: npm install
-      - run: npm run predeploy
+      - run: npm run build
       - name: Publish build to github pages
         uses: peaceiris/actions-gh-pages@v3.5.7
         with:
