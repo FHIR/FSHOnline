@@ -2,6 +2,7 @@
   "name": "fsh-playground",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://standardhealth.github.io/fsh-playground",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
