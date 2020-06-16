@@ -10,5 +10,11 @@ jobs:
     name: Deploy to GH Pages
     runs-on: ubuntu-latest
     steps:
-      - name: Run deploy script
-        run: npm run deploy
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      - run: npm run deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
