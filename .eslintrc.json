@@ -1,0 +1,7 @@
+{
+  "plugins": ["react"],
+  "extends": ["react-app", "eslint:recommended", "plugin:prettier/recommended"],
+  "parserOptions": {
+    "sourceType": "module"
+  }
+}
