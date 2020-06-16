@@ -3,7 +3,7 @@ name: Deploy to GH Pages
 on:
   push:
     branches:
-      - master
+      - update-deploy-workflow
 
 jobs:
   deploy-to-pages:
@@ -15,6 +15,12 @@ jobs:
         with:
           node-version: '12.x'
       - run: npm install
-      - run: npm run deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+      - run: npm run predeploy
+      - name: Publish build to github pages
+        uses: peaceiris/actions-gh-pages@v3.5.7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build
+          publish_branch: gh-pages
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
