@@ -5,18 +5,21 @@
   "homepage": "https://standardhealth.github.io/fsh-playground",
   "license": "Apache-2.0",
   "dependencies": {
+    "@material-ui/core": "^4.10.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "codemirror": "^5.54.0",
     "react": "^16.13.1",
+    "react-codemirror2": "^7.2.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "eslint './src/**/*.js'",
-    "lint-fix": "eslint './src/**/*.js' --fix",
+    "lint": "eslint \"./src/**/*.js\"",
+    "lint-fix": "eslint \"./src/**/*.js\" --fix",
     "prettier": "prettier --check \"**/*.{js,ts}\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
