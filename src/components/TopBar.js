@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     color: theme.palette.text.primary,
-    background: theme.palette.primary.light,
+    background: theme.palette.warning.dark,
     position: 'static'
   },
   docButton: {

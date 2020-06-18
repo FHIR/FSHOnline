@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     color: theme.palette.text.primary,
     background: theme.palette.grey[400],
-    width: '50%',
     height: '100%'
   }
 }));

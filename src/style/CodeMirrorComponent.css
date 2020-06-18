@@ -1,0 +1,6 @@
+.react-codemirror2 {
+  height: 100%;
+}
+.react-codemirror2 > .CodeMirror {
+  height: 100%;
+}
