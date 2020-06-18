@@ -1,5 +1,4 @@
 import React from 'react';
-import '../style/TopBar.css';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Button, Typography } from '@material-ui/core';
 
