@@ -14,18 +14,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function CodeMirrorComponent() {
+export default function CodeMirrorComponent(props) {
   const classes = useStyles();
+
+  function handleChangeBoth(text) {
+    props.handleText(text);
+    props.handleRunVariable(false);
+  }
   return (
-    <Box className={classes.box} border={1}>
+    <Box className={classes.box}>
       <CodeMirror
         className="react-codemirror2"
-        value="Edit Your FSH Here!"
+        value={props.value}
         options={{
           theme: 'material',
           lineNumbers: true
         }}
-        onChange={(editor, data, value) => {}}
+        onChange={(editor, data, value) => {
+          handleChangeBoth(value);
+        }}
       />
     </Box>
   );

@@ -4,26 +4,29 @@ import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   box: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(0, 2),
     color: theme.palette.text.primary,
     background: theme.palette.grey[400],
-    height: '100%'
+    height: '100%',
+    fontFamily: 'Consolas'
   }
 }));
 
-export default function JSONOutput() {
+export default function JSONOutput(props) {
   const classes = useStyles();
 
-  return (
-    <Box className={classes.box} border={1}>
-      <h4>JSON GOES HERE</h4>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at nibh rhoncus leo tempus vulputate vel ut
-        risus. Sed elementum fermentum velit, et efficitur nulla pulvinar quis. Donec nec aliquet justo. Vivamus sed
-        accumsan sapien, eu tincidunt arcu. Curabitur fringilla, mi eget ultricies dictum, purus sem suscipit dolor, sit
-        amet venenatis risus nibh eget ligula. Integer imperdiet in libero in suscipit. Proin tempor neque massa, ut
-        auctor leo dictum vel. Sed ac porta leo.
-      </p>
-    </Box>
-  );
+  if (props.value && props.text) {
+    return (
+      <Box className={classes.box} border={1}>
+        <h4>Your Output:</h4>
+        <p>{props.text}</p>
+      </Box>
+    );
+  } else {
+    return (
+      <Box className={classes.box} border={1}>
+        <h4>Your Output Will Display Here:</h4>
+      </Box>
+    );
+  }
 }

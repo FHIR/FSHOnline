@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '100%'
+    height: '100%',
+    fontFamily: 'Consolas'
   }
 }));
 
