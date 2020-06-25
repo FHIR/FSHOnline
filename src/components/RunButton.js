@@ -22,13 +22,14 @@ const useStyles = makeStyles((theme) => ({
 export default function RunButton(props) {
   const classes = useStyles();
 
+  //Sets the runVariable to true
   function handleClick() {
     props.onClick(true);
   }
 
   return (
     <Box className={classes.box}>
-      <Button className={classes.button} onClick={handleClick}>
+      <Button className={classes.button} onClick={handleClick} testid="Button">
         Run
       </Button>
     </Box>

@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 export default function JSONOutput(props) {
   const classes = useStyles();
 
+  //Checks to insure the runVariable is true (aka button has been pressed) and there is text to display for the output
   if (props.value && props.text) {
     return (
       <Box className={classes.box} border={1}>
