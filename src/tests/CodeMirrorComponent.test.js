@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import { act } from 'react-dom/test-utils';
 import CodeMirrorComponent from '../components/CodeMirrorComponent';
 
 beforeAll(() => {

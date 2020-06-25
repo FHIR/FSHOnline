@@ -22,26 +22,30 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
-  const [runVariable, setRunVariable] = useState(false);
+  const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
   const [text, setText] = useState('Edit FSH Here!');
 
-  function handleRunVariable(runVariable) {
-    setRunVariable(runVariable);
+  function updateShouldRunSUSHI(runVariable) {
+    setShouldRunSUSHI(runVariable);
   }
-  function handleTextValue(text) {
+  function updateTextValue(text) {
     setText(text);
   }
 
   return (
     <div className="root">
       <TopBar />
-      <RunButton onClick={handleRunVariable} />
+      <RunButton onClick={updateShouldRunSUSHI} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent value={text} handleText={handleTextValue} handleRunVariable={handleRunVariable} />
+          <CodeMirrorComponent
+            value={text}
+            updateTextValue={updateTextValue}
+            updateShouldRunSUSHI={updateShouldRunSUSHI}
+          />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput value={runVariable} text={text} />
+          <JSONOutput value={shouldRunSUSHI} text={text} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />
