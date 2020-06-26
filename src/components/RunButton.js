@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 export default function RunButton(props) {
   const classes = useStyles();
 
-  //Sets the runVariable to true
+  //Sets the shouldRunSUSHI to true
   function handleClick() {
     props.onClick(true);
   }

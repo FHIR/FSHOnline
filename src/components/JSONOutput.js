@@ -15,8 +15,8 @@ const useStyles = makeStyles((theme) => ({
 export default function JSONOutput(props) {
   const classes = useStyles();
 
-  //Checks to insure the runVariable is true (aka button has been pressed) and there is text to display for the output
-  if (props.value && props.text) {
+  //Checks to insure the shouldRunSUSHI is true (aka button has been pressed) and there is text to display for the output
+  if (props.shouldDisplaySUSHI && props.text) {
     return (
       <Box className={classes.box} border={1}>
         <h4>Your Output:</h4>

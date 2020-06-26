@@ -25,8 +25,8 @@ export default function App() {
   const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
   const [text, setText] = useState('Edit FSH Here!');
 
-  function updateShouldRunSUSHI(runVariable) {
-    setShouldRunSUSHI(runVariable);
+  function updateShouldRunSUSHI(shouldRunSUSHI) {
+    setShouldRunSUSHI(shouldRunSUSHI);
   }
   function updateTextValue(text) {
     setText(text);
@@ -45,7 +45,7 @@ export default function App() {
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput value={shouldRunSUSHI} text={text} />
+          <JSONOutput shouldDisplaySUSHI={shouldRunSUSHI} text={text} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />
