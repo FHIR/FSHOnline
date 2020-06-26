@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
+import RunButton from './components/RunButton';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -21,15 +22,30 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
+  const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
+  const [text, setText] = useState('Edit FSH Here!');
+
+  function updateShouldRunSUSHI(shouldRunSUSHI) {
+    setShouldRunSUSHI(shouldRunSUSHI);
+  }
+  function updateTextValue(text) {
+    setText(text);
+  }
+
   return (
     <div className="root">
       <TopBar />
+      <RunButton onClick={updateShouldRunSUSHI} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent />
+          <CodeMirrorComponent
+            value={text}
+            updateTextValue={updateTextValue}
+            updateShouldRunSUSHI={updateShouldRunSUSHI}
+          />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput />
+          <JSONOutput shouldDisplaySUSHI={shouldRunSUSHI} text={text} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />

@@ -11,7 +11,7 @@ beforeAll(() => {
   };
 });
 
-test('renders learn react link', () => {
+test('Renders FSH Playground App', () => {
   const { getByText } = render(<App />);
   const linkElement = getByText(/FSH Playground/i);
   expect(linkElement).toBeInTheDocument();

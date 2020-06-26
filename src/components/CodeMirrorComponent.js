@@ -14,18 +14,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function CodeMirrorComponent() {
+export default function CodeMirrorComponent(props) {
   const classes = useStyles();
+
+  //Updates both the text state with the codemirror value, and sets the shouldRunSUSHI back to false
+  function updateTextAndRun(text) {
+    props.updateTextValue(text);
+    props.updateShouldRunSUSHI(false);
+  }
   return (
-    <Box className={classes.box} border={1}>
+    <Box className={classes.box}>
       <CodeMirror
         className="react-codemirror2"
-        value="Edit Your FSH Here!"
+        value={props.value}
         options={{
           theme: 'material',
           lineNumbers: true
         }}
-        onChange={(editor, data, value) => {}}
+        onChange={(editor, data, value) => {
+          updateTextAndRun(value);
+        }}
       />
     </Box>
   );
