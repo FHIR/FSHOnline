@@ -5,6 +5,7 @@ import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
+import { StructureDefinition } from 'fsh-sushi/dist/fhirtypes/StructureDefinition';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -20,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  const sd = new StructureDefinition();
+  console.log(sd);
 
   return (
     <div className="root">
