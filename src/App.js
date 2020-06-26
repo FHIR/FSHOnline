@@ -33,7 +33,7 @@ export default function App() {
     setText(text);
   }
 
-  playgroundApp();
+  playgroundApp(text);
   return (
     <div className="root">
       <TopBar />

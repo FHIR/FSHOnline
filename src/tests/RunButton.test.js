@@ -16,7 +16,7 @@ afterEach(() => {
   container = null;
 });
 
-it('Changes the onChange function to change the runVariable when clicked', () => {
+it('Calls the proper function to change the shouldRunSUSHI variable when clicked', () => {
   const onClick = jest.fn();
 
   act(() => {
