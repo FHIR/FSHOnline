@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  console.log('hello');
   const sd = new StructureDefinition();
   console.log(sd);
 
