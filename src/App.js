@@ -6,6 +6,7 @@ import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
 import RunButton from './components/RunButton';
+import { playgroundApp } from 'fsh-sushi';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -32,6 +33,7 @@ export default function App() {
     setText(text);
   }
 
+  playgroundApp();
   return (
     <div className="root">
       <TopBar />
