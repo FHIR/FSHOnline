@@ -6,7 +6,8 @@ import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
 import RunButton from './components/RunButton';
-import { playgroundApp } from 'fsh-sushi';
+//import { StructureDefinition } from 'fsh-sushi/dist/fhirtypes/StructureDefinition';
+import { playgroundApp } from 'fsh-sushi/dist/playgroundApp';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -22,6 +23,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  // const sd = new StructureDefinition();
+  // console.log(sd);
 
   const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
   const [text, setText] = useState('Edit FSH Here!');
@@ -33,7 +36,9 @@ export default function App() {
     setText(text);
   }
 
-  playgroundApp(text);
+  // console.log(app);
+  console.log(playgroundApp);
+  //playgroundApp(text);
   return (
     <div className="root">
       <TopBar />
