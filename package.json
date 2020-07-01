@@ -9,11 +9,14 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "adm-zip": "^0.4.16",
+    "axios": "^0.19.2",
     "codemirror": "^5.54.0",
     "react": "^16.13.1",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "tar-stream": "^2.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
