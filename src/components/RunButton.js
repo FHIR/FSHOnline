@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button } from '@material-ui/core';
+import { playgroundApp } from 'fsh-sushi/dist/playgroundApp';
 import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,6 +26,7 @@ export default function RunButton(props) {
   //Sets the shouldRunSUSHI to true
   function handleClick() {
     props.onClick(true);
+    playgroundApp(props.text);
   }
 
   return (

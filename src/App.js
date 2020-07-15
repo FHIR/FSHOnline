@@ -35,7 +35,7 @@ export default function App() {
   return (
     <div className="root">
       <TopBar />
-      <RunButton onClick={updateShouldRunSUSHI} />
+      <RunButton onClick={updateShouldRunSUSHI} text={text} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent

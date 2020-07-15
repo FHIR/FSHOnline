@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import RunButton from '../components/RunButton';
 import { act } from 'react-dom/test-utils';
+import 'fake-indexeddb/auto';
 
 let container = null;
 beforeEach(() => {
