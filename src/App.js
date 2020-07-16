@@ -23,29 +23,32 @@ export default function App() {
   const classes = useStyles();
 
   const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
-  const [text, setText] = useState('Edit FSH Here!');
+  const [inputText, setInputText] = useState('Edit FSH Here!');
+  const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
 
-  function updateShouldRunSUSHI(shouldRunSUSHI) {
+  function buttonFunctionality(shouldRunSUSHI, sushiOutput) {
     setShouldRunSUSHI(shouldRunSUSHI);
+    setOutputText(sushiOutput);
+    // console.log(sushiOutput);
   }
-  function updateTextValue(text) {
-    setText(text);
+  function updateInputTextValue(text) {
+    setInputText(text);
   }
 
   return (
     <div className="root">
       <TopBar />
-      <RunButton onClick={updateShouldRunSUSHI} text={text} />
+      <RunButton onClick={buttonFunctionality} text={inputText} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent
-            value={text}
-            updateTextValue={updateTextValue}
-            updateShouldRunSUSHI={updateShouldRunSUSHI}
+            value={inputText}
+            updateTextValue={updateInputTextValue}
+            updateShouldRunSUSHI={buttonFunctionality}
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput shouldDisplaySUSHI={shouldRunSUSHI} text={text} />
+          <JSONOutput shouldDisplaySUSHI={shouldRunSUSHI} text={outputText} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />
