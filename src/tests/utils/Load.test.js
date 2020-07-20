@@ -1,4 +1,4 @@
-import { unzipDependencies, loadDependenciesInStorage, loadIntoDefsPlayground } from '../../utils/Load';
+import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs } from '../../utils/Load';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs/FHIRDefinitions';
 import tarStream from 'tar-stream';
 import http from 'http';
@@ -62,7 +62,7 @@ describe('#loadDependenciesInStorage', () => {
   });
 });
 
-describe('#loadIntoDefsPlayground', () => {
+describe('#loadAsFHIRDefs', () => {
   it('should take data from the database and translate them to FHIRDefs', async () => {
     const databaseReturn = await new Promise((resolve, reject) => {
       const resourcesTest = [
@@ -80,7 +80,7 @@ describe('#loadIntoDefsPlayground', () => {
       OpenDB.onsuccess = async (event) => {
         database = event.target.result;
         await loadDependenciesInStorage(database, resourcesTest);
-        finalDefs = await loadIntoDefsPlayground(FHIRdefs, database);
+        finalDefs = await loadAsFHIRDefs(FHIRdefs, database);
         resolve(finalDefs);
       };
       OpenDB.onerror = () => {

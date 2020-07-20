@@ -2,13 +2,13 @@ import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
 import { exportFHIR } from 'fsh-sushi/dist/export';
 import { logger, Type } from 'fsh-sushi/dist/utils';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
-import { loadExternalDependenciesPlayground, fillTank, readConfigPlayground } from './Processing';
+import { loadExternalDependencies, fillTank, readConfig } from './Processing';
 
-export async function playgroundApp(input) {
+export async function runSUSHI(input) {
   // Hard Code config
   let config = null;
   try {
-    config = readConfigPlayground();
+    config = readConfig();
   } catch {
     logger.error('Something went wrong when creating the configuration');
     return;
@@ -17,7 +17,7 @@ export async function playgroundApp(input) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   const version = 1;
-  defs = await loadExternalDependenciesPlayground(defs, version);
+  defs = await loadExternalDependencies(defs, version);
 
   // Load and fill FSH Tank
   let tank = FSHTank;
@@ -43,4 +43,4 @@ export async function playgroundApp(input) {
   return outPackage;
 }
 
-export default playgroundApp;
+export default runSUSHI;

@@ -1,4 +1,4 @@
-import { playgroundApp } from '../../utils/PlaygroundApp';
+import { runSUSHI } from '../../utils/RunSUSHI';
 import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
@@ -8,13 +8,10 @@ import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 describe('#playgroundApp', () => {
   it('should return an undefined package when we get invalid FHIRDefinitions', async () => {
     const FHIRDefs = new FHIRDefinitions();
-    const loadDefsSpy = jest
-      .spyOn(processing, 'loadExternalDependenciesPlayground')
-      .mockReset()
-      .mockResolvedValue(FHIRDefs);
+    const loadDefsSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
     const text =
       'Profile: FishPatient Parent: Patient Id: fish-patient Title: "Fish Patient" Description: "A patient that is a type of fish."';
-    const outPackage = await playgroundApp(text);
+    const outPackage = await runSUSHI(text);
     expect(loadDefsSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
   });
@@ -23,27 +20,24 @@ describe('#playgroundApp', () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    const loadSpy = jest
-      .spyOn(processing, 'loadExternalDependenciesPlayground')
-      .mockReset()
-      .mockResolvedValue(FHIRDefs);
+    const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
     const text =
       'Profile: FishPatient\nParent: Patient\nId: fish-patient\nTitle: "Fish Patient"\n Description: "A patient that is a type of fish."';
-    const outPackage = await playgroundApp(text);
+    const outPackage = await runSUSHI(text);
     expect(loadSpy).toHaveBeenCalled();
     expect(outPackage.profiles).toHaveLength(1);
   });
 
   it('should return an undefined package when the config is invalid', async () => {
-    const configSpy = jest.spyOn(processing, 'readConfigPlayground').mockImplementation(() => {
+    const configSpy = jest.spyOn(processing, 'readConfig').mockImplementation(() => {
       throw new Error('Bad Config');
     });
     const loadSpyConfig = jest
-      .spyOn(processing, 'loadExternalDependenciesPlayground')
+      .spyOn(processing, 'loadExternalDependencies')
       .mockReset()
       .mockResolvedValue(new FHIRDefinitions());
 
-    const outPackage = await playgroundApp();
+    const outPackage = await runSUSHI();
     expect(configSpy).toHaveBeenCalled();
     expect(loadSpyConfig).toHaveBeenCalledTimes(0);
     expect(outPackage).toBeUndefined();
@@ -53,11 +47,8 @@ describe('#playgroundApp', () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    const configSpy = jest.spyOn(processing, 'readConfigPlayground').mockReset().mockReturnValue(undefined);
-    const loadSpy = jest
-      .spyOn(processing, 'loadExternalDependenciesPlayground')
-      .mockReset()
-      .mockResolvedValue(FHIRDefs);
+    const configSpy = jest.spyOn(processing, 'readConfig').mockReset().mockReturnValue(undefined);
+    const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
     const fillTankSpy = jest
       .spyOn(processing, 'fillTank')
       .mockReset()
@@ -65,7 +56,7 @@ describe('#playgroundApp', () => {
         throw new Error('Failed to fill tank');
       });
     const input = 'Improper FSH code!';
-    const outPackage = await playgroundApp(input);
+    const outPackage = await runSUSHI(input);
     expect(configSpy).toHaveBeenCalled();
     expect(loadSpy).toHaveBeenCalled();
     expect(fillTankSpy).toHaveBeenCalled();

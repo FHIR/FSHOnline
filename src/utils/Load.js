@@ -48,7 +48,7 @@ export function loadDependenciesInStorage(database, resources) {
   });
 }
 
-export function loadIntoDefsPlayground(FHIRdefs, database) {
+export function loadAsFHIRDefs(FHIRdefs, database) {
   // Convert database data into FHIR Definitions
   return new Promise((resolve, reject) => {
     const getData = database

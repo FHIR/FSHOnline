@@ -1,5 +1,5 @@
 import { logger } from 'fsh-sushi/dist/utils';
-import { loadIntoDefsPlayground, loadDependenciesInStorage, unzipDependencies } from './Load';
+import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 import { FSHTank, importText, importConfiguration } from 'fsh-sushi/dist/import';
 import { minimalConfig } from './MinimalConfig';
@@ -10,14 +10,14 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
-export function readConfigPlayground() {
+export function readConfig() {
   const yamlContents = JSON.stringify(minimalConfig, null);
 
   const defaultPlaygroundConfigYaml = importConfiguration(yamlContents, '/test/import/fixtures/minimal-config.yaml');
   return defaultPlaygroundConfigYaml;
 }
 
-export async function loadExternalDependenciesPlayground(FHIRdefs, version) {
+export async function loadExternalDependencies(FHIRdefs, version) {
   return new Promise((resolve, reject) => {
     let database = null;
     let shouldUnzip = false;
@@ -31,7 +31,7 @@ export async function loadExternalDependenciesPlayground(FHIRdefs, version) {
         await unzipDependencies(resources);
         await loadDependenciesInStorage(database, resources);
       }
-      finalDefs = await loadIntoDefsPlayground(FHIRdefs, database);
+      finalDefs = await loadAsFHIRDefs(FHIRdefs, database);
       resolve(finalDefs);
     };
     // If upgrade is needed to the version, the database does not yet exist
