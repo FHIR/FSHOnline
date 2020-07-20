@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import CodeMirrorComponent from '../components/CodeMirrorComponent';
+import CodeMirrorComponent from '../../components/CodeMirrorComponent';
 
 beforeAll(() => {
   document.body.createTextRange = () => {

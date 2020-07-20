@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import TopBar from '../components/TopBar';
+import TopBar from '../../components/TopBar';
 
 let container = null;
 beforeEach(() => {
