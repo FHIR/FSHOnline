@@ -25,7 +25,6 @@ export async function loadExternalDependenciesPlayground(FHIRdefs, version) {
     const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies', version);
     // If successful the database exists
     OpenIDBRequest.onsuccess = async function (event) {
-      // @ts-ignore
       database = event.target.result;
       const resources = [];
       if (shouldUnzip) {
@@ -38,9 +37,7 @@ export async function loadExternalDependenciesPlayground(FHIRdefs, version) {
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
       shouldUnzip = true;
-      // @ts-ignore
       database = event.target.result;
-      // @ts-ignore
       database.createObjectStore('resources', {
         keyPath: ['id', 'resourceType']
       });

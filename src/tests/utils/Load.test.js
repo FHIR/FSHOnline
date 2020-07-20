@@ -39,12 +39,10 @@ describe('#loadDependenciesInStorage', () => {
       let database = null;
       const OpenDB = indexedDB.open('Test Database');
       OpenDB.onupgradeneeded = (event) => {
-        //@ts-ignore
         database = event.target.result;
         database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
       };
       OpenDB.onsuccess = async (event) => {
-        //@ts-ignore
         database = event.target.result;
         await loadDependenciesInStorage(database, resourcesTest);
         const databaseValue = await database
@@ -76,12 +74,10 @@ describe('#loadIntoDefsPlayground', () => {
       let database = null;
       const OpenDB = indexedDB.open('Test Database');
       OpenDB.onupgradeneeded = (event) => {
-        //@ts-ignore
         database = event.target.result;
         database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
       };
       OpenDB.onsuccess = async (event) => {
-        //@ts-ignore
         database = event.target.result;
         await loadDependenciesInStorage(database, resourcesTest);
         finalDefs = await loadIntoDefsPlayground(FHIRdefs, database);

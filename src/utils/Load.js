@@ -5,12 +5,10 @@ import http from 'http';
 export function unzipDependencies(resources) {
   return new Promise((resolve) => {
     http.get('http://packages.fhir.org/hl7.fhir.r4.core/4.0.1', function (res) {
-      // @ts-ignore
       const extract = tarStream.extract();
       // Unzip files
       extract.on('entry', function (header, stream, next) {
         let buf = '';
-        // @ts-ignore
         stream.on('data', function (chunk) {
           buf += chunk.toString();
         });
@@ -24,7 +22,6 @@ export function unzipDependencies(resources) {
           next();
         });
         stream.resume();
-        // @ts-ignore
       });
       extract.on('finish', function () {
         resolve(resources);
@@ -41,12 +38,10 @@ export function loadDependenciesInStorage(database, resources) {
     transaction.oncomplete = () => {
       resolve();
     };
-    // @ts-ignore
     transaction.onerror = (event) => {
       reject(event);
     };
     const objectStore = transaction.objectStore('resources', { keyPath: ['id', 'resourceType'] });
-    // @ts-ignore
     resources.forEach((res) => {
       objectStore.add(res);
     });
@@ -60,12 +55,10 @@ export function loadIntoDefsPlayground(FHIRdefs, database) {
       .transaction(['resources'], 'readonly')
       .objectStore('resources', { keyPath: ['id', 'resourceType'] })
       .openCursor();
-    // @ts-ignore
     getData.onerror = function () {
       reject('There is an error getting data out!');
     };
     getData.onsuccess = function () {
-      // @ts-ignore
       const iterator = getData.result;
       if (iterator) {
         FHIRdefs.add(iterator.value);

@@ -1,7 +1,7 @@
 import { playgroundApp } from '../../utils/PlaygroundApp';
 import * as processing from '../../utils/Processing';
-import Patient from './StructureDefinition-Patient.json';
-import StructureDefinition from './StructureDefinition-StructureDefinition.json';
+import Patient from './fixtures/StructureDefinition-Patient.json';
+import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
 import 'fake-indexeddb/auto';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 
