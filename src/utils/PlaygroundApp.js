@@ -2,12 +2,11 @@ import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
 import { exportFHIR } from 'fsh-sushi/dist/export';
 import { logger, Type } from 'fsh-sushi/dist/utils';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
-import { Configuration } from 'fsh-sushi/dist/fshtypes';
 import { loadExternalDependenciesPlayground, fillTank, readConfigPlayground } from './Processing';
 
 export async function playgroundApp(input) {
   // Hard Code config
-  let config = Configuration;
+  let config = null;
   try {
     config = readConfigPlayground();
   } catch {

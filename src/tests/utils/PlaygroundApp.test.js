@@ -48,4 +48,27 @@ describe('#playgroundApp', () => {
     expect(loadSpyConfig).toHaveBeenCalledTimes(0);
     expect(outPackage).toBeUndefined();
   });
+
+  it('should return an empty package when fillTank does not execute properly', async () => {
+    const FHIRDefs = new FHIRDefinitions();
+    FHIRDefs.add(Patient);
+    FHIRDefs.add(StructureDefinition);
+    const configSpy = jest.spyOn(processing, 'readConfigPlayground').mockReset().mockReturnValue(undefined);
+    const loadSpy = jest
+      .spyOn(processing, 'loadExternalDependenciesPlayground')
+      .mockReset()
+      .mockResolvedValue(FHIRDefs);
+    const fillTankSpy = jest
+      .spyOn(processing, 'fillTank')
+      .mockReset()
+      .mockImplementation(() => {
+        throw new Error('Failed to fill tank');
+      });
+    const input = 'Improper FSH code!';
+    const outPackage = await playgroundApp(input);
+    expect(configSpy).toHaveBeenCalled();
+    expect(loadSpy).toHaveBeenCalled();
+    expect(fillTankSpy).toHaveBeenCalled();
+    expect(outPackage).toBeUndefined();
+  });
 });
