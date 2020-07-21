@@ -33,7 +33,7 @@ export default function RunButton(props) {
   //Sets the shouldRunSUSHI to true
   async function handleClick() {
     const outPackage = await runSUSHI(props.text);
-    let jsonOutput = JSON.stringify(outPackage, replacer, '\t');
+    let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage.codeSystems) {
       if (
         !outPackage.codeSystems.length &&

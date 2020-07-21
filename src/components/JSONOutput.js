@@ -22,7 +22,7 @@ export default function JSONOutput(props) {
     return (
       <Box className={classes.box} border={1} overflow="scroll">
         <h4>Your Output: </h4>
-        <p>{props.text}</p>
+        <pre>{props.text}</pre>
       </Box>
     );
   } else {

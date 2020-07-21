@@ -30,7 +30,7 @@ afterEach(() => {
 
 it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a bad package', async () => {
   const onClick = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(badSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -47,9 +47,9 @@ it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a b
   });
 });
 
-it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibits an empty package', async () => {
+it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits an empty package', async () => {
   const onClick = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(emptySUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -66,9 +66,9 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
   });
 });
 
-it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibits a good package', async () => {
+it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a good package', async () => {
   const onClick = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -81,6 +81,6 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, '\t'));
+    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2));
   });
 });
