@@ -32,7 +32,6 @@ describe('#playgroundApp', () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    // const configSpy = jest.spyOn(processing, 'readConfig').mockReset().mockReturnValue(undefined);
     const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
     const fillTankSpy = jest
       .spyOn(processing, 'fillTank')
@@ -42,7 +41,6 @@ describe('#playgroundApp', () => {
       });
     const input = 'Improper FSH code!';
     const outPackage = await runSUSHI(input);
-    //expect(configSpy).toHaveBeenCalled();
     expect(loadSpy).toHaveBeenCalled();
     expect(fillTankSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
