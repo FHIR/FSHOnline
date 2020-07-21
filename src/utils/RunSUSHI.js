@@ -2,17 +2,11 @@ import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
 import { exportFHIR } from 'fsh-sushi/dist/export';
 import { logger, Type } from 'fsh-sushi/dist/utils';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
-import { loadExternalDependencies, fillTank, readConfig } from './Processing';
+import { loadExternalDependencies, fillTank } from './Processing';
 
 export async function runSUSHI(input) {
   // Hard Code config
-  let config = null;
-  try {
-    config = readConfig();
-  } catch {
-    logger.error('Something went wrong when creating the configuration');
-    return;
-  }
+  const config = { canonical: 'http://default.org' };
 
   // Load dependencies
   let defs = new FHIRDefinitions();

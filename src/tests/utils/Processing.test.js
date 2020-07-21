@@ -1,17 +1,8 @@
-import { loadExternalDependencies, readConfig, fillTank } from '../../utils/Processing';
+import { loadExternalDependencies, fillTank } from '../../utils/Processing';
 import { RawFSH } from 'fsh-sushi/dist/import/RawFSH';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 import * as loadModule from '../../utils/Load';
 import 'fake-indexeddb/auto';
-
-describe('#readConfig', () => {
-  it('should hard code the preferred config', () => {
-    const config = readConfig();
-    expect(config.fhirVersion).toEqual(['4.0.1']);
-    expect(config.id).toEqual('fhir.us.minimal');
-    expect(config.FSHOnly).toBe(false);
-  });
-});
 
 describe('#loadExternalDependencies()', () => {
   it('should log an error when it fails to make the database', () => {
@@ -68,9 +59,8 @@ describe('#filltank', () => {
     const input =
       'Alias: SCT = http://snomed.info/sct Profile:FishPatient Parent:Patient Id:fish-patient Title: "Fish Patient" Description: "A patient that is a type of fish."';
     const rawFSH = [new RawFSH(input)];
-    const config = readConfig();
+    const config = { canonical: 'http://default.org' };
     const tank = fillTank(rawFSH, config);
     expect(tank.docs.length).toEqual(1);
-    expect(tank.config.fhirVersion).toEqual(['4.0.1']);
   });
 });

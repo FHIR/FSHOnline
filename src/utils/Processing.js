@@ -1,20 +1,12 @@
 import { logger } from 'fsh-sushi/dist/utils';
 import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
-import { FSHTank, importText, importConfiguration } from 'fsh-sushi/dist/import';
-import { minimalConfig } from './MinimalConfig';
+import { FSHTank, importText } from 'fsh-sushi/dist/import';
 
 export function fillTank(rawFSHes, config) {
   logger.info('Importing FSH text...');
   const docs = importText(rawFSHes);
   return new FSHTank(docs, config);
-}
-
-export function readConfig() {
-  const yamlContents = JSON.stringify(minimalConfig, null);
-
-  const defaultPlaygroundConfigYaml = importConfiguration(yamlContents, '/test/import/fixtures/minimal-config.yaml');
-  return defaultPlaygroundConfigYaml;
 }
 
 export async function loadExternalDependencies(FHIRdefs, version) {

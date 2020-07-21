@@ -28,26 +28,11 @@ describe('#playgroundApp', () => {
     expect(outPackage.profiles).toHaveLength(1);
   });
 
-  it('should return an undefined package when the config is invalid', async () => {
-    const configSpy = jest.spyOn(processing, 'readConfig').mockImplementation(() => {
-      throw new Error('Bad Config');
-    });
-    const loadSpyConfig = jest
-      .spyOn(processing, 'loadExternalDependencies')
-      .mockReset()
-      .mockResolvedValue(new FHIRDefinitions());
-
-    const outPackage = await runSUSHI();
-    expect(configSpy).toHaveBeenCalled();
-    expect(loadSpyConfig).toHaveBeenCalledTimes(0);
-    expect(outPackage).toBeUndefined();
-  });
-
   it('should return an empty package when fillTank does not execute properly', async () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    const configSpy = jest.spyOn(processing, 'readConfig').mockReset().mockReturnValue(undefined);
+    // const configSpy = jest.spyOn(processing, 'readConfig').mockReset().mockReturnValue(undefined);
     const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
     const fillTankSpy = jest
       .spyOn(processing, 'fillTank')
@@ -57,7 +42,7 @@ describe('#playgroundApp', () => {
       });
     const input = 'Improper FSH code!';
     const outPackage = await runSUSHI(input);
-    expect(configSpy).toHaveBeenCalled();
+    //expect(configSpy).toHaveBeenCalled();
     expect(loadSpy).toHaveBeenCalled();
     expect(fillTankSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
