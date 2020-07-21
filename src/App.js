@@ -29,7 +29,6 @@ export default function App() {
   function buttonFunctionality(shouldRunSUSHI, sushiOutput) {
     setShouldRunSUSHI(shouldRunSUSHI);
     setOutputText(sushiOutput);
-    // console.log(sushiOutput);
   }
   function updateInputTextValue(text) {
     setInputText(text);

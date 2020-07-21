@@ -1,9 +1,9 @@
 import React from 'react';
-import * as playground from 'fsh-sushi/dist/playgroundApp';
+import * as runSUSHI from '../../utils/RunSUSHI';
 import { act } from 'react-dom/test-utils';
 import { render, wait } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import RunButton from '../components/RunButton';
+import RunButton from '../../components/RunButton';
 import 'fake-indexeddb/auto';
 
 const badSUSHIPackage = { a: '1', b: '2' };
@@ -28,9 +28,9 @@ afterEach(() => {
   container = null;
 });
 
-it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibits a bad package', async () => {
+it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a bad package', async () => {
   const onClick = jest.fn();
-  const playgroundSpy = jest.spyOn(playground, 'playgroundApp').mockResolvedValue(badSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(badSUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -41,7 +41,7 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
   });
 
   await wait(() => {
-    expect(playgroundSpy).toHaveBeenCalled();
+    expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!');
   });
@@ -49,7 +49,7 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
 
 it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibits an empty package', async () => {
   const onClick = jest.fn();
-  const playgroundSpy = jest.spyOn(playground, 'playgroundApp').mockResolvedValue(emptySUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -60,7 +60,7 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
   });
 
   await wait(() => {
-    expect(playgroundSpy).toHaveBeenCalled();
+    expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!');
   });
@@ -68,7 +68,7 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
 
 it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibits a good package', async () => {
   const onClick = jest.fn();
-  const playgroundSpy = jest.spyOn(playground, 'playgroundApp').mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
     render(<RunButton onClick={onClick} />, container);
@@ -79,7 +79,7 @@ it('calls playgroundApp and changes the SUSHIShouldRun variable onClick, exhibit
   });
 
   await wait(() => {
-    expect(playgroundSpy).toHaveBeenCalled();
+    expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, '\t'));
   });
