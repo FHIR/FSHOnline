@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import JSONOutput from '../components/JSONOutput';
+import JSONOutput from '../../components/JSONOutput';
 
 let container = null;
 beforeEach(() => {

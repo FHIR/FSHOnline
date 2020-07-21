@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button } from '@material-ui/core';
+import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,8 +24,10 @@ export default function RunButton(props) {
   const classes = useStyles();
 
   //Sets the shouldRunSUSHI to true
-  function handleClick() {
+  async function handleClick() {
     props.onClick(true);
+    const outPackage = await runSUSHI(props.text);
+    console.log(outPackage);
   }
 
   return (
