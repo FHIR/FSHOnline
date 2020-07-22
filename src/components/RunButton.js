@@ -30,7 +30,7 @@ function replacer(key, value) {
 export default function RunButton(props) {
   const classes = useStyles();
 
-  //Sets the shouldRunSUSHI to true
+  //Sets the doRunSUSHI to true
   async function handleClick() {
     const outPackage = await runSUSHI(props.text);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);

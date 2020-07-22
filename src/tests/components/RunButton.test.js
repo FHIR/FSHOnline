@@ -28,7 +28,7 @@ afterEach(() => {
   container = null;
 });
 
-it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a bad package', async () => {
+it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad package', async () => {
   const onClick = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
@@ -47,7 +47,7 @@ it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a b
   });
 });
 
-it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits an empty package', async () => {
+it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empty package', async () => {
   const onClick = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
@@ -66,7 +66,7 @@ it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits an 
   });
 });
 
-it('calls runSUSHI and changes the SUSHIShouldRun variable onClick, exhibits a good package', async () => {
+it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good package', async () => {
   const onClick = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 

@@ -28,7 +28,7 @@ it('Renders with the proper heading and updates with proper text', () => {
   expect(textElement).toBeInTheDocument();
 });
 
-it('Renders with the default heading if shouldRunSUSHI is false', () => {
+it('Renders with the default heading if doRunSUSHI is false', () => {
   const { getByText } = render(<JSONOutput displaySUSHI={false} text={'Hello World'} />, container);
   const textElement = getByText(/Your JSON Output Will Display Here:/i);
 
