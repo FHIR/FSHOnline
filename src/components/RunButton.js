@@ -32,6 +32,7 @@ export default function RunButton(props) {
 
   //Sets the doRunSUSHI to true
   async function handleClick() {
+    let isObject = true;
     const outPackage = await runSUSHI(props.text);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage.codeSystems) {
@@ -42,13 +43,17 @@ export default function RunButton(props) {
         !outPackage.profiles.length &&
         !outPackage.valueSets.length
       ) {
+        isObject = false;
         jsonOutput = 'Your FSH is invalid. Just keep swimming!';
       }
     } else {
+      isObject = false;
       jsonOutput = 'Your FSH is invalid. Just keep swimming!';
     }
 
-    props.onClick(true, jsonOutput);
+    //This double call to onClick just resets the doRunSUSHI variable so that react doesn't get confused with different incoming text
+    props.onClick(false, jsonOutput, isObject);
+    props.onClick(true, jsonOutput, isObject);
   }
 
   return (

@@ -42,8 +42,9 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
 
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalled();
-    expect(onClick).toHaveBeenCalledTimes(1);
-    expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!');
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onClick).toHaveBeenCalledWith(false, 'Your FSH is invalid. Just keep swimming!', false);
+    expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!', false);
   });
 });
 
@@ -61,8 +62,9 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
 
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalled();
-    expect(onClick).toHaveBeenCalledTimes(1);
-    expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!');
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onClick).toHaveBeenCalledWith(false, 'Your FSH is invalid. Just keep swimming!', false);
+    expect(onClick).toHaveBeenCalledWith(true, 'Your FSH is invalid. Just keep swimming!', false);
   });
 });
 
@@ -80,7 +82,8 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
 
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalled();
-    expect(onClick).toHaveBeenCalledTimes(1);
-    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2));
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onClick).toHaveBeenCalledWith(false, JSON.stringify(goodSUSHIPackage, null, 2), true);
+    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2), true);
   });
 });

@@ -17,10 +17,9 @@ const useStyles = makeStyles((theme) => ({
 export default function CodeMirrorComponent(props) {
   const classes = useStyles();
 
-  //Updates both the text state with the codemirror value, and sets the doRunSUSHI back to false
-  function updateTextAndRun(text) {
+  //Updates both the text state with the codemirror value
+  function updateText(text) {
     props.updateTextValue(text);
-    props.updateDoRunSUSHI(false);
   }
   return (
     <Box className={classes.box}>
@@ -32,7 +31,7 @@ export default function CodeMirrorComponent(props) {
           lineNumbers: true
         }}
         onChange={(editor, data, value) => {
-          updateTextAndRun(value);
+          updateText(value);
         }}
       />
     </Box>

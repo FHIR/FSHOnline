@@ -25,10 +25,12 @@ export default function App() {
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH Here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
+  const [isOutputObject, setIsOutputObject] = useState(false);
 
-  function handleRunButton(doRunSUSHI, sushiOutput) {
+  function handleRunButton(doRunSUSHI, sushiOutput, isObject) {
     setDoRunSUSHI(doRunSUSHI);
     setOutputText(sushiOutput);
+    setIsOutputObject(isObject);
   }
   function updateInputTextValue(text) {
     setInputText(text);
@@ -40,14 +42,10 @@ export default function App() {
       <RunButton onClick={handleRunButton} text={inputText} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent
-            value={inputText}
-            updateTextValue={updateInputTextValue}
-            updateDoRunSUSHI={handleRunButton}
-          />
+          <CodeMirrorComponent value={inputText} updateTextValue={updateInputTextValue} />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput displaySUSHI={doRunSUSHI} text={outputText} />
+          <JSONOutput displaySUSHI={doRunSUSHI} text={outputText} isObject={isOutputObject} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />
