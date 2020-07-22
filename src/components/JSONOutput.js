@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.grey[400],
     height: '100%',
     fontFamily: 'Consolas',
-    gutterBottom: true,
     noWrap: false
   }
 }));

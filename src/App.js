@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
-  const [shouldRunSUSHI, setShouldRunSUSHI] = useState(false);
+  const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH Here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
 
-  function handleRunButton(shouldRunSUSHI, sushiOutput) {
-    setShouldRunSUSHI(shouldRunSUSHI);
+  function handleRunButton(doRunSUSHI, sushiOutput) {
+    setDoRunSUSHI(doRunSUSHI);
     setOutputText(sushiOutput);
   }
   function updateInputTextValue(text) {
@@ -43,11 +43,11 @@ export default function App() {
           <CodeMirrorComponent
             value={inputText}
             updateTextValue={updateInputTextValue}
-            updateShouldRunSUSHI={handleRunButton}
+            updateDoRunSUSHI={handleRunButton}
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput displaySUSHI={shouldRunSUSHI} text={outputText} />
+          <JSONOutput displaySUSHI={doRunSUSHI} text={outputText} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
           <ConsoleComponent />
