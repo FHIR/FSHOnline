@@ -17,20 +17,20 @@ afterEach(() => {
 
 it('Renders with the proper heading as default', () => {
   const { getByText } = render(<JSONOutput />, container);
-  const textElement = getByText(/Your Output Will Display Here:/i);
+  const textElement = getByText(/Your JSON Output Will Display Here:/i);
 
   expect(textElement).toBeInTheDocument();
 });
 it('Renders with the proper heading and updates with proper text', () => {
-  const { getByText } = render(<JSONOutput shouldDisplaySUSHI={true} text={'Hello World'} />, container);
-  const textElement = getByText(/Hello World/i);
+  const { getByText } = render(<JSONOutput displaySUSHI={true} text={'Hello World'} />, container);
+  const textElement = getByText(/Your Output:/i);
 
   expect(textElement).toBeInTheDocument();
 });
 
-it('Renders with the default heading if shouldRunSUSHI is false', () => {
-  const { getByText } = render(<JSONOutput shouldDisplaySUSHI={false} text={'Hello World'} />, container);
-  const textElement = getByText(/Your Output Will Display Here:/i);
+it('Renders with the default heading if doRunSUSHI is false', () => {
+  const { getByText } = render(<JSONOutput displaySUSHI={false} text={'Hello World'} />, container);
+  const textElement = getByText(/Your JSON Output Will Display Here:/i);
 
   expect(textElement).toBeInTheDocument();
 });

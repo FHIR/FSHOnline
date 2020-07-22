@@ -20,14 +20,35 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function replacer(key, value) {
+  if (key === 'config') {
+    return undefined;
+  }
+  return value;
+}
+
 export default function RunButton(props) {
   const classes = useStyles();
 
-  //Sets the shouldRunSUSHI to true
+  //Sets the doRunSUSHI to true
   async function handleClick() {
-    props.onClick(true);
     const outPackage = await runSUSHI(props.text);
-    console.log(outPackage);
+    let jsonOutput = JSON.stringify(outPackage, replacer, 2);
+    if (outPackage.codeSystems) {
+      if (
+        !outPackage.codeSystems.length &&
+        !outPackage.extensions.length &&
+        !outPackage.instances.length &&
+        !outPackage.profiles.length &&
+        !outPackage.valueSets.length
+      ) {
+        jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+      }
+    } else {
+      jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+    }
+
+    props.onClick(true, jsonOutput);
   }
 
   return (

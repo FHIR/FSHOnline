@@ -5,7 +5,7 @@ import StructureDefinition from './fixtures/StructureDefinition-StructureDefinit
 import 'fake-indexeddb/auto';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 
-describe('#playgroundApp', () => {
+describe('#runSUSHI', () => {
   it('should return an undefined package when we get invalid FHIRDefinitions', async () => {
     const FHIRDefs = new FHIRDefinitions();
     const loadDefsSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
@@ -16,7 +16,7 @@ describe('#playgroundApp', () => {
     expect(outPackage).toBeUndefined();
   });
 
-  it('should return the correct output pacakge when proper FSH code is entered', async () => {
+  it('should return the correct output package when proper FSH code is entered', async () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);

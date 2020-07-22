@@ -17,10 +17,10 @@ const useStyles = makeStyles((theme) => ({
 export default function CodeMirrorComponent(props) {
   const classes = useStyles();
 
-  //Updates both the text state with the codemirror value, and sets the shouldRunSUSHI back to false
+  //Updates both the text state with the codemirror value, and sets the doRunSUSHI back to false
   function updateTextAndRun(text) {
     props.updateTextValue(text);
-    props.updateShouldRunSUSHI(false);
+    props.updateDoRunSUSHI(false);
   }
   return (
     <Box className={classes.box}>
