@@ -32,6 +32,8 @@ export default function RunButton(props) {
 
   //Sets the doRunSUSHI to true
   async function handleClick() {
+    props.onClick(true, 'Loading...', false);
+    let isObject = true;
     const outPackage = await runSUSHI(props.text);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage.codeSystems) {
@@ -42,13 +44,15 @@ export default function RunButton(props) {
         !outPackage.profiles.length &&
         !outPackage.valueSets.length
       ) {
+        isObject = false;
         jsonOutput = 'Your FSH is invalid. Just keep swimming!';
       }
     } else {
+      isObject = false;
       jsonOutput = 'Your FSH is invalid. Just keep swimming!';
     }
 
-    props.onClick(true, jsonOutput);
+    props.onClick(true, jsonOutput, isObject);
   }
 
   return (
