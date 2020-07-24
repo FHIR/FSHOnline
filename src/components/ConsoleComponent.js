@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.common.black,
     height: '200%',
     fontFamily: 'Consolas'
+  },
+  pre: {
+    margin: '0px'
   }
 }));
 
@@ -25,7 +28,11 @@ export default function Console() {
     <Box className={classes.box} overflow="scroll">
       <h3>Console</h3>
       {msgArray.map((msg, i) => {
-        return <p key={i}>{msg}</p>;
+        return (
+          <pre key={i} className={classes.pre}>
+            {msg}
+          </pre>
+        );
       })}
     </Box>
   );

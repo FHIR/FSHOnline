@@ -1,6 +1,7 @@
+import { pad, padStart, sample, padEnd } from 'lodash';
 import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
 import { exportFHIR } from 'fsh-sushi/dist/export';
-import { logger, Type } from 'fsh-sushi/dist/utils';
+import { logger, stats, Type } from 'fsh-sushi/dist/utils';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 import { loadExternalDependencies, fillTank } from './Processing';
 
@@ -32,8 +33,93 @@ export async function runSUSHI(input) {
     );
     return;
   }
+
+  logger.info('Converting FSH to FHIR resources...');
   const outPackage = exportFHIR(tank, defs);
+
+  console.log(' ');
+  printResults(outPackage);
+
   return outPackage;
 }
+
+function printResults(pkg) {
+  // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
+  const prNum = pad(pkg.profiles.length.toString(), 8);
+  const extnNum = pad(pkg.extensions.length.toString(), 10);
+  const vstNum = pad(pkg.valueSets.length.toString(), 9);
+  const cdsysNum = pad(pkg.codeSystems.length.toString(), 11);
+  const insNum = pad(pkg.instances.length.toString(), 9);
+  const errorNumMsg = pad(`${stats.numError} Error${stats.numError !== 1 ? 's' : ''}`, 13);
+  const wrNumMsg = padStart(`${stats.numWarn} Warning${stats.numWarn !== 1 ? 's' : ''}`, 12);
+  let resultStatus;
+  if (stats.numError === 0 && stats.numWarn === 0) {
+    resultStatus = 'clean';
+  } else if (stats.numError > 0) {
+    resultStatus = 'errors';
+  } else {
+    resultStatus = 'warnings';
+  }
+  const aWittyMessageInvolvingABadFishPun = padEnd(sample(MESSAGE_MAP[resultStatus]), 36);
+  const color = COLOR_MAP[resultStatus]; // eslint-disable-line no-unused-vars
+
+  /* eslint-disable no-useless-concat */
+  // NOTE: Doing some funky things w/ strings on some lines to keep overall alignment in the code
+  const results = [
+    '╔' + '════════════════════════ SUSHI RESULTS ══════════════════════════' + '╗',
+    '║' + ' ╭──────────┬────────────┬───────────┬─────────────┬───────────╮ ' + '║',
+    '║' + ' │ Profiles │ Extensions │ ValueSets │ CodeSystems │ Instances │ ' + '║',
+    '║' + ' ├──────────┼────────────┼───────────┼─────────────┼───────────┤ ' + '║',
+    '║' + ` │ ${prNum} │ ${extnNum} │ ${vstNum} │ ${cdsysNum} │ ${insNum} │ ` + '║',
+    '║' + ' ╰──────────┴────────────┴───────────┴─────────────┴───────────╯ ' + '║',
+    '║' + '                                                                 ' + '║',
+    '╠' + '═════════════════════════════════════════════════════════════════' + '╣',
+    '║' + ` ${aWittyMessageInvolvingABadFishPun} ${errorNumMsg} ${wrNumMsg} ` + '║',
+    '╚' + '═════════════════════════════════════════════════════════════════' + '╝'
+  ];
+  results.forEach((r) => console.log(r));
+  // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
+}
+
+const MESSAGE_MAP = {
+  clean: [
+    'That went swimmingly!',
+    'O-fish-ally error free!',
+    "Nice! You're totally krilling it!",
+    'Cool and So-fish-ticated!',
+    'Well hooked and landed!',
+    'You earned a PhD in Ichthyology!',
+    'You rock, lobster!',
+    'Everything is ship-shape!',
+    'Ex-clam-ation point!',
+    'Ac-clam-ations!',
+    'Fin-tastic job!'
+  ],
+  warnings: [
+    'Not bad, but you cod do batter!',
+    'Something smells fishy...',
+    'Warnings... Water those about?',
+    'Looks like you are casting about.',
+    'A bit pitchy, but tuna-ble.'
+  ],
+  errors: [
+    'Ick! Errors!',
+    'Some-fin went wrong...',
+    'Unfor-tuna-tely, there are errors.',
+    'That really smelt.',
+    'You spawned some errors.',
+    'Just keep swimming, Dory.',
+    'This is the one that got away.',
+    'The docs might be bene-fish-al.',
+    'This was a turtle disaster.',
+    'Something went eely wrong there.'
+  ]
+};
+
+const COLOR_MAP = {
+  clean: 'green',
+  warnings: '#b36200',
+  errors: 'red'
+};
 
 export default runSUSHI;
