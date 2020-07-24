@@ -19,6 +19,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const log = console.log; //eslint-disable-line no-unused-vars
+let msgArray = [];
+console.log = function getMessages(message) {
+  msgArray.push(message);
+};
+
 export default function App() {
   const classes = useStyles();
 
@@ -26,6 +32,10 @@ export default function App() {
   const [inputText, setInputText] = useState('Edit FSH Here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
+
+  function resetLogMessages() {
+    msgArray = [];
+  }
 
   function handleRunButton(doRunSUSHI, sushiOutput, isObject) {
     setDoRunSUSHI(doRunSUSHI);
@@ -39,7 +49,7 @@ export default function App() {
   return (
     <div className="root">
       <TopBar />
-      <RunButton onClick={handleRunButton} text={inputText} />
+      <RunButton onClick={handleRunButton} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent value={inputText} updateTextValue={updateInputTextValue} />
@@ -48,7 +58,7 @@ export default function App() {
           <JSONOutput displaySUSHI={doRunSUSHI} text={outputText} isObject={isOutputObject} />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
-          <ConsoleComponent />
+          <ConsoleComponent msgArray={msgArray} />
         </Grid>
       </Grid>
     </div>

@@ -32,6 +32,7 @@ export default function RunButton(props) {
 
   //Sets the doRunSUSHI to true
   async function handleClick() {
+    props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
     const outPackage = await runSUSHI(props.text);

@@ -7,16 +7,27 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '100%',
+    height: '200%',
     fontFamily: 'Consolas'
+  },
+  pre: {
+    margin: '0px'
   }
 }));
 
-export default function Console() {
+export default function Console(props) {
   const classes = useStyles();
+
   return (
-    <Box className={classes.box}>
-      <h1>Console is here</h1>
+    <Box className={classes.box} overflow="scroll">
+      <h3>Console</h3>
+      {props.msgArray.map((msg, i) => {
+        return (
+          <pre key={i} className={classes.pre}>
+            {msg}
+          </pre>
+        );
+      })}
     </Box>
   );
 }
