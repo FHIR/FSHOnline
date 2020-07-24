@@ -32,7 +32,6 @@ export async function runSUSHI(input) {
     );
     return;
   }
-
   const outPackage = exportFHIR(tank, defs);
   return outPackage;
 }

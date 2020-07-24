@@ -5,17 +5,20 @@ import { AppBar, Toolbar, Button, Typography } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    color: theme.palette.text.primary,
-    background: theme.palette.warning.dark,
-    position: 'static'
+    color: 'white',
+    background: '#30638E',
+    position: 'static',
+    height: '50%'
   },
   docButton: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(1),
+    color: 'white',
+    background: 'linear-gradient(45deg, #30638E 30%, #285a85 90%)',
+    boxShadow: '0 3px 5px 2px #285a85'
   },
   title: {
     flexGrow: 1,
-    edge: 'start',
-    fontFamily: 'Consolas'
+    edge: 'start'
   }
 }));
 
@@ -27,9 +30,7 @@ export default function ButtonAppBar() {
         <Typography className={classes.title} variant="h6">
           FSH Playground
         </Typography>
-        <Button className={classes.docButton} variant="outlined">
-          Documentation
-        </Button>
+        <Button className={classes.docButton}>Documentation</Button>
       </Toolbar>
     </AppBar>
   );
