@@ -5,6 +5,14 @@ import { logger, stats, Type } from 'fsh-sushi/dist/utils';
 import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
 import { loadExternalDependencies, fillTank } from './Processing';
 
+/**
+ * TODO: Keep a running tally of errors because the logger stats do not reset between SUSHI runs
+ * If we have a way to clear the stats in the logger, these variables should be removed and we can
+ * just use stats.numError and stats.numWarn similar to SUSHI.
+ */
+let startingErrors = 0;
+let startingWarns = 0;
+
 export async function runSUSHI(input) {
   // Hard Code config
   const config = { canonical: 'http://default.org' };
@@ -38,24 +46,28 @@ export async function runSUSHI(input) {
   const outPackage = exportFHIR(tank, defs);
 
   console.log(' ');
-  printResults(outPackage);
+  const { errors, warns } = printResults(outPackage, startingErrors, startingWarns);
+  startingErrors = errors;
+  startingWarns = warns;
 
   return outPackage;
 }
 
-function printResults(pkg) {
+function printResults(pkg, startError, startWarn) {
+  const numError = stats.numError - startError;
+  const numWarn = stats.numWarn - startWarn;
   // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
   const prNum = pad(pkg.profiles.length.toString(), 8);
   const extnNum = pad(pkg.extensions.length.toString(), 10);
   const vstNum = pad(pkg.valueSets.length.toString(), 9);
   const cdsysNum = pad(pkg.codeSystems.length.toString(), 11);
   const insNum = pad(pkg.instances.length.toString(), 9);
-  const errorNumMsg = pad(`${stats.numError} Error${stats.numError !== 1 ? 's' : ''}`, 13);
-  const wrNumMsg = padStart(`${stats.numWarn} Warning${stats.numWarn !== 1 ? 's' : ''}`, 12);
+  const errorNumMsg = pad(`${numError} Error${numError !== 1 ? 's' : ''}`, 13);
+  const wrNumMsg = padStart(`${numWarn} Warning${numWarn !== 1 ? 's' : ''}`, 12);
   let resultStatus;
-  if (stats.numError === 0 && stats.numWarn === 0) {
+  if (numError === 0 && numWarn === 0) {
     resultStatus = 'clean';
-  } else if (stats.numError > 0) {
+  } else if (numError > 0) {
     resultStatus = 'errors';
   } else {
     resultStatus = 'warnings';
@@ -79,6 +91,7 @@ function printResults(pkg) {
   ];
   results.forEach((r) => console.log(r));
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
+  return { errors: numError, warns: numWarn };
 }
 
 const MESSAGE_MAP = {
