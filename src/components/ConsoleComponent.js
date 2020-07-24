@@ -15,19 +15,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const log = console.log; //eslint-disable-line no-unused-vars
-let msgArray = [];
-console.log = function getMessages(message) {
-  msgArray.push(message);
-};
-
-export default function Console() {
+export default function Console(props) {
   const classes = useStyles();
 
   return (
     <Box className={classes.box} overflow="scroll">
       <h3>Console</h3>
-      {msgArray.map((msg, i) => {
+      {props.msgArray.map((msg, i) => {
         return (
           <pre key={i} className={classes.pre}>
             {msg}

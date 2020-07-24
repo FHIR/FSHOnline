@@ -16,18 +16,16 @@ afterEach(() => {
 });
 
 it('Renders with the appropriate label', () => {
-  const { getByText } = render(<ConsoleComponent />, container);
+  const { getByText } = render(<ConsoleComponent msgArray={[]} />, container);
   const textElement = getByText(/Console/i);
 
   expect(textElement).toBeInTheDocument();
 });
 
 it('Renders with proper messages in the console', () => {
-  console.log('Hello');
-  console.log('Goodbye');
-  console.log('How are you?');
+  const msgArray = ['Hello', 'Goodbye', 'How are you?'];
 
-  const { getByText, queryByText } = render(<ConsoleComponent />, container);
+  const { getByText, queryByText } = render(<ConsoleComponent msgArray={msgArray} />, container);
   const textElement1 = getByText(/Hello/i);
   const textElement2 = getByText(/Goodbye/i);
   const textElement3 = getByText(/How are you\?/i);

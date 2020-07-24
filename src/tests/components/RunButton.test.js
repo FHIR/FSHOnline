@@ -30,10 +30,11 @@ afterEach(() => {
 
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad package', async () => {
   const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} />, container);
+    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -41,6 +42,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   });
 
   await wait(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
@@ -50,10 +52,11 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
 
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empty package', async () => {
   const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} />, container);
+    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -61,6 +64,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   });
 
   await wait(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
@@ -70,10 +74,11 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
 
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good package', async () => {
   const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} />, container);
+    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -81,6 +86,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   });
 
   await wait(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
