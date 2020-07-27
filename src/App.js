@@ -29,7 +29,7 @@ export default function App() {
   const classes = useStyles();
 
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
-  const [inputText, setInputText] = useState('Edit FSH Here!');
+  const [inputText, setInputText] = useState('Edit FSH here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
 
