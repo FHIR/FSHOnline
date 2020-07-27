@@ -25,7 +25,7 @@ export default function CodeMirrorComponent(props) {
     <Box className={classes.box}>
       <CodeMirror
         className="react-codemirror2"
-        value={props.value}
+        value={'Edit FSH here!'}
         options={{
           theme: 'material',
           lineNumbers: true
