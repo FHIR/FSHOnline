@@ -1,8 +1,8 @@
 {
-  "name": "fsh-playground",
+  "name": "fsh-online",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://standardhealth.github.io/fsh-playground",
+  "homepage": "https://fshschool.org/FSHOnline",
   "license": "Apache-2.0",
   "dependencies": {
     "@material-ui/core": "^4.10.2",

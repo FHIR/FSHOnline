@@ -11,8 +11,8 @@ beforeAll(() => {
   };
 });
 
-test('Renders FSH Playground App', () => {
+test('Renders FSH Online App', () => {
   const { getByText } = render(<App />);
-  const linkElement = getByText(/FSH Playground/i);
+  const linkElement = getByText(/FSH Online/i);
   expect(linkElement).toBeInTheDocument();
 });
