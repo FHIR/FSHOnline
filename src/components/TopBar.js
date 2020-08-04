@@ -28,7 +28,7 @@ export default function ButtonAppBar() {
     <AppBar className={classes.root}>
       <Toolbar>
         <Typography className={classes.title} variant="h6">
-          FSH Playground
+          FSH Online
         </Typography>
         <Button className={classes.docButton}>Documentation</Button>
       </Toolbar>

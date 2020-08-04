@@ -17,7 +17,7 @@ afterEach(() => {
 
 it('Renders with the proper heading as default', () => {
   const { getByText } = render(<TopBar />, container);
-  const textElement = getByText(/FSH Playground/i);
+  const textElement = getByText(/FSH Online/i);
 
   expect(textElement).toBeInTheDocument();
 });
