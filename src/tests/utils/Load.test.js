@@ -23,9 +23,9 @@ describe('#unzipDependencies', () => {
   });
   it('should make an http request and extract data from the resulting zip folder', () => {
     unzipDependencies(resources);
-    const callbackFunct = getSpy.mock.calls[0][1];
+    const callbackFunction = getSpy.mock.calls[0][1];
     expect(getSpy).toBeCalled();
-    expect(getSpy).toBeCalledWith('http://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunct);
+    expect(getSpy).toBeCalledWith('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunction);
   });
 });
 

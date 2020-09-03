@@ -37,7 +37,7 @@ export default function RunButton(props) {
     let isObject = true;
     const outPackage = await runSUSHI(props.text);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
-    if (outPackage.codeSystems) {
+    if (outPackage && outPackage.codeSystems) {
       if (
         !outPackage.codeSystems.length &&
         !outPackage.extensions.length &&
