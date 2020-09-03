@@ -4,7 +4,7 @@ import http from 'http';
 
 export function unzipDependencies(resources) {
   return new Promise((resolve) => {
-    http.get('http://packages.fhir.org/hl7.fhir.r4.core/4.0.1', function (res) {
+    http.get('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', function (res) {
       const extract = tarStream.extract();
       // Unzip files
       extract.on('entry', function (header, stream, next) {

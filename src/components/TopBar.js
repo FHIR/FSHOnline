@@ -30,7 +30,9 @@ export default function ButtonAppBar() {
         <Typography className={classes.title} variant="h6">
           FSH Online
         </Typography>
-        <Button className={classes.docButton}>Documentation</Button>
+        <Button className={classes.docButton} href="https://fshschool.org/" target="_blank">
+          Documentation
+        </Button>
       </Toolbar>
     </AppBar>
   );
