@@ -7,8 +7,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '200%',
-    fontFamily: 'Consolas'
+    height: '200%'
   },
   pre: {
     margin: '0px'

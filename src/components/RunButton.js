@@ -16,7 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: theme.palette.common.white,
-    background: theme.palette.success.dark
+    background: theme.palette.success.dark,
+    textTransform: 'none',
+    fontWeight: 'bold'
   }
 }));
 

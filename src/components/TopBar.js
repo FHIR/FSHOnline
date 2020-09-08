@@ -13,16 +13,17 @@ const useStyles = makeStyles((theme) => ({
   docButton: {
     margin: theme.spacing(1),
     color: 'white',
-    background: 'linear-gradient(45deg, #30638E 30%, #285a85 90%)',
-    boxShadow: '0 3px 5px 2px #285a85'
+    textTransform: 'none',
+    fontWeight: 'bold'
   },
   title: {
     flexGrow: 1,
-    edge: 'start'
+    edge: 'start',
+    fontWeight: 'bold'
   }
 }));
 
-export default function ButtonAppBar() {
+export default function TopBar() {
   const classes = useStyles();
   return (
     <AppBar className={classes.root}>
