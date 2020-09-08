@@ -24,7 +24,7 @@ let consoleMessages = [];
 let errorMessages = [];
 console.log = function getMessages(message) {
   consoleMessages.push(message);
-  if (message.startsWith('error')) {
+  if (message && message.startsWith('error')) {
     errorMessages.push(message);
   }
 };
@@ -47,6 +47,7 @@ export default function App() {
     setOutputText(sushiOutput);
     setIsOutputObject(isObject);
   }
+
   function updateInputTextValue(text) {
     setInputText(text);
   }

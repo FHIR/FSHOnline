@@ -34,7 +34,7 @@ const renderDisplayContent = (displaySUSHI, text, isObject) => {
     return (
       <span>
         <h4>Results</h4>
-        <ReactJson src={packageJSON} displayDataTypes={false} collapsed={3} name={false} />
+        <ReactJson src={packageJSON} displayDataTypes={false} collapsed={false} name={false} />
       </span>
     );
   } else if (displaySUSHI && text) {
