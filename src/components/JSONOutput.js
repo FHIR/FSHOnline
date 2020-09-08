@@ -32,7 +32,11 @@ export default function JSONOutput(props) {
       return (
         <Box className={classes.box} border={1} overflow="scroll">
           <h4>Your Output: </h4>
-          <pre>{props.text}</pre>
+          {props.errors.length > 0 ? (
+            props.errors.map((error, i) => <pre key={i}>{error}</pre>)
+          ) : (
+            <pre>{props.text}</pre>
+          )}
         </Box>
       );
     }

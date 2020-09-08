@@ -21,10 +21,10 @@ export default function Console(props) {
   return (
     <Box className={classes.box} overflow="scroll">
       <h3>Console</h3>
-      {props.msgArray.map((msg, i) => {
+      {props.consoleMessages.map((message, i) => {
         return (
           <pre key={i} className={classes.pre}>
-            {msg}
+            {message}
           </pre>
         );
       })}

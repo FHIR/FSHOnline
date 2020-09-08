@@ -22,15 +22,31 @@ it('Renders with the proper heading as default', () => {
   expect(textElement).toBeInTheDocument();
 });
 it('Renders with the proper heading and updates with proper text', () => {
-  const { getByText } = render(<JSONOutput displaySUSHI={true} text={'Hello World'} />, container);
+  const { getByText } = render(<JSONOutput displaySUSHI={true} text={'Hello World'} errors={[]} />, container);
   const textElement = getByText(/Your Output:/i);
 
   expect(textElement).toBeInTheDocument();
 });
 
-it('Renders with the default heading if doRunSUSHI is false', () => {
-  const { getByText } = render(<JSONOutput displaySUSHI={false} text={'Hello World'} />, container);
+it('Renders with the default heading if displaySUSHI is false', () => {
+  const { getByText } = render(<JSONOutput displaySUSHI={false} text={'Hello World'} errors={[]} />, container);
   const textElement = getByText(/Your JSON Output Will Display Here:/i);
 
   expect(textElement).toBeInTheDocument();
+});
+
+it('Renders error messages if present', () => {
+  const { getByText } = render(
+    <JSONOutput
+      displaySUSHI={true}
+      text={'Hello World'}
+      errors={['error Unexpected input', 'error Something else wrong']}
+    />,
+    container
+  );
+  const firstError = getByText(/Unexpected input/);
+  const secondError = getByText(/Something else wrong/);
+
+  expect(firstError).toBeInTheDocument();
+  expect(secondError).toBeInTheDocument();
 });
