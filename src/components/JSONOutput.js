@@ -14,37 +14,45 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function JSONOutput(props) {
-  const classes = useStyles();
-  let display = '';
-
-  //Checks to insure the doRunSUSHI is true (aka button has been pressed) and there is text to display for the output
-  if (props.displaySUSHI && props.text) {
-    if (props.isObject) {
-      display = JSON.parse(props.text);
-      return (
-        <Box className={classes.box} border={1} overflow="scroll">
-          <h4>Your Output: </h4>
-          <ReactJson src={display} displayDataTypes={false} collapsed={4} name={false} />
-        </Box>
-      );
-    } else {
-      return (
-        <Box className={classes.box} border={1} overflow="scroll">
-          <h4>Your Output: </h4>
-          {props.errors.length > 0 ? (
-            props.errors.map((error, i) => <pre key={i}>{error}</pre>)
-          ) : (
-            <pre>{props.text}</pre>
-          )}
-        </Box>
-      );
-    }
-  } else {
+const renderErrorMessage = (errors = []) => {
+  if (errors.length > 0) {
     return (
-      <Box className={classes.box} border={1}>
-        <h4>Your JSON Output Will Display Here: </h4>
-      </Box>
+      <span>
+        <h4>Errors</h4>
+        {errors.map((error, i) => (
+          <pre key={i}>{error}</pre>
+        ))}
+      </span>
     );
   }
+  return;
+};
+
+const renderDisplayContent = (displaySUSHI, text, isObject) => {
+  if (displaySUSHI && text && isObject) {
+    const packageJSON = JSON.parse(text);
+    return (
+      <span>
+        <h4>Results</h4>
+        <ReactJson src={packageJSON} displayDataTypes={false} collapsed={3} name={false} />
+      </span>
+    );
+  } else if (displaySUSHI && text) {
+    return <pre>{text}</pre>;
+  }
+  return '';
+};
+
+export default function JSONOutput(props) {
+  const classes = useStyles();
+  const errorContent = renderErrorMessage(props.errors);
+  const displayContent = renderDisplayContent(props.displaySUSHI, props.text, props.isObject);
+
+  return (
+    <Box className={classes.box} border={1} overflow="scroll">
+      <h3>SUSHI Output</h3>
+      {errorContent}
+      {displayContent}
+    </Box>
+  );
 }

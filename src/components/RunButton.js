@@ -46,11 +46,11 @@ export default function RunButton(props) {
         !outPackage.valueSets.length
       ) {
         isObject = false;
-        jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+        jsonOutput = '';
       }
     } else {
       isObject = false;
-      jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+      jsonOutput = '';
     }
 
     props.onClick(true, jsonOutput, isObject);
