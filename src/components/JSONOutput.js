@@ -25,7 +25,7 @@ export default function JSONOutput(props) {
       return (
         <Box className={classes.box} border={1} overflow="scroll">
           <h4>Your Output: </h4>
-          <ReactJson src={display} displayDataTypes={false} collapsed={1} name={false} />
+          <ReactJson src={display} displayDataTypes={false} collapsed={4} name={false} />
         </Box>
       );
     } else {
