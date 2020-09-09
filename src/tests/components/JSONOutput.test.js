@@ -18,7 +18,7 @@ afterEach(() => {
 it('Renders with the default heading if displaySUSHI is false', () => {
   // Initial case, nothing from SUSHI is displayed
   const { getByText, queryByText } = render(
-    <JSONOutput displaySUSHI={false} text={'Hello World'} errors={[]} />,
+    <JSONOutput displaySUSHI={false} text={'Hello World'} errorsAndWarnings={[]} />,
     container
   );
   const headerElement = getByText(/SUSHI Output/i);
@@ -32,7 +32,7 @@ it('Renders with the default heading if displaySUSHI is false', () => {
 
 it('Renders with the proper heading and updates with proper text when not an object', () => {
   const { getByText, queryByText } = render(
-    <JSONOutput displaySUSHI={true} text={'Hello World'} isObject={false} errors={[]} />,
+    <JSONOutput displaySUSHI={true} text={'Hello World'} isObject={false} errorsAndWarnings={[]} />,
     container
   );
   const resultsElement = queryByText(/Results/i);
@@ -46,7 +46,7 @@ it('Renders with the proper heading and updates with proper text when not an obj
 
 it('Renders with the proper headings when text is an object (SUSHI Package)', () => {
   const { getByText, queryByText } = render(
-    <JSONOutput displaySUSHI={true} text={JSON.stringify({ profiles: [] })} isObject={true} errors={[]} />,
+    <JSONOutput displaySUSHI={true} text={JSON.stringify({ profiles: [] })} isObject={true} errorsAndWarnings={[]} />,
     container
   );
   const resultsElement = getByText(/Results/i);
@@ -62,7 +62,7 @@ it('Renders error messages if present', () => {
       displaySUSHI={true}
       isObject={false}
       text={'Hello World'}
-      errors={['error Unexpected input', 'error Something else wrong']}
+      errorsAndWarnings={['error Unexpected input', 'error Something else wrong']}
     />,
     container
   );

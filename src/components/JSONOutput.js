@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const renderErrorMessage = (errors = []) => {
-  if (errors.length > 0) {
+const renderErrorAndWarningContent = (errorsAndWarnings = []) => {
+  if (errorsAndWarnings.length > 0) {
     return (
       <span>
-        <h4>Errors</h4>
-        {errors.map((error, i) => (
-          <pre key={i}>{error}</pre>
+        <h4>Errors and Warnings</h4>
+        {errorsAndWarnings.map((message, i) => (
+          <pre key={i}>{message}</pre>
         ))}
       </span>
     );
@@ -44,13 +44,13 @@ const renderDisplayContent = (displaySUSHI, text, isObject) => {
 
 export default function JSONOutput(props) {
   const classes = useStyles();
-  const errorContent = renderErrorMessage(props.errors);
+  const errorAndWarningContent = renderErrorAndWarningContent(props.errorsAndWarnings);
   const displayContent = renderDisplayContent(props.displaySUSHI, props.text, props.isObject);
 
   return (
     <Box className={classes.box} border={1} overflow="scroll">
       <h3>SUSHI Output</h3>
-      {errorContent}
+      {errorAndWarningContent}
       {displayContent}
     </Box>
   );
