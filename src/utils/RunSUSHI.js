@@ -1,9 +1,14 @@
 import { pad, padStart, sample, padEnd } from 'lodash';
-import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
-import { exportFHIR } from 'fsh-sushi/dist/export';
-import { logger, stats, Type } from 'fsh-sushi/dist/utils';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
+import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { loadExternalDependencies, fillTank } from './Processing';
+
+const FSHTank = sushiImport.FSHTank;
+const RawFSH = sushiImport.RawFSH;
+const exportFHIR = sushiExport.exportFHIR;
+const logger = utils.logger;
+const stats = utils.stats;
+const Type = utils.Type;
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 /**
  * TODO: Keep a running tally of errors because the logger stats do not reset between SUSHI runs
@@ -110,7 +115,8 @@ const MESSAGE_MAP = {
     'Everything is ship-shape!',
     'Ex-clam-ation point!',
     'Ac-clam-ations!',
-    'Fin-tastic job!'
+    'Fin-tastic job!',
+    "You're dolphinitely doing great!"
   ],
   warnings: [
     'Not bad, but you cod do batter!',
@@ -129,7 +135,8 @@ const MESSAGE_MAP = {
     'This is the one that got away.',
     'The docs might be bene-fish-al.',
     'This was a turtle disaster.',
-    'Something went eely wrong there.'
+    'Something went eely wrong there.',
+    'Documentation may be kelp-ful.'
   ]
 };
 

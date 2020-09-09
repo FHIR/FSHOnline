@@ -1,8 +1,10 @@
 import { loadExternalDependencies, fillTank } from '../../utils/Processing';
-import { RawFSH } from 'fsh-sushi/dist/import/RawFSH';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
+import { fhirdefs, sushiImport } from 'fsh-sushi';
 import * as loadModule from '../../utils/Load';
 import 'fake-indexeddb/auto';
+
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
+const RawFSH = sushiImport.RawFSH;
 
 describe('#loadExternalDependencies()', () => {
   it('should log an error when it fails to make the database', () => {

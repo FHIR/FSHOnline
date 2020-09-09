@@ -3,7 +3,9 @@ import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
 import 'fake-indexeddb/auto';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
+import { fhirdefs } from 'fsh-sushi';
+
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 describe('#runSUSHI', () => {
   it('should return an undefined package when we get invalid FHIRDefinitions', async () => {

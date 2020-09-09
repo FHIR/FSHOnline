@@ -1,8 +1,10 @@
 import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs } from '../../utils/Load';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs/FHIRDefinitions';
+import { fhirdefs } from 'fsh-sushi';
 import tarStream from 'tar-stream';
 import http from 'http';
 import 'fake-indexeddb/auto';
+
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 describe('#unzipDependencies', () => {
   let getSpy = jest.SpyInstance;

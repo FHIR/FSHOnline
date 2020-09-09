@@ -1,7 +1,10 @@
-import { logger } from 'fsh-sushi/dist/utils';
+import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
 import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
-import { FSHTank, importText } from 'fsh-sushi/dist/import';
+
+const logger = utils.logger;
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
+const FSHTank = sushiImport.FSHTank;
+const importText = sushiImport.importText;
 
 export function fillTank(rawFSHes, config) {
   logger.info('Importing FSH text...');
