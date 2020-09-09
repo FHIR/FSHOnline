@@ -1,9 +1,14 @@
 import { pad, padStart, sample, padEnd } from 'lodash';
-import { FSHTank, RawFSH } from 'fsh-sushi/dist/import';
-import { exportFHIR } from 'fsh-sushi/dist/export';
-import { logger, stats, Type } from 'fsh-sushi/dist/utils';
-import { FHIRDefinitions } from 'fsh-sushi/dist/fhirdefs';
+import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { loadExternalDependencies, fillTank } from './Processing';
+
+const FSHTank = sushiImport.FSHTank;
+const RawFSH = sushiImport.RawFSH;
+const exportFHIR = sushiExport.exportFHIR;
+const logger = utils.logger;
+const stats = utils.stats;
+const Type = utils.Type;
+const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 /**
  * TODO: Keep a running tally of errors because the logger stats do not reset between SUSHI runs
