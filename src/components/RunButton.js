@@ -16,7 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: theme.palette.common.white,
-    background: theme.palette.success.dark
+    background: theme.palette.success.dark,
+    textTransform: 'none',
+    fontWeight: 'bold'
   }
 }));
 
@@ -46,11 +48,11 @@ export default function RunButton(props) {
         !outPackage.valueSets.length
       ) {
         isObject = false;
-        jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+        jsonOutput = '';
       }
     } else {
       isObject = false;
-      jsonOutput = 'Your FSH is invalid. Just keep swimming!';
+      jsonOutput = '';
     }
 
     props.onClick(true, jsonOutput, isObject);

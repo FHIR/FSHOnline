@@ -50,6 +50,10 @@ export async function runSUSHI(input) {
   startingErrors = errors;
   startingWarns = warns;
 
+  // Remove snapshots
+  outPackage.profiles = outPackage.profiles.map((p) => p.toJSON(false));
+  outPackage.extensions = outPackage.extensions.map((e) => e.toJSON(false));
+
   return outPackage;
 }
 

@@ -20,9 +20,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const log = console.log; //eslint-disable-line no-unused-vars
-let msgArray = [];
+let consoleMessages = [];
+let errorAndWarningMessages = [];
 console.log = function getMessages(message) {
-  msgArray.push(message);
+  consoleMessages.push(message);
+  if (message && (message.startsWith('error') || message.startsWith('warn'))) {
+    errorAndWarningMessages.push(message);
+  }
 };
 
 export default function App() {
@@ -34,7 +38,8 @@ export default function App() {
   const [isOutputObject, setIsOutputObject] = useState(false);
 
   function resetLogMessages() {
-    msgArray = [];
+    consoleMessages = [];
+    errorAndWarningMessages = [];
   }
 
   function handleRunButton(doRunSUSHI, sushiOutput, isObject) {
@@ -42,6 +47,7 @@ export default function App() {
     setOutputText(sushiOutput);
     setIsOutputObject(isObject);
   }
+
   function updateInputTextValue(text) {
     setInputText(text);
   }
@@ -55,10 +61,15 @@ export default function App() {
           <CodeMirrorComponent value={inputText} updateTextValue={updateInputTextValue} />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput displaySUSHI={doRunSUSHI} text={outputText} isObject={isOutputObject} />
+          <JSONOutput
+            displaySUSHI={doRunSUSHI}
+            text={outputText}
+            isObject={isOutputObject}
+            errorsAndWarnings={errorAndWarningMessages}
+          />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
-          <ConsoleComponent msgArray={msgArray} />
+          <ConsoleComponent consoleMessages={consoleMessages} />
         </Grid>
       </Grid>
     </div>

@@ -9,38 +9,49 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     background: theme.palette.grey[400],
     height: '100%',
-    fontFamily: 'Consolas',
     noWrap: false
   }
 }));
 
-export default function JSONOutput(props) {
-  const classes = useStyles();
-  let display = '';
-
-  //Checks to insure the doRunSUSHI is true (aka button has been pressed) and there is text to display for the output
-  if (props.displaySUSHI && props.text) {
-    if (props.isObject) {
-      display = JSON.parse(props.text);
-      return (
-        <Box className={classes.box} border={1} overflow="scroll">
-          <h4>Your Output: </h4>
-          <ReactJson src={display} displayDataTypes={false} collapsed={1} name={false} />
-        </Box>
-      );
-    } else {
-      return (
-        <Box className={classes.box} border={1} overflow="scroll">
-          <h4>Your Output: </h4>
-          <pre>{props.text}</pre>
-        </Box>
-      );
-    }
-  } else {
+const renderErrorAndWarningContent = (errorsAndWarnings = []) => {
+  if (errorsAndWarnings.length > 0) {
     return (
-      <Box className={classes.box} border={1}>
-        <h4>Your JSON Output Will Display Here: </h4>
-      </Box>
+      <span>
+        <h4>Errors and Warnings</h4>
+        {errorsAndWarnings.map((message, i) => (
+          <pre key={i}>{message}</pre>
+        ))}
+      </span>
     );
   }
+  return;
+};
+
+const renderDisplayContent = (displaySUSHI, text, isObject) => {
+  if (displaySUSHI && text && isObject) {
+    const packageJSON = JSON.parse(text);
+    return (
+      <span>
+        <h4>Results</h4>
+        <ReactJson src={packageJSON} displayDataTypes={false} collapsed={false} name={false} />
+      </span>
+    );
+  } else if (displaySUSHI && text) {
+    return <pre>{text}</pre>;
+  }
+  return '';
+};
+
+export default function JSONOutput(props) {
+  const classes = useStyles();
+  const errorAndWarningContent = renderErrorAndWarningContent(props.errorsAndWarnings);
+  const displayContent = renderDisplayContent(props.displaySUSHI, props.text, props.isObject);
+
+  return (
+    <Box className={classes.box} border={1} overflow="scroll">
+      <h3>SUSHI Output</h3>
+      {errorAndWarningContent}
+      {displayContent}
+    </Box>
+  );
 }

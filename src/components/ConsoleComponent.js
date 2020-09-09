@@ -7,8 +7,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '200%',
-    fontFamily: 'Consolas'
+    height: '200%'
   },
   pre: {
     margin: '0px'
@@ -21,10 +20,10 @@ export default function Console(props) {
   return (
     <Box className={classes.box} overflow="scroll">
       <h3>Console</h3>
-      {props.msgArray.map((msg, i) => {
+      {props.consoleMessages.map((message, i) => {
         return (
           <pre key={i} className={classes.pre}>
-            {msg}
+            {message}
           </pre>
         );
       })}
