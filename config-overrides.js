@@ -10,6 +10,10 @@ module.exports = function override(config, env) {
       use: 'null-loader'
     },
     {
+      test: /.*readline-sync.*/,
+      use: 'null-loader'
+    },
+    {
       test: /.*tar(\\|\/).*/,
       use: 'null-loader'
     },
