@@ -115,7 +115,8 @@ const MESSAGE_MAP = {
     'Everything is ship-shape!',
     'Ex-clam-ation point!',
     'Ac-clam-ations!',
-    'Fin-tastic job!'
+    'Fin-tastic job!',
+    "You're dolphinitely doing great!"
   ],
   warnings: [
     'Not bad, but you cod do batter!',
@@ -134,7 +135,8 @@ const MESSAGE_MAP = {
     'This is the one that got away.',
     'The docs might be bene-fish-al.',
     'This was a turtle disaster.',
-    'Something went eely wrong there.'
+    'Something went eely wrong there.',
+    'Documentation may be kelp-ful.'
   ]
 };
 
