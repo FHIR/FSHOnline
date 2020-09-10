@@ -1,43 +1,86 @@
+# FSH Online
+
+FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It is available on https://fshschool.org/FSHOnline/.
+
+NOTE: This application is an early alpha release and is designed to be used for initial exploration.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Getting Started
 
-In the project directory, you can run:
+To run the project locally, [Node.js](https://nodejs.org/) must be installed on the user's system.
 
-### `npm install`
+In order to install all the required dependencies for the project, clone the repository and run the following command:
 
-Installs all required dependencies for the project.
+```bash
+npm install
+```
 
-### `npm start`
+Once the dependencies are installed, the application can be run in development mode by running the following command:
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+npm start
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits. Lint errors will appear in the console.
 
-### `npm test`
+## NPM Tasks
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The following NPM tasks are useful in development.
 
-### `npm run lint`
+### Tests
 
-Runs the linter for the project and will list any issues based.
+To run the project's tests, run the following command:
 
-### `npm run build`
+```bash
+npm test
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This will launch the test runner in the interactive watch mode. For more information, see the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) in the Create React App documentation.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Lint
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To run the linter for the project, run the following command:
 
-### `npm run eject`
+```bash
+npm run lint
+```
+
+Any issues will be listed. Some issues can be automatically fixed by lint. In order to fix these issues, run the following command:
+
+```bash
+npm run lint-fix
+```
+
+### Prettier
+
+To run the prettier code formatting, run the following command:
+
+```bash
+npm run prettier
+```
+
+### Build
+
+To build the app for production, run the following command:
+
+```bash
+npm run build
+```
+
+This will bundle the project in production mode and optimize the build for the best performance. The build will be output to the `build` folder. The build is minified and the filenames include the hashes.
+
+The build can be used to deploy the application. For more information, see the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) in the Create React App documentation.
+
+### Eject
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+To eject this project, run:
+
+```bash
+npm run eject
+```
 
 If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
@@ -47,33 +90,14 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### FHIR Shorthand
+
+To learn more about FHIR Shorthand (FSH), check out the [specification](https://build.fhir.org/ig/HL7/fhir-shorthand/). To learn more about SUSHI, check out the [documentation](https://fshschool.org/docs/sushi/). For other resources and tools to use with FHIR Shorthand, check out [FSH School](https://fshschool.org/).
+
+### React
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started) as well.
 
 # License
 
