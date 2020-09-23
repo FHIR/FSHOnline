@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
 
@@ -19,6 +25,13 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.success.dark,
     textTransform: 'none',
     fontWeight: 'bold'
+  },
+  secondaryButton: {
+    color: theme.palette.common.white,
+    background: '#30638E',
+    textTransform: 'none',
+    fontWeight: 'bold',
+    marginLeft: '5px'
   }
 }));
 
@@ -31,13 +44,35 @@ function replacer(key, value) {
 
 export default function RunButton(props) {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [canonical, setCanonical] = useState('http://example.org');
+  const [version, setVersion] = useState('1.0.0');
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const updateCanonical = (event) => {
+    const newCanonical = event.target.value;
+    setCanonical(newCanonical);
+  };
+
+  const updateVersion = (event) => {
+    const newVersion = event.target.value;
+    setVersion(newVersion);
+  };
 
   //Sets the doRunSUSHI to true
   async function handleClick() {
     props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
-    const outPackage = await runSUSHI(props.text);
+    const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
+    const outPackage = await runSUSHI(props.text, config);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -63,6 +98,45 @@ export default function RunButton(props) {
       <Button className={classes.button} onClick={handleClick} testid="Button">
         Run
       </Button>
+      <Button className={classes.secondaryButton} onClick={handleClickOpen}>
+        Configuration
+      </Button>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Change the configuration options to use when running SUSHI on your FSH</DialogContentText>
+          <TextField
+            id="canonical"
+            margin="dense"
+            fullWidth
+            label="Canonical URL"
+            defaultValue="http://example.org"
+            onChange={updateCanonical}
+          />
+          <TextField
+            id="version"
+            margin="dense"
+            fullWidth
+            label="Version"
+            defaultValue="1.0.0"
+            onChange={updateVersion}
+          />
+          <TextField
+            id="dependencies"
+            disabled
+            margin="dense"
+            label="Dependencies"
+            helperText="(Not yet supported) dependencyA#id, dependencyB#id"
+            defaultValue="dependency#id"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
