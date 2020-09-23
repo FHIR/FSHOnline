@@ -3,7 +3,7 @@ import * as runSUSHI from '../../utils/RunSUSHI';
 import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import RunButton from '../../components/RunButton';
+import SUSHIControls from '../../components/SUSHIControls';
 import 'fake-indexeddb/auto';
 
 const badSUSHIPackage = { a: '1', b: '2' };
@@ -34,7 +34,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -56,7 +56,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -78,7 +78,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<RunButton onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -100,7 +100,7 @@ it('uses user provided canonical when calling runSUSHI', () => {
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <RunButton onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -129,7 +129,7 @@ it('uses user provided version when calling runSUSHI', () => {
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <RunButton onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 

@@ -42,13 +42,13 @@ function replacer(key, value) {
   return value;
 }
 
-export default function RunButton(props) {
+export default function SUSHIControls(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
@@ -67,7 +67,7 @@ export default function RunButton(props) {
   };
 
   //Sets the doRunSUSHI to true
-  async function handleClick() {
+  async function handleRunClick() {
     props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
@@ -95,10 +95,10 @@ export default function RunButton(props) {
 
   return (
     <Box className={classes.box}>
-      <Button className={classes.button} onClick={handleClick} testid="Button">
+      <Button className={classes.button} onClick={handleRunClick} testid="Button">
         Run
       </Button>
-      <Button className={classes.secondaryButton} onClick={handleClickOpen}>
+      <Button className={classes.secondaryButton} onClick={handleOpen}>
         Configuration
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
