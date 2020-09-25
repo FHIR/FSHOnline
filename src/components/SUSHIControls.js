@@ -110,7 +110,7 @@ export default function SUSHIControls(props) {
             margin="dense"
             fullWidth
             label="Canonical URL"
-            defaultValue="http://example.org"
+            defaultValue={canonical}
             onChange={updateCanonical}
           />
           <TextField
@@ -118,7 +118,7 @@ export default function SUSHIControls(props) {
             margin="dense"
             fullWidth
             label="Version"
-            defaultValue="1.0.0"
+            defaultValue={version}
             onChange={updateVersion}
           />
           <TextField
