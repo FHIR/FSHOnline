@@ -18,10 +18,19 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 let startingErrors = 0;
 let startingWarns = 0;
 
-export async function runSUSHI(input) {
-  // Hard Code config
-  const config = { canonical: 'http://default.org' };
-
+/**
+ * Load dependencies (FHIR R4) and run SUSHI on provided text
+ *
+ * @param {string} input - string containing FSH text
+ * @param {object} config - Configuration for SUSHI based on user input and defaults
+ * config.canonical: user set, defaults to http://example.org
+ * config.version: user set, defaults to 1.0.0
+ * config.FSHOnly: true
+ * config.fhirVersion: [4.0.1]
+ *
+ * @returns Package with FHIR resources
+ */
+export async function runSUSHI(input, config) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   const version = 1;

@@ -5,7 +5,7 @@ import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
-import RunButton from './components/RunButton';
+import SUSHIControls from './components/SUSHIControls';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -42,7 +42,7 @@ export default function App() {
     errorAndWarningMessages = [];
   }
 
-  function handleRunButton(doRunSUSHI, sushiOutput, isObject) {
+  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject) {
     setDoRunSUSHI(doRunSUSHI);
     setOutputText(sushiOutput);
     setIsOutputObject(isObject);
@@ -55,7 +55,7 @@ export default function App() {
   return (
     <div className="root">
       <TopBar />
-      <RunButton onClick={handleRunButton} text={inputText} resetLogMessages={resetLogMessages} />
+      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent value={inputText} updateTextValue={updateInputTextValue} />
