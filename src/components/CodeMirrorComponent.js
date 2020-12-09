@@ -72,7 +72,7 @@ export default function CodeMirrorComponent(props) {
   }
 
   return (
-    <Box className={classes.box}>
+    <Box className={classes.box} borderTop={1}>
       <ReactCodeMirror
         className="react-codemirror2"
         value={'Edit FSH here!'}

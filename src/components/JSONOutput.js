@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: theme.spacing(0, 2),
     color: theme.palette.text.primary,
-    background: theme.palette.grey[400],
+    background: theme.palette.background.paper,
     height: '100%',
     noWrap: false
   }

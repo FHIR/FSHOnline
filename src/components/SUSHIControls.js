@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
-    background: theme.palette.grey[400],
+    background: theme.palette.background.paper,
     height: '4vh',
     display: 'flex;',
     alignItems: 'center',
@@ -94,7 +94,7 @@ export default function SUSHIControls(props) {
   }
 
   return (
-    <Box className={classes.box}>
+    <Box className={classes.box} borderRight={1} borderLeft={1}>
       <Button className={classes.button} onClick={handleRunClick} testid="Button">
         Run
       </Button>
