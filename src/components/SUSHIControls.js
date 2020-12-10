@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button } from '@material-ui/core';
+import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
+import { Box, Button, ThemeProvider } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,6 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
+import '../style/ButtonComponents.css';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -24,16 +25,28 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
     background: theme.palette.success.dark,
     textTransform: 'none',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    '&:hover': {
+      background: theme.palette.success.main
+    }
   },
   secondaryButton: {
     color: theme.palette.common.white,
     background: '#2c4f85',
     textTransform: 'none',
     fontWeight: 'bold',
-    marginLeft: '5px'
+    marginLeft: '5px',
+    '&:hover': {
+      background: '#385f9c'
+    }
   }
 }));
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: 'Open Sans'
+  }
+});
 
 function replacer(key, value) {
   if (key === 'config') {
@@ -94,49 +107,53 @@ export default function SUSHIControls(props) {
   }
 
   return (
-    <Box className={classes.box} borderRight={1} borderLeft={1}>
-      <Button className={classes.button} onClick={handleRunClick} testid="Button">
-        Run
-      </Button>
-      <Button className={classes.secondaryButton} onClick={handleOpen}>
-        Configuration
-      </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Change the configuration options to use when running SUSHI on your FSH</DialogContentText>
-          <TextField
-            id="canonical"
-            margin="dense"
-            fullWidth
-            label="Canonical URL"
-            defaultValue={canonical}
-            onChange={updateCanonical}
-          />
-          <TextField
-            id="version"
-            margin="dense"
-            fullWidth
-            label="Version"
-            defaultValue={version}
-            onChange={updateVersion}
-          />
-          <TextField
-            id="dependencies"
-            disabled
-            margin="dense"
-            label="Dependencies"
-            helperText="(Not yet supported) dependencyA#id, dependencyB#id"
-            defaultValue="dependency#id"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Done
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box className={classes.box} borderRight={1} borderLeft={1}>
+        <Button className={classes.button} onClick={handleRunClick} testid="Button">
+          Run
+        </Button>
+        <Button className={classes.secondaryButton} onClick={handleOpen}>
+          Configuration
+        </Button>
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Change the configuration options to use when running SUSHI on your FSH
+            </DialogContentText>
+            <TextField
+              id="canonical"
+              margin="dense"
+              fullWidth
+              label="Canonical URL"
+              defaultValue={canonical}
+              onChange={updateCanonical}
+            />
+            <TextField
+              id="version"
+              margin="dense"
+              fullWidth
+              label="Version"
+              defaultValue={version}
+              onChange={updateVersion}
+            />
+            <TextField
+              id="dependencies"
+              disabled
+              margin="dense"
+              label="Dependencies"
+              helperText="(Not yet supported) dependencyA#id, dependencyB#id"
+              defaultValue="dependency#id"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Done
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </ThemeProvider>
   );
 }
