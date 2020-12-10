@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   secondaryButton: {
     color: theme.palette.common.white,
-    background: '#30638E',
+    background: '#2c4f85',
     textTransform: 'none',
     fontWeight: 'bold',
     marginLeft: '5px'

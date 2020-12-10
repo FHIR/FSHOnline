@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     color: 'white',
-    background: '#30638E',
+    background: '#2c4f85',
     position: 'static',
     height: '50%',
     boxShadow: '0'
@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: 20,
     flexGrow: 1,
+    marginLeft: theme.spacing(-1),
     edge: 'start',
     fontWeight: 700
   }
