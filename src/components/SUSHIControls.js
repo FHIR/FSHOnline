@@ -42,11 +42,26 @@ function replacer(key, value) {
   return value;
 }
 
+async function sliceDependency(dependencies) {
+  const arr = dependencies.split(',');
+  let returnArr = [];
+  let i;
+  for (i = 0; i < arr.length; i++) {
+    if (arr[i][0] === ' ') {
+      arr[i] = arr[i].slice(1);
+    }
+    let singleDep = arr[i].split('#');
+    returnArr[i] = [singleDep[0], singleDep[1]];
+  }
+  return returnArr;
+}
+
 export default function SUSHIControls(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
+  const [dependencies, setDependencies] = useState('dependency#id');
 
   const handleOpen = () => {
     setOpen(true);
@@ -66,13 +81,19 @@ export default function SUSHIControls(props) {
     setVersion(newVersion);
   };
 
+  const updateDependencyString = (event) => {
+    const dependencyString = event.target.value;
+    setDependencies(dependencyString);
+  };
+
   //Sets the doRunSUSHI to true
   async function handleRunClick() {
     props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
+    const dependencyArr = await sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
-    const outPackage = await runSUSHI(props.text, config);
+    const outPackage = await runSUSHI(props.text, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -123,12 +144,12 @@ export default function SUSHIControls(props) {
           />
           <TextField
             id="dependencies"
-            disabled
             margin="dense"
-            label="Dependencies"
-            helperText="(Not yet supported) dependencyA#id, dependencyB#id"
-            defaultValue="dependency#id"
             fullWidth
+            label="Dependencies"
+            helperText="dependencyA#id, dependencyB#id"
+            defaultValue={dependencies}
+            onChange={updateDependencyString}
           />
         </DialogContent>
         <DialogActions>

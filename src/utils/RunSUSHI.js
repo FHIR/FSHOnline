@@ -30,7 +30,7 @@ let startingWarns = 0;
  *
  * @returns Package with FHIR resources
  */
-export async function runSUSHI(input, config) {
+export async function runSUSHI(input, config, dependencyArr) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   const version = 1;
