@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
-import { Box, Button, ThemeProvider } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -41,12 +41,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Open Sans'
-  }
-});
-
 function replacer(key, value) {
   if (key === 'config') {
     return undefined;
@@ -54,11 +48,26 @@ function replacer(key, value) {
   return value;
 }
 
+async function sliceDependency(dependencies) {
+  const arr = dependencies.split(',');
+  let returnArr = [];
+  let i;
+  for (i = 0; i < arr.length; i++) {
+    if (arr[i][0] === ' ') {
+      arr[i] = arr[i].slice(1);
+    }
+    let singleDep = arr[i].split('#');
+    returnArr[i] = [singleDep[0], singleDep[1]];
+  }
+  return returnArr;
+}
+
 export default function SUSHIControls(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
+  const [dependencies, setDependencies] = useState('dependency#id');
 
   const handleOpen = () => {
     setOpen(true);
@@ -78,13 +87,19 @@ export default function SUSHIControls(props) {
     setVersion(newVersion);
   };
 
+  const updateDependencyString = (event) => {
+    const dependencyString = event.target.value;
+    setDependencies(dependencyString);
+  };
+
   //Sets the doRunSUSHI to true
   async function handleRunClick() {
     props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
+    const dependencyArr = await sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
-    const outPackage = await runSUSHI(props.text, config);
+    const outPackage = await runSUSHI(props.text, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -106,53 +121,49 @@ export default function SUSHIControls(props) {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box className={classes.box} borderRight={1} borderLeft={1}>
-        <Button className={classes.button} onClick={handleRunClick} testid="Button">
-          Run
-        </Button>
-        <Button className={classes.secondaryButton} onClick={handleOpen}>
-          Configuration
-        </Button>
-        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Change the configuration options to use when running SUSHI on your FSH
-            </DialogContentText>
-            <TextField
-              id="canonical"
-              margin="dense"
-              fullWidth
-              label="Canonical URL"
-              defaultValue={canonical}
-              onChange={updateCanonical}
-            />
-            <TextField
-              id="version"
-              margin="dense"
-              fullWidth
-              label="Version"
-              defaultValue={version}
-              onChange={updateVersion}
-            />
-            <TextField
-              id="dependencies"
-              disabled
-              margin="dense"
-              label="Dependencies"
-              helperText="(Not yet supported) dependencyA#id, dependencyB#id"
-              defaultValue="dependency#id"
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Done
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </ThemeProvider>
+    <Box className={classes.box}>
+      <Button className={classes.button} onClick={handleRunClick} testid="Button">
+        Run
+      </Button>
+      <Button className={classes.secondaryButton} onClick={handleOpen}>
+        Configuration
+      </Button>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Change the configuration options to use when running SUSHI on your FSH</DialogContentText>
+          <TextField
+            id="canonical"
+            margin="dense"
+            fullWidth
+            label="Canonical URL"
+            defaultValue={canonical}
+            onChange={updateCanonical}
+          />
+          <TextField
+            id="version"
+            margin="dense"
+            fullWidth
+            label="Version"
+            defaultValue={version}
+            onChange={updateVersion}
+          />
+          <TextField
+            id="dependencies"
+            margin="dense"
+            fullWidth
+            label="Dependencies"
+            helperText="dependencyA#id, dependencyB#id"
+            defaultValue={dependencies}
+            onChange={updateDependencyString}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }
