@@ -2,32 +2,41 @@ import tarStream from 'tar-stream';
 import zlib from 'zlib';
 import http from 'http';
 
-export function unzipDependencies(resources) {
+export function unzipDependencies(resources, dependencyArr) {
   return new Promise((resolve) => {
-    http.get('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', function (res) {
-      const extract = tarStream.extract();
-      // Unzip files
-      extract.on('entry', function (header, stream, next) {
-        let buf = '';
-        stream.on('data', function (chunk) {
-          buf += chunk.toString();
+    for (let i = 0; i < dependencyArr.length; i++) {
+      let dependency = dependencyArr[i][0];
+      let id = dependencyArr[i][1];
+      http.get(`http://packages.fhir.org/${dependency}/${id}`, function (res) {
+        const extract = tarStream.extract();
+        // Unzip files
+        extract.on('entry', function (header, stream, next) {
+          let buf = '';
+          stream.on('data', function (chunk) {
+            buf += chunk.toString();
+          });
+          stream.on('end', function () {
+            try {
+              const resource = JSON.parse(buf);
+              if (resource.resourceType) {
+                resources.push(resource);
+              }
+            } catch {} //eslint-disable-line no-empty
+            next();
+          });
+          stream.resume();
         });
-        stream.on('end', function () {
-          try {
-            const resource = JSON.parse(buf);
-            if (resource.resourceType) {
-              resources.push(resource);
-            }
-          } catch {} //eslint-disable-line no-empty
-          next();
+        extract.on('finish', function () {
+          resolve(resources);
         });
-        stream.resume();
+        if (res.statusCode < 400) {
+          res.pipe(zlib.createGunzip()).pipe(extract);
+        } else {
+          console.log(`error: your depdendency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+          resolve(resources);
+        }
       });
-      extract.on('finish', function () {
-        resolve(resources);
-      });
-      res.pipe(zlib.createGunzip()).pipe(extract);
-    });
+    }
   });
 }
 
