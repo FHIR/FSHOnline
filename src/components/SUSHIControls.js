@@ -9,7 +9,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
-import '../style/ButtonComponents.css';
 
 const useStyles = makeStyles((theme) => ({
   box: {

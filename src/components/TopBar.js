@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Button, Typography, ThemeProvider, Box } from '@material-ui/core';
 import { createMuiTheme, StylesProvider } from '@material-ui/core/styles';
-import '../style/ButtonComponents.css';
+import '../style/TopBarStyling.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
