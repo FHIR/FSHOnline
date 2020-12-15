@@ -12,7 +12,7 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
-export async function loadExternalDependencies(FHIRdefs, version) {
+export async function loadExternalDependencies(FHIRdefs, version, dependencyArr) {
   return new Promise((resolve, reject) => {
     let database = null;
     let shouldUnzip = false;
@@ -20,10 +20,13 @@ export async function loadExternalDependencies(FHIRdefs, version) {
     const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies', version);
     // If successful the database exists
     OpenIDBRequest.onsuccess = async function (event) {
+      if (dependencyArr.length !== 0) {
+        shouldUnzip = true;
+      }
       database = event.target.result;
       const resources = [];
       if (shouldUnzip) {
-        await unzipDependencies(resources);
+        await unzipDependencies(resources, dependencyArr);
         await loadDependenciesInStorage(database, resources);
       }
       finalDefs = await loadAsFHIRDefs(FHIRdefs, database);
@@ -31,6 +34,7 @@ export async function loadExternalDependencies(FHIRdefs, version) {
     };
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
+      dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
       shouldUnzip = true;
       database = event.target.result;
       database.createObjectStore('resources', {

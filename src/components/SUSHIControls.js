@@ -43,15 +43,17 @@ function replacer(key, value) {
 }
 
 async function sliceDependency(dependencies) {
-  const arr = dependencies.split(',');
   let returnArr = [];
-  let i;
-  for (i = 0; i < arr.length; i++) {
+  const arr = dependencies.split(',');
+  for (let i = 0; i < arr.length; i++) {
     if (arr[i][0] === ' ') {
       arr[i] = arr[i].slice(1);
     }
     let singleDep = arr[i].split('#');
     returnArr[i] = [singleDep[0], singleDep[1]];
+  }
+  if (returnArr[0][0] === 'dependency') {
+    returnArr.shift();
   }
   return returnArr;
 }

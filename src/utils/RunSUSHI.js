@@ -34,7 +34,7 @@ export async function runSUSHI(input, config, dependencyArr) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   const version = 1;
-  defs = await loadExternalDependencies(defs, version);
+  defs = await loadExternalDependencies(defs, version, dependencyArr);
 
   // Load and fill FSH Tank
   let tank = FSHTank;
