@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -14,19 +15,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: 'Open Sans'
+  }
+});
+
 export default function Console(props) {
   const classes = useStyles();
 
   return (
-    <Box className={classes.box} overflow="scroll">
-      <h3>Console</h3>
-      {props.consoleMessages.map((message, i) => {
-        return (
-          <pre key={i} className={classes.pre}>
-            {message}
-          </pre>
-        );
-      })}
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box className={classes.box} overflow="scroll">
+        <Typography variant="subtitle1">Console</Typography>
+        {props.consoleMessages.map((message, i) => {
+          return (
+            <pre key={i} className={classes.pre}>
+              {message}
+            </pre>
+          );
+        })}
+      </Box>
+    </ThemeProvider>
   );
 }

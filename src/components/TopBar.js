@@ -1,40 +1,63 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Button, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, Button, Typography, ThemeProvider, Box } from '@material-ui/core';
+import { createMuiTheme, StylesProvider } from '@material-ui/core/styles';
+import '../style/TopBarStyling.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
-    color: 'white',
-    background: '#30638E',
+    background: '#2c4f85',
     position: 'static',
-    height: '50%'
-  },
-  docButton: {
-    margin: theme.spacing(1),
-    color: 'white',
-    textTransform: 'none',
-    fontWeight: 'bold'
+    height: '50%',
+    boxShadow: '0'
   },
   title: {
-    flexGrow: 1,
-    edge: 'start',
-    fontWeight: 'bold'
+    fontSize: 20,
+    marginLeft: theme.spacing(-1.2),
+    padding: 2,
+    fontWeight: 700
   }
 }));
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: 'Open Sans'
+  }
+});
 
 export default function TopBar() {
   const classes = useStyles();
   return (
-    <AppBar className={classes.root}>
-      <Toolbar>
-        <Typography className={classes.title} variant="h6">
-          FSH Online
-        </Typography>
-        <Button className={classes.docButton} href="https://fshschool.org/" target="_blank">
-          Documentation
-        </Button>
-      </Toolbar>
-    </AppBar>
+    <ThemeProvider theme={theme}>
+      <AppBar className={classes.root}>
+        <Toolbar>
+          <Box display="flex" flexGrow={1} flexDirection="row">
+            <Box order={1} display="flex" flexGrow={1} flexDirection="row">
+              <Box order={1} alignSelf="center">
+                <Typography className={classes.title}>FSH ONLINE</Typography>
+              </Box>
+              <Box order={2} alignSelf="center" m={1}>
+                <ThemeProvider theme={theme}>
+                  <StylesProvider injectFirst>
+                    <Typography order={2} classes={{ root: 'versionText' }}>
+                      Powered by SUSHI v1.0.1
+                    </Typography>
+                  </StylesProvider>
+                </ThemeProvider>
+              </Box>
+            </Box>
+            <Box order={2}>
+              <ThemeProvider theme={theme}>
+                <StylesProvider injectFirst>
+                  <Button classes={{ root: 'docButton' }} href="https://fshschool.org/" target="_blank">
+                    Back to School
+                  </Button>
+                </StylesProvider>
+              </ThemeProvider>
+            </Box>
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </ThemeProvider>
   );
 }
