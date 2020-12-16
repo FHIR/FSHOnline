@@ -2,11 +2,11 @@ import tarStream from 'tar-stream';
 import zlib from 'zlib';
 import http from 'http';
 
-export function unzipDependencies(resources, dependencyArr) {
-  return new Promise((resolve) => {
-    for (let i = 0; i < dependencyArr.length; i++) {
-      let dependency = dependencyArr[i][0];
-      let id = dependencyArr[i][1];
+export async function unzipDependencies(resources, dependencyArr) {
+  for (let i = 0; i < dependencyArr.length; i++) {
+    let dependency = dependencyArr[i][0];
+    let id = dependencyArr[i][1];
+    await new Promise((resolve) => {
       http.get(`http://packages.fhir.org/${dependency}/${id}`, function (res) {
         const extract = tarStream.extract();
         // Unzip files
@@ -32,12 +32,13 @@ export function unzipDependencies(resources, dependencyArr) {
         if (res.statusCode < 400) {
           res.pipe(zlib.createGunzip()).pipe(extract);
         } else {
-          console.log(`error: your depdendency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+          console.log(`error your depdendency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
           resolve(resources);
         }
       });
-    }
-  });
+    });
+  }
+  return resources;
 }
 
 export function loadDependenciesInStorage(database, resources) {
@@ -45,6 +46,7 @@ export function loadDependenciesInStorage(database, resources) {
     // Loads parsed json into indexDB
     const transaction = database.transaction(['resources'], 'readwrite');
     transaction.oncomplete = () => {
+      console.log('hello');
       resolve();
     };
     transaction.onerror = (event) => {
@@ -52,7 +54,7 @@ export function loadDependenciesInStorage(database, resources) {
     };
     const objectStore = transaction.objectStore('resources', { keyPath: ['id', 'resourceType'] });
     resources.forEach((res) => {
-      objectStore.add(res);
+      objectStore.put(res);
     });
   });
 }
