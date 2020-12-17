@@ -46,14 +46,12 @@ async function sliceDependency(dependencies) {
   let returnArr = [];
   const arr = dependencies.split(',');
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i][0] === ' ') {
-      arr[i] = arr[i].slice(1);
+    if (arr[i] === '') {
+      continue;
     }
+    arr[i] = arr[i].trim();
     let singleDep = arr[i].split('#');
     returnArr[i] = [singleDep[0], singleDep[1]];
-  }
-  if (returnArr[0][0] === 'dependency') {
-    returnArr.shift();
   }
   return returnArr;
 }
@@ -63,7 +61,7 @@ export default function SUSHIControls(props) {
   const [open, setOpen] = useState(false);
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
-  const [dependencies, setDependencies] = useState('dependency#id');
+  const [dependencies, setDependencies] = useState('');
 
   const handleOpen = () => {
     setOpen(true);

@@ -1,5 +1,6 @@
 import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
 import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
+import { findIndex } from 'lodash';
 
 const logger = utils.logger;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
@@ -12,34 +13,85 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
+export function toUpgradeDatabase(dependencyArr) {
+  let helperReturn = { shouldUpdate: false, version: 1 };
+  return new Promise((resolve, reject) => {
+    let database = null;
+    const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies');
+    OpenIDBRequest.onsuccess = function (event) {
+      database = event.target.result;
+      let existingObjectStores = database.objectStoreNames;
+      helperReturn.version = database.version;
+      if (existingObjectStores.length === 0 || dependencyArr.length === 0) {
+        helperReturn.shouldUpdate = true;
+        database.close();
+        resolve(helperReturn);
+      } else {
+        for (let i = 0; i < dependencyArr.length; i++) {
+          let dependency = dependencyArr[i][0];
+          let id = dependencyArr[i][1];
+          if (!existingObjectStores.contains(`${dependency}${id}`)) {
+            helperReturn.shouldUpdate = true;
+          }
+        }
+        database.close();
+        resolve(helperReturn);
+      }
+    };
+    OpenIDBRequest.onupgradeneeded = function (event) {
+      database = event.target.result;
+    };
+    OpenIDBRequest.onerror = function (event) {
+      reject(event);
+    };
+  });
+}
+
 export async function loadExternalDependencies(FHIRdefs, version, dependencyArr) {
   return new Promise((resolve, reject) => {
     let database = null;
-    let shouldUnzip = false;
+    let newDependencies = [];
     let finalDefs = FHIRDefinitions;
     const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies', version);
     // If successful the database exists
     OpenIDBRequest.onsuccess = async function (event) {
-      if (dependencyArr.length !== 0) {
-        shouldUnzip = true;
-      }
       database = event.target.result;
-      const resources = [];
-      if (shouldUnzip) {
-        await unzipDependencies(resources, dependencyArr);
-        await loadDependenciesInStorage(database, resources);
+      let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
+      if (findR4 < 0) {
+        dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
       }
-      finalDefs = await loadAsFHIRDefs(FHIRdefs, database);
+      for (let i = 0; i < dependencyArr.length; i++) {
+        let resources = [];
+        let shouldUnzip = false;
+        let dependency = dependencyArr[i][0];
+        let id = dependencyArr[i][1];
+        if (newDependencies.includes(`${dependency}${id}`)) {
+          shouldUnzip = true;
+        }
+        if (shouldUnzip) {
+          resources = await unzipDependencies(resources, dependency, id);
+          await loadDependenciesInStorage(database, resources, dependency, id);
+        }
+        finalDefs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
+      }
+      database.close();
       resolve(finalDefs);
     };
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
       dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
-      shouldUnzip = true;
       database = event.target.result;
-      database.createObjectStore('resources', {
-        keyPath: ['id', 'resourceType']
-      });
+      let existingObjectStores = database.objectStoreNames;
+      for (let i = 0; i < dependencyArr.length; i++) {
+        let dependency = dependencyArr[i][0];
+        let id = dependencyArr[i][1];
+        if (!existingObjectStores.contains(`${dependency}${id}`)) {
+          database.createObjectStore(`${dependency}${id}`, {
+            keyPath: ['id', 'resourceType']
+          });
+          newDependencies.push(`${dependency}${id}`);
+        }
+      }
     };
     // Checks if there is an error
     OpenIDBRequest.onerror = function (event) {
