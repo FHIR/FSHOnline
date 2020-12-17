@@ -1,6 +1,7 @@
 import tarStream from 'tar-stream';
 import zlib from 'zlib';
 import http from 'http';
+import { logger } from 'fsh-sushi/dist/utils';
 
 export function unzipDependencies(resources, dependency, id) {
   return new Promise((resolve) => {
@@ -28,6 +29,7 @@ export function unzipDependencies(resources, dependency, id) {
       });
       if (res.statusCode < 400) {
         res.pipe(zlib.createGunzip()).pipe(extract);
+        logger.info(`Found ${dependency}#${id}`);
       } else {
         console.log(`error your depdendency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
         resolve(resources);
@@ -56,6 +58,7 @@ export function loadDependenciesInStorage(database, resources, dependency, id) {
 export function loadAsFHIRDefs(FHIRdefs, database, dependency, id) {
   // Convert database data into FHIR Definitions
   return new Promise((resolve, reject) => {
+    let displayLoaded = false;
     const getData = database
       .transaction([`${dependency}${id}`], 'readonly')
       .objectStore(`${dependency}${id}`, { keyPath: ['id', 'resourceType'] })
@@ -66,9 +69,13 @@ export function loadAsFHIRDefs(FHIRdefs, database, dependency, id) {
     getData.onsuccess = function () {
       const iterator = getData.result;
       if (iterator) {
+        displayLoaded = true;
         FHIRdefs.add(iterator.value);
         iterator.continue();
       } else {
+        if (displayLoaded) {
+          logger.info(`Loaded package ${dependency}#${id}`);
+        }
         resolve(FHIRdefs);
       }
     };
