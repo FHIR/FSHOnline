@@ -42,7 +42,7 @@ function replacer(key, value) {
   return value;
 }
 
-async function sliceDependency(dependencies) {
+export async function sliceDependency(dependencies) {
   let returnArr = [];
   const arr = dependencies.split(',');
   for (let i = 0; i < arr.length; i++) {
