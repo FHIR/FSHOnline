@@ -24,7 +24,7 @@ describe('#unzipDependencies', () => {
     getSpy.mockClear();
   });
   it('should make an http request and extract data from the resulting zip folder', () => {
-    unzipDependencies(resources);
+    unzipDependencies(resources, 'hl7.fhir.r4.core', '4.0.1');
     const callbackFunction = getSpy.mock.calls[0][1];
     expect(getSpy).toBeCalled();
     expect(getSpy).toBeCalledWith('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunction);
@@ -42,14 +42,14 @@ describe('#loadDependenciesInStorage', () => {
       const OpenDB = indexedDB.open('Test Database');
       OpenDB.onupgradeneeded = (event) => {
         database = event.target.result;
-        database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
+        database.createObjectStore('testDependency1.0.0', { keyPath: ['id', 'resourceType'] });
       };
       OpenDB.onsuccess = async (event) => {
         database = event.target.result;
-        await loadDependenciesInStorage(database, resourcesTest);
+        await loadDependenciesInStorage(database, resourcesTest, 'testDependency', '1.0.0');
         const databaseValue = await database
-          .transaction(['resources'], 'readonly')
-          .objectStore('resources', { keyPath: ['id', 'resourceType'] })
+          .transaction(['testDependency1.0.0'], 'readonly')
+          .objectStore('testDependency1.0.0', { keyPath: ['id', 'resourceType'] })
           .getAll();
         databaseValue.onsuccess = () => {
           resolve(databaseValue.result);
@@ -77,12 +77,12 @@ describe('#loadAsFHIRDefs', () => {
       const OpenDB = indexedDB.open('Test Database');
       OpenDB.onupgradeneeded = (event) => {
         database = event.target.result;
-        database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
+        database.createObjectStore('testDependency1.0.0', { keyPath: ['id', 'resourceType'] });
       };
       OpenDB.onsuccess = async (event) => {
         database = event.target.result;
-        await loadDependenciesInStorage(database, resourcesTest);
-        finalDefs = await loadAsFHIRDefs(FHIRdefs, database);
+        await loadDependenciesInStorage(database, resourcesTest, 'testDependency', '1.0.0');
+        finalDefs = await loadAsFHIRDefs(FHIRdefs, database, 'testDependency', '1.0.0');
         resolve(finalDefs);
       };
       OpenDB.onerror = () => {

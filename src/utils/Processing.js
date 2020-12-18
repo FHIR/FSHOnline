@@ -13,11 +13,11 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
-export function toUpgradeDatabase(dependencyArr) {
+export function toUpgradeDatabase(dependencyArr, databaseName = 'FSH Playground Dependencies') {
   let helperReturn = { shouldUpdate: false, version: 1 };
   return new Promise((resolve, reject) => {
     let database = null;
-    const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies');
+    const OpenIDBRequest = indexedDB.open(databaseName);
     OpenIDBRequest.onsuccess = function (event) {
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
