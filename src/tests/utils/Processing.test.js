@@ -1,4 +1,4 @@
-import { loadExternalDependencies, fillTank, toUpgradeDatabase } from '../../utils/Processing';
+import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade } from '../../utils/Processing';
 import { fhirdefs, sushiImport } from 'fsh-sushi';
 import * as loadModule from '../../utils/Load';
 import 'fake-indexeddb/auto';
@@ -6,12 +6,12 @@ import 'fake-indexeddb/auto';
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 const RawFSH = sushiImport.RawFSH;
 
-describe('#toUpgradeDatabase()', () => {
+describe('#checkForDatabaseUpgrade()', () => {
   it('should say we need to upgrade database if we have no ObjectStores or dependency inputs and should return proper version number', async () => {
     const dependencyArr = [];
-    const toUpgradeDatabaseReturn = await toUpgradeDatabase(dependencyArr);
-    expect(toUpgradeDatabaseReturn.shouldUpdate).toEqual(true);
-    expect(toUpgradeDatabaseReturn.version).toEqual(1);
+    const checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr);
+    expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
+    expect(checkForDatabaseUpgradeReturn.version).toEqual(1);
   });
 
   it('should not upgrade database if we have the correct objectStores needed for our dependency array', async () => {
@@ -33,8 +33,34 @@ describe('#toUpgradeDatabase()', () => {
       };
     });
     const dependencyArr = [['testDependency', '1.0.0']];
-    let toUpgradeDatabaseReturn = await toUpgradeDatabase(dependencyArr, 'Test Database');
-    expect(toUpgradeDatabaseReturn.shouldUpdate).toEqual(false);
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(false);
+  });
+
+  it('should upgrade the database if we have new dependencies with no existing objectStores', async () => {
+    let helperReturn = { shouldUpdate: false, version: 1 };
+    await new Promise((resolve, reject) => {
+      let database = null;
+      const OpenIDBRequest = indexedDB.open('Test Database');
+      OpenIDBRequest.onsuccess = function (event) {
+        database = event.target.result;
+        database.close();
+        resolve(helperReturn);
+      };
+      OpenIDBRequest.onupgradeneeded = function (event) {
+        database = event.target.result;
+        database.createObjectStore('testDependency1.0.0', { keyPath: ['id', 'resourceType'] });
+      };
+      OpenIDBRequest.onerror = function (event) {
+        reject(event);
+      };
+    });
+    const dependencyArr = [
+      ['testDependency', '1.0.0'],
+      ['newTestDependency', '2.0.0']
+    ];
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
   });
 });
 

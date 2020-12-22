@@ -29,9 +29,13 @@ export function unzipDependencies(resources, dependency, id) {
       });
       if (res.statusCode < 400) {
         res.pipe(zlib.createGunzip()).pipe(extract);
-        logger.info(`Found ${dependency}#${id}`);
+        logger.info(`Downloaded ${dependency}#${id}`);
       } else {
-        console.log(`error your depdendency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+        if (id === 'current' || id === 'dev') {
+          console.log(`error FSHOnline does not currently support "current" or "dev" package versions`);
+        } else {
+          console.log(`error your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+        }
         resolve(resources);
       }
     });

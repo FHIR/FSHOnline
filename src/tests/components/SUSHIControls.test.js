@@ -186,29 +186,29 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
 
   const defaultConfig = { FSHOnly: true, canonical: 'http://example.org', fhirVersion: ['4.0.1'], version: '1.0.0' };
 
-  const expectedDependencyArrr = [
+  const expectedDependencyArr = [
     ['hl7.fhir.us.core', '3.1.1'],
     ['hello', '123']
   ];
 
   await wait(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArrr); // Includes new version
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Includes new version
   });
 });
 
 describe('#sliceDependency()', () => {
-  it('should correctly parse a given array of dependencies', async () => {
-    const input = 'hl7.fhir.us.core#3.1.1, testing#123';
-    const returnArr = await sliceDependency(input);
+  it('should correctly parse a given array of dependencies', () => {
+    const input = 'hl7.fhir.us.core#3.1.1, , testing#123';
+    const returnArr = sliceDependency(input);
     expect(returnArr).toEqual([
       ['hl7.fhir.us.core', '3.1.1'],
       ['testing', '123']
     ]);
   });
 
-  it('should correctly parse an empty array of dependencies', async () => {
+  it('should correctly parse an empty array of dependencies', () => {
     const input = '';
-    const returnArr = await sliceDependency(input);
+    const returnArr = sliceDependency(input);
     expect(returnArr).toEqual([]);
   });
 });

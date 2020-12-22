@@ -13,7 +13,7 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
-export function toUpgradeDatabase(dependencyArr, databaseName = 'FSH Playground Dependencies') {
+export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playground Dependencies') {
   let helperReturn = { shouldUpdate: false, version: 1 };
   return new Promise((resolve, reject) => {
     let database = null;
@@ -63,8 +63,8 @@ export async function loadExternalDependencies(FHIRdefs, version, dependencyArr)
       for (let i = 0; i < dependencyArr.length; i++) {
         let resources = [];
         let shouldUnzip = false;
-        let dependency = dependencyArr[i][0];
-        let id = dependencyArr[i][1];
+        const dependency = dependencyArr[i][0];
+        const id = dependencyArr[i][1];
         if (newDependencies.includes(`${dependency}${id}`)) {
           shouldUnzip = true;
         }
@@ -79,12 +79,15 @@ export async function loadExternalDependencies(FHIRdefs, version, dependencyArr)
     };
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
-      dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
+      let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
+      if (findR4 < 0) {
+        dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
+      }
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
       for (let i = 0; i < dependencyArr.length; i++) {
-        let dependency = dependencyArr[i][0];
-        let id = dependencyArr[i][1];
+        const dependency = dependencyArr[i][0];
+        const id = dependencyArr[i][1];
         if (!existingObjectStores.contains(`${dependency}${id}`)) {
           database.createObjectStore(`${dependency}${id}`, {
             keyPath: ['id', 'resourceType']
