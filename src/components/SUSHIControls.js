@@ -54,11 +54,26 @@ function replacer(key, value) {
   return value;
 }
 
+export function sliceDependency(dependencies) {
+  let returnArr = [];
+  const arr = dependencies.split(',');
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = arr[i].trim();
+    if (arr[i] === '') {
+      continue;
+    }
+    let singleDep = arr[i].split('#');
+    returnArr.push([singleDep[0], singleDep[1]]);
+  }
+  return returnArr;
+}
+
 export default function SUSHIControls(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
+  const [dependencies, setDependencies] = useState('');
 
   const handleOpen = () => {
     setOpen(true);
@@ -78,13 +93,19 @@ export default function SUSHIControls(props) {
     setVersion(newVersion);
   };
 
+  const updateDependencyString = (event) => {
+    const dependencyString = event.target.value;
+    setDependencies(dependencyString);
+  };
+
   //Sets the doRunSUSHI to true
   async function handleRunClick() {
     props.resetLogMessages();
     props.onClick(true, 'Loading...', false);
     let isObject = true;
+    const dependencyArr = sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
-    const outPackage = await runSUSHI(props.text, config);
+    const outPackage = await runSUSHI(props.text, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -107,7 +128,7 @@ export default function SUSHIControls(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box} borderRight={1} borderLeft={1}>
+      <Box className={classes.box} borderLeft={1} borderRight={1}>
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
           Run
         </Button>
@@ -138,12 +159,12 @@ export default function SUSHIControls(props) {
             />
             <TextField
               id="dependencies"
-              disabled
               margin="dense"
-              label="Dependencies"
-              helperText="(Not yet supported) dependencyA#id, dependencyB#id"
-              defaultValue="dependency#id"
               fullWidth
+              label="Dependencies"
+              helperText="dependencyID#version, dependencyID#version"
+              defaultValue={dependencies}
+              onChange={updateDependencyString}
             />
           </DialogContent>
           <DialogActions>
