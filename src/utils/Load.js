@@ -1,7 +1,8 @@
 import tarStream from 'tar-stream';
 import zlib from 'zlib';
 import http from 'http';
-import { logger } from 'fsh-sushi/dist/utils';
+import { utils } from 'fsh-sushi';
+const logger = utils.logger;
 
 export function unzipDependencies(resources, dependency, id) {
   return new Promise((resolve) => {
@@ -32,9 +33,9 @@ export function unzipDependencies(resources, dependency, id) {
         logger.info(`Downloaded ${dependency}#${id}`);
       } else {
         if (id === 'current' || id === 'dev') {
-          console.log(`error FSHOnline does not currently support "current" or "dev" package versions`);
+          logger.error(`FSHOnline does not currently support "current" or "dev" package versions`);
         } else {
-          console.log(`error your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+          logger.error(`your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
         }
         resolve(resources);
       }

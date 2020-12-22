@@ -128,7 +128,7 @@ export default function SUSHIControls(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box}>
+      <Box className={classes.box} borderLeft={1} borderRight={1}>
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
           Run
         </Button>
@@ -162,7 +162,7 @@ export default function SUSHIControls(props) {
               margin="dense"
               fullWidth
               label="Dependencies"
-              helperText="dependencyA#id, dependencyB#id"
+              helperText="dependencyID#version, dependencyID#version"
               defaultValue={dependencies}
               onChange={updateDependencyString}
             />
