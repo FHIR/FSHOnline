@@ -7,6 +7,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
 const zlib = require('zlib');
@@ -48,6 +49,11 @@ const useStyles = makeStyles((theme) => ({
 const theme = createMuiTheme({
   typography: {
     fontFamily: 'Open Sans'
+  },
+  palette: {
+    secondary: {
+      main: '#357a38'
+    }
   }
 });
 
@@ -81,6 +87,7 @@ export default function SUSHIControls(props) {
   const [openConfig, setOpenConfig] = useState(false);
   const [openShare, setOpenShare] = useState(false);
   const [link, setLink] = useState();
+  const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
   const [canonical, setCanonical] = useState('http://example.org');
   const [version, setVersion] = useState('1.0.0');
   const [dependencies, setDependencies] = useState('');
@@ -94,6 +101,7 @@ export default function SUSHIControls(props) {
   };
 
   const handleOpenShare = () => {
+    setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
     let shareLink = encodeFSH(props.text);
     setLink(`https://fshschool.org/FSHOnline/${shareLink}`);
     setOpenShare(true);
@@ -101,10 +109,6 @@ export default function SUSHIControls(props) {
 
   const handleCloseShare = () => {
     setOpenShare(false);
-  };
-
-  const copyToClipboard = () => {
-    console.log('we still need to make this copy functionality');
   };
 
   const updateCanonical = (event) => {
@@ -222,9 +226,9 @@ export default function SUSHIControls(props) {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={copyToClipboard} color="primary">
-              Copy to Clipboard
-            </Button>
+            <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>
+              <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
+            </CopyToClipboard>
             <Button onClick={handleCloseShare} color="primary">
               Done
             </Button>
