@@ -6,7 +6,6 @@ import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
 import SUSHIControls from './components/SUSHIControls';
-const zlib = require('zlib');
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -23,28 +22,28 @@ const useStyles = makeStyles((theme) => ({
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
-// console.log = function getMessages(message) {
-//   consoleMessages.push(message);
-//   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
-//     errorAndWarningMessages.push(message);
-//   }
-// };
+console.log = function getMessages(message) {
+  consoleMessages.push(message);
+  if (message && (message.startsWith('error') || message.startsWith('warn'))) {
+    errorAndWarningMessages.push(message);
+  }
+};
 
 function decodeFSH(encodedFsh) {
   if (encodedFsh.text === undefined) {
     return;
   }
-  const buff = Buffer.from(encodedFsh.text, 'base64');
-  const decoded = zlib.inflateSync(buff).toString();
-  return decoded;
+  try {
+    return Buffer.from(encodedFsh.text, 'base64').toString('utf-8');
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default function AppFromLink(props) {
-  console.log('you are in appfromLink');
   const classes = useStyles();
   const text64 = props.match.params;
   const decodedText = decodeFSH(text64);
-  console.log(decodedText);
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState(decodedText);
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');

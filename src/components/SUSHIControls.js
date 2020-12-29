@@ -10,7 +10,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import './CodeMirrorComponent';
-const zlib = require('zlib');
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -79,7 +78,7 @@ export function sliceDependency(dependencies) {
 }
 
 function encodeFSH(fsh) {
-  return zlib.deflateSync(fsh).toString('base64');
+  return new Buffer.from(fsh).toString('base64');
 }
 
 export default function SUSHIControls(props) {

@@ -22,12 +22,6 @@ const useStyles = makeStyles((theme) => ({
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
-// console.log = function getMessages(message) {
-//   consoleMessages.push(message);
-//   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
-//     errorAndWarningMessages.push(message);
-//   }
-// };
 
 export default function App(props) {
   const classes = useStyles();
