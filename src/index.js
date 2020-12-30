@@ -6,7 +6,7 @@ import AppFromLink from './AppFromLink';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-const AppRouter = () => (
+export const AppRouter = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/FSHOnline/:text" component={AppFromLink} />

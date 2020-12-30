@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import SUSHIControls from '../../components/SUSHIControls';
+//import { generateLink } from '../../components/SUSHIControls';
 import 'fake-indexeddb/auto';
 
 const badSUSHIPackage = { a: '1', b: '2' };
@@ -212,3 +213,52 @@ describe('#sliceDependency()', () => {
     expect(returnArr).toEqual([]);
   });
 });
+
+// it('copies link to clipboard on button click', () => {
+//   const onClick = jest.fn();
+//   const resetLogMessages = jest.fn();
+//   const generateLinkSpy = jest.spyOn(spy, 'generateLink').mockImplementation(() => {});
+//   document.execCommand = jest.fn();
+
+//   const { getByText } = render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+
+//   const shareButton = getByText('Share');
+//   fireEvent.click(shareButton);
+//   const copyButton = getByText('Copy to Clipboard');
+//   fireEvent.click(copyButton);
+
+//   expect(generateLinkSpy).toHaveBeenCalled();
+//   expect(document.execCommand).toHaveBeenCalledWith('copy');
+// });
+
+// it('generates link when share button is clicked', () => {
+//   const onClick = jest.fn();
+//   const resetLogMessages = jest.fn();
+//   const generateLinkSpy = jest
+//     .spyOn(generateLink, 'generateLink')
+//     .mockReset()
+//     .mockImplementation(() => {
+//       return 'success';
+//     });
+
+//   const { getByText } = render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+//   const shareButton = getByText('Share');
+//   fireEvent.click(shareButton);
+
+//   expect(generateLinkSpy).toHaveBeenCalled();
+// });
+
+// it('will return a shortened bitly url', async () => {
+//   const fsh = 'Edit FSH Here!';
+//   let shortLink = await generateLink(fsh);
+//   await wait(() => {
+//     expect(shortLink).toContain('bit.ly/');
+//   });
+// });
+
+/* 
+tests I need:
+- generateLink function
+- clicking share button
+- copy to clipboard
+*/
