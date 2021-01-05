@@ -22,6 +22,9 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
       helperReturn.version = database.version;
+      if (existingObjectStores.contains('resources')) {
+        helperReturn.shouldUpdate = true;
+      }
       if (existingObjectStores.length === 0 || dependencyArr.length === 0) {
         helperReturn.shouldUpdate = true;
         database.close();
@@ -47,14 +50,21 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
   });
 }
 
-export async function loadExternalDependencies(FHIRdefs, version, dependencyArr) {
+export async function loadExternalDependencies(
+  FHIRdefs,
+  version,
+  dependencyArr,
+  databaseName = 'FSH Playground Dependencies'
+) {
   return new Promise((resolve, reject) => {
     let database = null;
     let newDependencies = [];
     let finalDefs = FHIRDefinitions;
-    const OpenIDBRequest = indexedDB.open('FSH Playground Dependencies', version);
+    const OpenIDBRequest = indexedDB.open(databaseName, version);
     // If successful the database exists
+    console.log('here');
     OpenIDBRequest.onsuccess = async function (event) {
+      console.log('ahhhhh');
       database = event.target.result;
       let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
       if (findR4 < 0) {
@@ -94,10 +104,14 @@ export async function loadExternalDependencies(FHIRdefs, version, dependencyArr)
           });
           newDependencies.push(`${dependency}${id}`);
         }
+        if (existingObjectStores.contains('resources')) {
+          database.deleteObjectStore('resources');
+        }
       }
     };
     // Checks if there is an error
     OpenIDBRequest.onerror = function (event) {
+      console.log('ererrerror');
       reject(event);
     };
   });

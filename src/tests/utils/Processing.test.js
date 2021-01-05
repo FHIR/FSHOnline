@@ -62,6 +62,29 @@ describe('#checkForDatabaseUpgrade()', () => {
     let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
     expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
   });
+
+  it('should upgrade the database if we have the "resources" objectStore still existing', async () => {
+    let helperReturn = { shouldUpdate: false, version: 1 };
+    await new Promise((resolve, reject) => {
+      let database = null;
+      const OpenIDBRequest = indexedDB.open('Test Database');
+      OpenIDBRequest.onsuccess = function (event) {
+        database = event.target.result;
+        database.close();
+        resolve(helperReturn);
+      };
+      OpenIDBRequest.onupgradeneeded = function (event) {
+        database = event.target.result;
+        database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
+      };
+      OpenIDBRequest.onerror = function (event) {
+        reject(event);
+      };
+    });
+    const dependencyArr = [];
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
+  });
 });
 
 describe('#loadExternalDependencies()', () => {
@@ -111,6 +134,39 @@ describe('#loadExternalDependencies()', () => {
       expect(loadInStorageSpy).toBeCalledTimes(0);
       expect(loadAsDefsSpy).toBeCalled();
     };
+  });
+
+  it.only('should delete the the "resources" objectStore if it exists', async () => {
+    const defs = new FHIRDefinitions();
+    const version = 1;
+    let database = null;
+    let existingObjectStores = null;
+    const unzipSpy = jest.spyOn(loadModule, 'unzipDependencies').mockImplementation(() => {
+      return undefined;
+    });
+    const loadInStorageSpy = jest.spyOn(loadModule, 'loadDependenciesInStorage').mockImplementation(() => {
+      return undefined;
+    });
+    const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
+      return undefined;
+    });
+    await new Promise((resolve, reject) => {
+      const OpenIDBRequest = indexedDB.open('Test Database');
+      OpenIDBRequest.onsuccess = async function (event) {
+        database = event.target.result;
+        resolve();
+      };
+      OpenIDBRequest.onupgradeneeded = function (event) {
+        database = event.target.result;
+        database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
+      };
+    });
+    console.log('here');
+    await loadExternalDependencies(defs, version + 1, [], 'Test Database');
+    expect(existingObjectStores.contains('resources')).toBeFalsy();
+    expect(unzipSpy).toBeCalledTimes(0);
+    expect(loadInStorageSpy).toBeCalledTimes(0);
+    expect(loadAsDefsSpy).toBeCalled();
   });
 });
 
