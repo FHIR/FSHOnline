@@ -9,11 +9,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
-import { utils } from 'fsh-sushi';
+import { generateLink } from '../utils/GenerateLink';
 import './CodeMirrorComponent';
-const logger = utils.logger;
-const BitlyClient = require('bitly').BitlyClient;
-const bitly = new BitlyClient('2740ea05eb8099e664f60559416380f4f06d9dc8');
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -81,22 +78,6 @@ export function sliceDependency(dependencies) {
   return returnArr;
 }
 
-export async function generateLink(fsh) {
-  return new Promise((resolve, reject) => {
-    const encoded = new Buffer.from(fsh).toString('base64');
-    const longLink = `https://fshschool.org/FSHOnline/${encoded}`;
-    bitly
-      .shorten(longLink)
-      .then(function (result) {
-        resolve(result.link);
-      })
-      .catch(function (error) {
-        logger.error('accessing link shortening service');
-        reject();
-      });
-  });
-}
-
 export default function SUSHIControls(props) {
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState(false);
@@ -116,7 +97,9 @@ export default function SUSHIControls(props) {
   };
 
   const handleOpenShare = async () => {
-    const shareLink = await generateLink(props.text);
+    const encoded = new Buffer.from(props.text).toString('base64');
+    const longLink = `https://fshschool.org/FSHOnline/${encoded}`;
+    const shareLink = await generateLink(longLink);
     setLink(shareLink);
     setOpenShare(true);
     setCopied({ copied: false, copyButton: 'Copy to Clipboard' });

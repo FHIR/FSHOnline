@@ -29,11 +29,23 @@ console.log = function getMessages(message) {
   }
 };
 
+export function decodeFSH(encodedFsh) {
+  if (encodedFsh.text === undefined) {
+    return 'Edit FSH here!';
+  }
+  try {
+    return Buffer.from(encodedFsh.text, 'base64').toString('utf-8');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default function App(props) {
   const classes = useStyles();
-
+  const text64 = props.match.params;
+  const decodedText = decodeFSH(text64);
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
-  const [inputText, setInputText] = useState('Edit FSH here!');
+  const [inputText, setInputText] = useState(decodedText);
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
 

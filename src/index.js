@@ -2,14 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import AppFromLink from './AppFromLink';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 export const AppRouter = () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/FSHOnline/:text" component={AppFromLink} />
+      <Route path="/FSHOnline/:text" component={App} />
       <Route path="/FSHOnline" exact component={App} />
     </Switch>
   </BrowserRouter>
