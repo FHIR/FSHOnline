@@ -1,14 +1,18 @@
 import React from 'react';
-import * as runSUSHI from '../../utils/RunSUSHI';
-import { sliceDependency } from '../../components/SUSHIControls';
-import * as generateLink from '../../utils/GenerateLink';
+import '@testing-library/jest-dom/extend-expect';
+import 'fake-indexeddb/auto';
+import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import { unmountComponentAtNode } from 'react-dom';
+import * as runSUSHI from '../../utils/RunSUSHI';
+import * as generateLink from '../../utils/GenerateLink';
+import { sliceDependency } from '../../components/SUSHIControls';
 import SUSHIControls from '../../components/SUSHIControls';
-//import { generateLink } from '../../components/SUSHIControls';
-import 'fake-indexeddb/auto';
+
+// Mock copy to clipboard since we don't need to test the component itself
+jest.mock('copy-to-clipboard', () => {
+  return jest.fn();
+});
 
 const badSUSHIPackage = { a: '1', b: '2' };
 const emptySUSHIPackage = { config: {}, profiles: [], extensions: [], instances: [], valueSets: [], codeSystems: [] };
@@ -195,7 +199,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   ];
 
   await wait(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Includes new version
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
   });
 });
 
@@ -216,54 +220,38 @@ describe('#sliceDependency()', () => {
   });
 });
 
-// This test below needs some work. Possibly due to the async nature of generateLink?
-it.skip('copies link to clipboard on button click', async () => {
-  let getByText;
+it('copies link to clipboard on button click', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const setState = jest.fn();
-  const useStateSpy = jest.spyOn(React, 'useState');
-  useStateSpy.mockImplementation((init) => [init, setState]);
   const generateLinkSpy = jest.spyOn(generateLink, 'generateLink').mockReset().mockResolvedValue('success');
 
-  act(() => {
-    getByText = render(
-      <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-      container
-    ).getByText;
-  });
-
-  // act(() => {
-  // });
+  const { getByText } = render(
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    container
+  );
 
   await wait(() => {
     const shareButton = getByText('Share');
     fireEvent.click(shareButton);
-    const copyBtn = getByText('Copy to Clipboard');
-    fireEvent.click(copyBtn);
-
     expect(generateLinkSpy).toHaveBeenCalled();
-    expect(setState).toHaveBeenCalledWith({ copied: true, copyButton: 'Link Copied' });
   });
+
+  const copyBtn = getByText('Copy to Clipboard');
+  fireEvent.click(copyBtn);
+  const linkCopiedBtn = getByText('Link Copied');
+  expect(linkCopiedBtn).toBeDefined();
 });
 
 it('generates link when share button is clicked', async () => {
-  let getByText;
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest
-    .spyOn(generateLink, 'generateLink')
-    .mockReset()
-    .mockImplementation(() => {
-      return 'success';
-    });
+  const generateLinkSpy = jest.spyOn(generateLink, 'generateLink').mockReset().mockResolvedValue('success');
 
-  act(() => {
-    getByText = render(
-      <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-      container
-    ).getByText;
-  });
+  const { getByText } = render(
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    container
+  );
+
   act(() => {
     const shareButton = getByText('Share');
     fireEvent.click(shareButton);
