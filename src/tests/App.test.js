@@ -1,8 +1,4 @@
-// import React from 'react';
-// import { render } from '@testing-library/react';
 import { decodeFSH } from '../App';
-// import { AppRouter } from '../index';
-// import { MemoryRouter } from 'react-router-dom';
 
 beforeAll(() => {
   document.body.createTextRange = () => {
@@ -12,17 +8,6 @@ beforeAll(() => {
     };
   };
 });
-
-//This test needs some work
-// test.skip('Renders FSH Online App', () => {
-//   const { getByText } = render(
-//     <MemoryRouter initialEntries={['/FSHOnline']}>
-//       <AppRouter />
-//     </MemoryRouter>
-//   );
-//   const linkElement = getByText(/FSH Online/i);
-//   expect(linkElement).toBeInTheDocument();
-// });
 
 test('decodeFSH will return a properly decoded string from base64', () => {
   const base64 = {

@@ -1,22 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import AppRouter from './utils/AppRouter';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
-export const AppRouter = () => (
-  <BrowserRouter>
-    <Switch>
-      <Route path="/FSHOnline/:text" component={App} />
-      <Route path="/FSHOnline" exact component={App} />
-    </Switch>
-  </BrowserRouter>
-);
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppRouter />
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
