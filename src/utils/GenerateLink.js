@@ -1,7 +1,5 @@
-import { utils } from 'fsh-sushi';
 const BitlyClient = require('bitly').BitlyClient;
-const bitly = new BitlyClient('2740ea05eb8099e664f60559416380f4f06d9dc8');
-const logger = utils.logger;
+const bitly = new BitlyClient(process.env.REACT_APP_BITLY_KEY);
 
 export async function generateLink(longLink) {
   return new Promise((resolve, reject) => {
@@ -11,7 +9,13 @@ export async function generateLink(longLink) {
         resolve(result.link);
       })
       .catch(function (error) {
-        logger.error('accessing link shortening service');
+        if (process.env.REACT_APP_BITLY_KEY == null) {
+          console.error(
+            'Error: REACT_APP_BITLY_KEY needs to be set as an environment variable in order to share FSH Online links.'
+          );
+        } else {
+          console.error('Error accessing link shortening service');
+        }
         reject();
       });
   });
