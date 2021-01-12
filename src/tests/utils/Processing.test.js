@@ -1,4 +1,4 @@
-import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade } from '../../utils/Processing';
+import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from '../../utils/Processing';
 import { fhirdefs, sushiImport } from 'fsh-sushi';
 import * as loadModule from '../../utils/Load';
 import 'fake-indexeddb/auto';
@@ -99,7 +99,7 @@ describe('#loadExternalDependencies()', () => {
     const defs = new FHIRDefinitions();
     const version = 2;
     const unzipSpy = jest.spyOn(loadModule, 'unzipDependencies').mockImplementation(() => {
-      return undefined;
+      return { resourceArr: [], emptyDependencies: [] };
     });
     const loadInStorageSpy = jest.spyOn(loadModule, 'loadDependenciesInStorage').mockImplementation(() => {
       return undefined;
@@ -118,7 +118,7 @@ describe('#loadExternalDependencies()', () => {
     const defs = new FHIRDefinitions();
     const version = 1;
     const unzipSpy = jest.spyOn(loadModule, 'unzipDependencies').mockImplementation(() => {
-      return undefined;
+      return { resourceArr: [], emptyDependencies: [] };
     });
     const loadInStorageSpy = jest.spyOn(loadModule, 'loadDependenciesInStorage').mockImplementation(() => {
       return undefined;
@@ -136,13 +136,13 @@ describe('#loadExternalDependencies()', () => {
     };
   });
 
-  it.only('should delete the the "resources" objectStore if it exists', async () => {
+  it('should delete the the "resources" objectStore if it exists', async () => {
     const defs = new FHIRDefinitions();
     const version = 1;
     let database = null;
     let existingObjectStores = null;
     const unzipSpy = jest.spyOn(loadModule, 'unzipDependencies').mockImplementation(() => {
-      return undefined;
+      return { resourceArr: [], emptyDependencies: [] };
     });
     const loadInStorageSpy = jest.spyOn(loadModule, 'loadDependenciesInStorage').mockImplementation(() => {
       return undefined;
@@ -150,23 +150,102 @@ describe('#loadExternalDependencies()', () => {
     const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
       return undefined;
     });
-    await new Promise((resolve, reject) => {
-      const OpenIDBRequest = indexedDB.open('Test Database');
-      OpenIDBRequest.onsuccess = async function (event) {
+
+    // Open and set up a test database to have 'resources' objectStore
+    await new Promise((resolve) => {
+      const OpenIDBRequest = indexedDB.open('Test Database Resources', version);
+      OpenIDBRequest.onsuccess = async (event) => {
         database = event.target.result;
+        existingObjectStores = database.objectStoreNames;
+        database.close();
         resolve();
       };
-      OpenIDBRequest.onupgradeneeded = function (event) {
+      OpenIDBRequest.onupgradeneeded = async (event) => {
         database = event.target.result;
         database.createObjectStore('resources', { keyPath: ['id', 'resourceType'] });
       };
     });
-    console.log('here');
-    await loadExternalDependencies(defs, version + 1, [], 'Test Database');
+
+    // This call should upgrade our database and delete the 'resources' objectStore
+    await loadExternalDependencies(defs, version + 1, [], 'Test Database Resources');
+
+    // Reopen the database to update our existingObjectStores variable
+    await new Promise((resolve) => {
+      const OpenIDBRequest = indexedDB.open('Test Database Resources', version + 1);
+      OpenIDBRequest.onsuccess = async (event) => {
+        database = event.target.result;
+        existingObjectStores = database.objectStoreNames;
+        database.close();
+        resolve();
+      };
+    });
+
     expect(existingObjectStores.contains('resources')).toBeFalsy();
-    expect(unzipSpy).toBeCalledTimes(0);
-    expect(loadInStorageSpy).toBeCalledTimes(0);
+    expect(unzipSpy).toBeCalled();
+    expect(loadInStorageSpy).toBeCalled();
     expect(loadAsDefsSpy).toBeCalled();
+  });
+
+  it('should add empty objectStores to the emptyDependencies array', async () => {
+    const defs = new FHIRDefinitions();
+    const version = 2;
+    const unzipSpy = jest.spyOn(loadModule, 'unzipDependencies').mockImplementation(() => {
+      return { resourceArr: [], emptyDependencies: ['hello#123'] };
+    });
+    const loadInStorageSpy = jest.spyOn(loadModule, 'loadDependenciesInStorage').mockImplementation(() => {
+      return undefined;
+    });
+    const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
+      return undefined;
+    });
+    const dependencyDefs = await loadExternalDependencies(defs, version, [], true);
+    expect(dependencyDefs).toEqual({ finalDefs: undefined, emptyDependencies: [['hello#123']] });
+    expect(unzipSpy).toBeCalled();
+    expect(loadInStorageSpy).toBeCalled();
+    expect(loadAsDefsSpy).toBeCalled();
+  });
+});
+
+describe('#cleanDatabase()', () => {
+  it('should delete empty objectStores', async () => {
+    let database = null;
+    const version = 1;
+    let existingObjectStores = null;
+    const emptyDependencies = [['test#123'], ['test456'], ['#789'], ['badObjectStore']];
+
+    // Open and set up a test database
+    await new Promise((resolve) => {
+      const OpenIDBRequest = indexedDB.open('Test Database Empty ObjectStores', version);
+      OpenIDBRequest.onsuccess = async (event) => {
+        database = event.target.result;
+        existingObjectStores = database.objectStoreNames;
+        database.close();
+        resolve();
+      };
+      OpenIDBRequest.onupgradeneeded = async (event) => {
+        database = event.target.result;
+        database.createObjectStore('test#123', { keyPath: ['id', 'resourceType'] });
+        database.createObjectStore('test456', { keyPath: ['id', 'resourceType'] });
+        database.createObjectStore('#789', { keyPath: ['id', 'resourceType'] });
+        database.createObjectStore('badObjectStore', { keyPath: ['id', 'resourceType'] });
+      };
+    });
+
+    // This call should upgrade our database and delete the empty objectStores
+    await cleanDatabase(emptyDependencies, version + 1, 'Test Database Empty ObjectStores');
+
+    // Reopen the database to check if our empty objectStores are gone
+    await new Promise((resolve) => {
+      const OpenIDBRequest = indexedDB.open('Test Database Empty ObjectStores', version + 1);
+      OpenIDBRequest.onsuccess = async (event) => {
+        database = event.target.result;
+        existingObjectStores = database.objectStoreNames;
+        database.close();
+        resolve();
+      };
+    });
+
+    expect(existingObjectStores).toHaveLength(0);
   });
 });
 

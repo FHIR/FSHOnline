@@ -15,12 +15,21 @@ const defaultConfig = {
 
 describe('#runSUSHI', () => {
   it('should return an undefined package when we get invalid FHIRDefinitions', async () => {
-    const FHIRDefs = new FHIRDefinitions();
-    const loadDefsSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
+    const fhirDefs = new FHIRDefinitions();
+    const dependencyArr = [];
+    const loadDefsSpy = jest
+      .spyOn(processing, 'loadExternalDependencies')
+      .mockReset()
+      .mockResolvedValue({ finalDefs: fhirDefs, emptyDependencies: [] });
+    const checkForDatabaseUpgradeSpy = jest
+      .spyOn(processing, 'checkForDatabaseUpgrade')
+      .mockReset()
+      .mockResolvedValue({ shouldUpdate: false, version: 1 });
     const text =
       'Profile: FishPatient Parent: Patient Id: fish-patient Title: "Fish Patient" Description: "A patient that is a type of fish."';
-    const outPackage = await runSUSHI(text, defaultConfig);
+    const outPackage = await runSUSHI(text, defaultConfig, dependencyArr);
     expect(loadDefsSpy).toHaveBeenCalled();
+    expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
   });
 
@@ -28,11 +37,19 @@ describe('#runSUSHI', () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
+    const loadSpy = jest
+      .spyOn(processing, 'loadExternalDependencies')
+      .mockReset()
+      .mockResolvedValue({ finalDefs: FHIRDefs, emptyDependencies: [] });
+    const checkForDatabaseUpgradeSpy = jest
+      .spyOn(processing, 'checkForDatabaseUpgrade')
+      .mockReset()
+      .mockResolvedValue({ shouldUpdate: false, version: 1 });
     const text =
       'Profile: FishPatient\nParent: Patient\nId: fish-patient\nTitle: "Fish Patient"\n Description: "A patient that is a type of fish."';
     const outPackage = await runSUSHI(text, defaultConfig);
     expect(loadSpy).toHaveBeenCalled();
+    expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
     expect(outPackage.profiles).toHaveLength(1);
   });
 
@@ -40,7 +57,14 @@ describe('#runSUSHI', () => {
     const FHIRDefs = new FHIRDefinitions();
     FHIRDefs.add(Patient);
     FHIRDefs.add(StructureDefinition);
-    const loadSpy = jest.spyOn(processing, 'loadExternalDependencies').mockReset().mockResolvedValue(FHIRDefs);
+    const loadSpy = jest
+      .spyOn(processing, 'loadExternalDependencies')
+      .mockReset()
+      .mockResolvedValue({ finalDefs: FHIRDefs, emptyDependencies: [] });
+    const checkForDatabaseUpgradeSpy = jest
+      .spyOn(processing, 'checkForDatabaseUpgrade')
+      .mockReset()
+      .mockResolvedValue({ shouldUpdate: false, version: 1 });
     const fillTankSpy = jest
       .spyOn(processing, 'fillTank')
       .mockReset()
@@ -50,6 +74,7 @@ describe('#runSUSHI', () => {
     const input = 'Improper FSH code!';
     const outPackage = await runSUSHI(input, defaultConfig);
     expect(loadSpy).toHaveBeenCalled();
+    expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
     expect(fillTankSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
   });

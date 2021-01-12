@@ -5,6 +5,7 @@ import { utils } from 'fsh-sushi';
 const logger = utils.logger;
 
 export function unzipDependencies(resources, dependency, id) {
+  let returnPackage = { resourceArr: resources, emptyDependencies: [] };
   return new Promise((resolve) => {
     http.get(`https://packages.fhir.org/${dependency}/${id}`, function (res) {
       const extract = tarStream.extract();
@@ -18,7 +19,7 @@ export function unzipDependencies(resources, dependency, id) {
           try {
             const resource = JSON.parse(buf);
             if (resource.resourceType) {
-              resources.push(resource);
+              returnPackage.resourceArr.push(resource);
             }
           } catch {} //eslint-disable-line no-empty
           next();
@@ -26,7 +27,7 @@ export function unzipDependencies(resources, dependency, id) {
         stream.resume();
       });
       extract.on('finish', function () {
-        resolve(resources);
+        resolve(returnPackage);
       });
       if (res.statusCode < 400) {
         res.pipe(zlib.createGunzip()).pipe(extract);
@@ -36,8 +37,9 @@ export function unzipDependencies(resources, dependency, id) {
           logger.error(`FSHOnline does not currently support "current" or "dev" package versions`);
         } else {
           logger.error(`your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+          returnPackage.emptyDependencies.push(`${dependency}${id}`);
         }
-        resolve(resources);
+        resolve(returnPackage);
       }
     });
   });

@@ -8,6 +8,7 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 describe('#unzipDependencies', () => {
   let getSpy = jest.SpyInstance;
+  // let getSpyBad = jest.SpyInstance;
   let tarSpy = jest.SpyInstance;
   let resources = [];
   beforeAll(() => {
@@ -29,6 +30,20 @@ describe('#unzipDependencies', () => {
     expect(getSpy).toBeCalled();
     expect(getSpy).toBeCalledWith('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunction);
   });
+
+  //TODO - test failed http request
+
+  // it('should add failed http requests to a list of emptyDependencies', async () => {
+  //   getSpyBad = jest.spyOn(http, 'get').mockImplementation(() => {
+  //     const res = { statusCode: 404 };
+  //     return res;
+  //   });
+  //   const unzipReturn = await unzipDependencies(resources, 'hello', '123');
+  //   const callbackFunction = getSpy.mock.calls[0][1];
+  //   expect(getSpyBad).toBeCalled();
+  //   expect(getSpyBad).toBeCalledWith('https://packages.fhir.org/hello/123', callbackFunction);
+  //   expect(unzipReturn).toBe({ resourceArr: resources, emptyDependencies: ['hello#123'] });
+  // });
 });
 
 describe('#loadDependenciesInStorage', () => {

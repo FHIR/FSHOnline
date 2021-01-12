@@ -1,6 +1,6 @@
 import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
 import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
-import { findIndex } from 'lodash';
+import { findIndex, flatten } from 'lodash';
 
 const logger = utils.logger;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
@@ -11,6 +11,47 @@ export function fillTank(rawFSHes, config) {
   logger.info('Importing FSH text...');
   const docs = importText(rawFSHes);
   return new FSHTank(docs, config);
+}
+
+export function cleanDatabase(emptyDependencies, version, databaseName = 'FSH Playground Dependencies') {
+  const mergedEmpties = flatten(emptyDependencies);
+  return new Promise((resolve, reject) => {
+    let database = null;
+    const OpenIDBRequest = indexedDB.open(databaseName, version);
+    OpenIDBRequest.onsuccess = function (event) {
+      database = event.target.result;
+      database.close();
+      resolve();
+    };
+    OpenIDBRequest.onupgradeneeded = async function (event) {
+      database = event.target.result;
+      let existingObjectStores = database.objectStoreNames;
+
+      // Checks existing objectStores to see if any are empty - failsafe for users who previously had blank objectStores created
+      for (let objectStore of existingObjectStores) {
+        await new Promise((resolve) => {
+          let transaction = event.target.transaction;
+          const objStore = transaction.objectStore(`${objectStore}`).getAll();
+          objStore.onsuccess = (event) => {
+            let items = event.target.result;
+            if (items.length === 0 && !mergedEmpties.includes(objectStore)) {
+              emptyDependencies.push(objectStore);
+            }
+            resolve();
+          };
+        });
+      }
+      // Deletes objectStores that are empty
+      for (let i = 0; i < mergedEmpties.length; i++) {
+        if (existingObjectStores.contains(mergedEmpties[i])) {
+          database.deleteObjectStore(mergedEmpties[i]);
+        }
+      }
+    };
+    OpenIDBRequest.onerror = function (event) {
+      reject(event);
+    };
+  });
 }
 
 export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playground Dependencies') {
@@ -54,17 +95,17 @@ export async function loadExternalDependencies(
   FHIRdefs,
   version,
   dependencyArr,
-  databaseName = 'FSH Playground Dependencies'
+  databaseName = 'FSH Playground Dependencies',
+  shouldUnzip = false
 ) {
   return new Promise((resolve, reject) => {
     let database = null;
     let newDependencies = [];
-    let finalDefs = FHIRDefinitions;
+    let returnPackage = { finalDefs: FHIRDefinitions, emptyDependencies: [] };
     const OpenIDBRequest = indexedDB.open(databaseName, version);
+
     // If successful the database exists
-    console.log('here');
     OpenIDBRequest.onsuccess = async function (event) {
-      console.log('ahhhhh');
       database = event.target.result;
       let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
       if (findR4 < 0) {
@@ -72,21 +113,25 @@ export async function loadExternalDependencies(
       }
       for (let i = 0; i < dependencyArr.length; i++) {
         let resources = [];
-        let shouldUnzip = false;
+        shouldUnzip = false;
         const dependency = dependencyArr[i][0];
         const id = dependencyArr[i][1];
         if (newDependencies.includes(`${dependency}${id}`)) {
           shouldUnzip = true;
         }
         if (shouldUnzip) {
-          resources = await unzipDependencies(resources, dependency, id);
-          await loadDependenciesInStorage(database, resources, dependency, id);
+          let unzipReturn = await unzipDependencies(resources, dependency, id);
+          if (unzipReturn.emptyDependencies.length !== 0) {
+            returnPackage.emptyDependencies.push(unzipReturn.emptyDependencies);
+          }
+          await loadDependenciesInStorage(database, unzipReturn.resourceArr, dependency, id);
         }
-        finalDefs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
+        returnPackage.finalDefs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
       }
       database.close();
-      resolve(finalDefs);
+      resolve(returnPackage);
     };
+
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
       let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
@@ -109,9 +154,9 @@ export async function loadExternalDependencies(
         }
       }
     };
+
     // Checks if there is an error
     OpenIDBRequest.onerror = function (event) {
-      console.log('ererrerror');
       reject(event);
     };
   });
