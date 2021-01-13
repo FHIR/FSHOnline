@@ -32,7 +32,6 @@ describe('#unzipDependencies', () => {
     const callbackFunction = getSpy.mock.calls[0][1];
     callbackFunction({ statusCode: 404 });
     expect(getSpy).toBeCalled();
-    expect(getSpy).toBeCalledWith('https://packages.fhir.org/hello/123', callbackFunction);
     expect(unzipPromise).resolves.toEqual({ emptyDependencies: ['hello123'], resourceArr: resources });
   });
 });
