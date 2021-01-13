@@ -15,9 +15,9 @@ test('Renders FSH Online App when visiting /FSHOnline', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test('Renders FSH Online App when visiting /FSHOnline/:id', () => {
+test('Renders FSH Online App when visiting /FSHOnline/share/:id', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/FSHOnline/abcd']}>
+    <MemoryRouter initialEntries={['/FSHOnline/share/abcd']}>
       <AppRouter />
     </MemoryRouter>
   );

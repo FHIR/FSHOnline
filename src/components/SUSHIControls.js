@@ -100,7 +100,7 @@ export default function SUSHIControls(props) {
 
   const handleOpenShare = async () => {
     const encoded = new Buffer.from(props.text).toString('base64');
-    const longLink = `https://fshschool.org/FSHOnline/${encoded}`;
+    const longLink = `https://fshschool.org/FSHOnline/share/${encoded}`;
     const shareLink = await generateLink(longLink);
     setLink(shareLink);
     setOpenShare(true);

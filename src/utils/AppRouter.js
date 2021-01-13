@@ -5,7 +5,7 @@ import App from '../App';
 export default function AppRouter(props) {
   return (
     <Switch>
-      <Route path="/FSHOnline/:text" component={App} />
+      <Route path="/FSHOnline/share/:text" component={App} />
       <Route path="/FSHOnline" exact component={App} />
     </Switch>
   );
