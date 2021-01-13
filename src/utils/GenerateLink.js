@@ -16,7 +16,6 @@ export async function generateLink(longLink) {
         } else {
           console.error('Error accessing link shortening service');
         }
-        reject();
       });
   });
 }

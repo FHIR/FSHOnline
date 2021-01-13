@@ -42,7 +42,9 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   textArea: {
-    width: '100%'
+    width: '100%',
+    color: theme.palette.text.primary,
+    fontWeight: 'bold'
   }
 }));
 
