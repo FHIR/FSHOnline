@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { inflateSync } from 'browserify-zlib';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
@@ -36,7 +37,7 @@ export async function decodeFSH(encodedFSH) {
   } else {
     const promisedURL = await expandLink(encodedFSH);
     const sliced64 = promisedURL.long_url.slice(38);
-    const displayText = Buffer.from(sliced64, 'base64').toString('utf-8');
+    const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
     return displayText;
   }
 }

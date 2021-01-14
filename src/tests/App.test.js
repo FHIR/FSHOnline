@@ -13,10 +13,10 @@ beforeAll(() => {
 
 test('decodeFSH will return a properly decoded string from base64', async () => {
   const expandLinkSpy = jest.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
-    long_url: 'https://fshschool.org/FSHOnline/share/SGksIHRoaXMgaXMgYSB0ZXN0IGZvciBkZWNvZGluZy4='
+    long_url: 'https://fshschool.org/FSHOnline/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
   });
   const base64 = {
-    text: '39BrRjO'
+    text: '2Lpe5ZL'
   };
   const decoded = await decodeFSH(base64);
   const expectedDecoded = 'Hi, this is a test for decoding.';

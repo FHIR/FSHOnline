@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { deflateSync } from 'browserify-zlib';
 import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
 import { Box, Button, TextareaAutosize, ThemeProvider } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -99,7 +100,7 @@ export default function SUSHIControls(props) {
   };
 
   const handleOpenShare = async () => {
-    const encoded = new Buffer.from(props.text).toString('base64');
+    const encoded = deflateSync(props.text).toString('base64');
     const longLink = `https://fshschool.org/FSHOnline/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     const bitlySlice = bitlyLink.slice(15);

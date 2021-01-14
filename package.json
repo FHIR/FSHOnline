@@ -10,6 +10,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "bitly": "^7.1.0",
+    "browserify-zlib": "^0.2.0",
     "codemirror": "^5.54.0",
     "fsh-sushi": "^1.0.1",
     "lodash": "^4.17.19",
