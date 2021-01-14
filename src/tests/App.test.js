@@ -1,4 +1,6 @@
+import { wait } from '@testing-library/react';
 import { decodeFSH } from '../App';
+import * as bitlyWorker from '../utils/BitlyWorker';
 
 beforeAll(() => {
   document.body.createTextRange = () => {
@@ -9,18 +11,17 @@ beforeAll(() => {
   };
 });
 
-test('decodeFSH will return a properly decoded string from base64', () => {
+test('decodeFSH will return a properly decoded string from base64', async () => {
+  const expandLinkSpy = jest.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
+    long_url: 'https://fshschool.org/FSHOnline/share/SGksIHRoaXMgaXMgYSB0ZXN0IGZvciBkZWNvZGluZy4='
+  });
   const base64 = {
-    text:
-      'UHJvZmlsZTogICAgICAgIEZpc2hQYXRpZW50ClBhcmVudDogICAgICAgICBQYXRpZW50CklkOiAgICAgICAgICAgICBmaXNoLXBhdGllbnQKVGl0bGU6ICAgICAgICAgICJGaXNoIFBhdGllbnQiCkRlc2NyaXB0aW9uOiAgICAiQSBwYXRpZW50IHRoYXQgaXMgYSB0eXBlIG9mIGZpc2guIg'
+    text: '39BrRjO'
   };
-  const decoded = decodeFSH(base64);
-  const expectedDecoded = [
-    'Profile:        FishPatient',
-    'Parent:         Patient',
-    'Id:             fish-patient',
-    'Title:          "Fish Patient"',
-    'Description:    "A patient that is a type of fish."'
-  ].join('\n');
-  expect(decoded).toEqual(expectedDecoded);
+  const decoded = await decodeFSH(base64);
+  const expectedDecoded = 'Hi, this is a test for decoding.';
+  await wait(() => {
+    expect(decoded).toEqual(expectedDecoded);
+    expect(expandLinkSpy).toHaveBeenCalled();
+  });
 });

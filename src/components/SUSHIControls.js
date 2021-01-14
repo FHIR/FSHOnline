@@ -9,7 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
-import { generateLink } from '../utils/GenerateLink';
+import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -101,8 +101,10 @@ export default function SUSHIControls(props) {
   const handleOpenShare = async () => {
     const encoded = new Buffer.from(props.text).toString('base64');
     const longLink = `https://fshschool.org/FSHOnline/share/${encoded}`;
-    const shareLink = await generateLink(longLink);
-    setLink(shareLink);
+    const bitlyLink = await generateLink(longLink);
+    const bitlySlice = bitlyLink.slice(15);
+    const displayLink = `https://fshschool.org/FSHOnline/share/${bitlySlice}`;
+    setLink(displayLink);
     setOpenShare(true);
     setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
   };
@@ -209,21 +211,18 @@ export default function SUSHIControls(props) {
             </Button>
           </DialogActions>
         </Dialog>
-        <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title">
+        <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
           <DialogTitle id="form-dialog-title">Share</DialogTitle>
           <DialogContent>
             <DialogContentText>Use this link to share your fsh with others!</DialogContentText>
-            <div>
-              <TextareaAutosize
-                id="link"
-                disabled
-                margin="dense"
-                label="Your Link"
-                defaultValue={link}
-                onChange={updateLink}
-                className={classes.textArea}
-              ></TextareaAutosize>
-            </div>
+            <TextareaAutosize
+              id="link"
+              disabled
+              label="Your Link"
+              defaultValue={link}
+              onChange={updateLink}
+              className={classes.textArea}
+            ></TextareaAutosize>
           </DialogContent>
           <DialogActions>
             <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>

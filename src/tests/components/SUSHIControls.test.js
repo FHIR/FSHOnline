@@ -4,10 +4,10 @@ import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
-import * as runSUSHI from '../../utils/RunSUSHI';
-import * as generateLink from '../../utils/GenerateLink';
 import { sliceDependency } from '../../components/SUSHIControls';
 import SUSHIControls from '../../components/SUSHIControls';
+import * as runSUSHI from '../../utils/RunSUSHI';
+import * as bitlyWorker from '../../utils/BitlyWorker';
 
 // Mock copy to clipboard since we don't need to test the component itself
 jest.mock('copy-to-clipboard', () => {
@@ -223,7 +223,7 @@ describe('#sliceDependency()', () => {
 it('copies link to clipboard on button click', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest.spyOn(generateLink, 'generateLink').mockReset().mockResolvedValue('success');
+  const generateLinkSpy = jest.spyOn(bitlyWorker, 'generateLink').mockReset().mockResolvedValue('success');
 
   const { getByText } = render(
     <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
@@ -245,7 +245,7 @@ it('copies link to clipboard on button click', async () => {
 it('generates link when share button is clicked', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest.spyOn(generateLink, 'generateLink').mockReset().mockResolvedValue('success');
+  const generateLinkSpy = jest.spyOn(bitlyWorker, 'generateLink').mockReset().mockResolvedValue('success');
 
   const { getByText } = render(
     <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,

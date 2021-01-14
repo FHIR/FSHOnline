@@ -2,7 +2,7 @@ const BitlyClient = require('bitly').BitlyClient;
 const bitly = new BitlyClient(process.env.REACT_APP_BITLY_KEY);
 
 export async function generateLink(longLink) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     bitly
       .shorten(longLink)
       .then(function (result) {
@@ -16,6 +16,20 @@ export async function generateLink(longLink) {
         } else {
           console.error('Error accessing link shortening service');
         }
+      });
+  });
+}
+
+export async function expandLink(encodedFsh) {
+  const bitlyURL = `https://bit.ly/${encodedFsh.text}`;
+  return new Promise((resolve) => {
+    bitly
+      .expand(bitlyURL)
+      .then(function (result) {
+        resolve(result);
+      })
+      .catch(function (error) {
+        console.log(error);
       });
   });
 }
