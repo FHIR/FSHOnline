@@ -25,8 +25,8 @@ afterEach(() => {
 });
 
 it('Renders appropriately', () => {
-  const { getByText } = render(<CodeMirrorComponent value="Edit FSH Here!" />, container);
-  const textElement = getByText(/Edit FSH Here!/i);
+  const { getByText } = render(<CodeMirrorComponent initialText="Edit FSH here!" />, container);
+  const textElement = getByText(/Edit FSH here!/i);
 
   expect(textElement).toBeInTheDocument();
 });

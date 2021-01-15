@@ -49,12 +49,13 @@ export default function App(props) {
   const text64 = props.match.params;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH here!');
+  const [initialText, setInitialText] = useState('Edit FSH here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
-      setInputText(await decodeFSH(text64));
+      setInitialText(await decodeFSH(text64));
     }
     waitForFSH();
   }, [text64]);
@@ -80,7 +81,7 @@ export default function App(props) {
       <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent value={inputText} updateTextValue={updateInputTextValue} />
+          <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
           <JSONOutput
