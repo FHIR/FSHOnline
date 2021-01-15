@@ -63,9 +63,6 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
       helperReturn.version = database.version;
-      // if (existingObjectStores.contains('resources')) {
-      //   helperReturn.shouldUpdate = true;
-      // }
       if (
         existingObjectStores.length === 0 ||
         dependencyArr.length === 0 ||
@@ -144,6 +141,9 @@ export async function loadExternalDependencies(
       }
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
+      if (existingObjectStores.contains('resources')) {
+        database.deleteObjectStore('resources');
+      }
       for (let i = 0; i < dependencyArr.length; i++) {
         const dependency = dependencyArr[i][0];
         const id = dependencyArr[i][1];
@@ -152,9 +152,6 @@ export async function loadExternalDependencies(
             keyPath: ['id', 'resourceType']
           });
           newDependencies.push(`${dependency}${id}`);
-        }
-        if (existingObjectStores.contains('resources')) {
-          database.deleteObjectStore('resources');
         }
       }
     };
