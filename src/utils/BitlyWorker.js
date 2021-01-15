@@ -30,7 +30,7 @@ export async function expandLink(encodedFsh) {
         resolve(result);
       })
       .catch(function (error) {
-        console.log(error);
+        console.error(error);
       });
   });
 }

@@ -107,6 +107,7 @@ export default function SUSHIControls(props) {
     if (bitlyLink.errorNeeded === true) {
       handleOpenShareError();
     } else {
+      // Removes the encoded data from the end of the url, starting at index 15
       const bitlySlice = bitlyLink.link.slice(15);
       const displayLink = `https://fshschool.org/FSHOnline/share/${bitlySlice}`;
       setLink(displayLink);

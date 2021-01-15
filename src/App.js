@@ -36,6 +36,8 @@ export async function decodeFSH(encodedFSH) {
     return 'Edit FSH here!';
   } else {
     const promisedURL = await expandLink(encodedFSH);
+
+    // Removes the encoded data from the end of the url, starting at index 38
     const sliced64 = promisedURL.long_url.slice(38);
     const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
     return displayText;
@@ -45,20 +47,17 @@ export async function decodeFSH(encodedFSH) {
 export default function App(props) {
   const classes = useStyles();
   const text64 = props.match.params;
-  let decodedText = null;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
-  const [inputText, setInputText] = useState('Edit FSH Here!');
+  const [inputText, setInputText] = useState('Edit FSH here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      decodedText = await decodeFSH(text64);
-      setInputText(decodedText);
+      setInputText(await decodeFSH(text64));
     }
     waitForFSH();
-  }, []);
+  }, [text64]);
 
   function resetLogMessages() {
     consoleMessages = [];
