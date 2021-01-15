@@ -85,6 +85,7 @@ export default function SUSHIControls(props) {
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState(false);
   const [openShare, setOpenShare] = useState(false);
+  const [openShareError, setOpenShareError] = useState(false);
   const [link, setLink] = useState();
   const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
   const [canonical, setCanonical] = useState('http://example.org');
@@ -103,11 +104,23 @@ export default function SUSHIControls(props) {
     const encoded = deflateSync(props.text).toString('base64');
     const longLink = `https://fshschool.org/FSHOnline/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
-    const bitlySlice = bitlyLink.slice(15);
-    const displayLink = `https://fshschool.org/FSHOnline/share/${bitlySlice}`;
-    setLink(displayLink);
-    setOpenShare(true);
-    setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
+    if (bitlyLink.errorNeeded === true) {
+      handleOpenShareError();
+    } else {
+      const bitlySlice = bitlyLink.link.slice(15);
+      const displayLink = `https://fshschool.org/FSHOnline/share/${bitlySlice}`;
+      setLink(displayLink);
+      setOpenShare(true);
+      setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
+    }
+  };
+
+  const handleOpenShareError = () => {
+    setOpenShareError(true);
+  };
+
+  const handleCloseShareError = () => {
+    setOpenShareError(false);
   };
 
   const handleCloseShare = () => {
@@ -231,6 +244,22 @@ export default function SUSHIControls(props) {
             </CopyToClipboard>
             <Button onClick={handleCloseShare} color="primary">
               Done
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={openShareError}
+          onClose={handleCloseShareError}
+          aria-labelledby="alert-dialog-title"
+          maxWidth="lg"
+        >
+          <DialogTitle id="alert-dialog-title">Share Error</DialogTitle>
+          <DialogContent>
+            <DialogContentText>There was a problem sharing your FSH. Your FSH file may be too long.</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseShareError} color="primary" autoFocus>
+              Keep Swimming!
             </Button>
           </DialogActions>
         </Dialog>

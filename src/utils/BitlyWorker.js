@@ -6,15 +6,16 @@ export async function generateLink(longLink) {
     bitly
       .shorten(longLink)
       .then(function (result) {
-        resolve(result.link);
+        resolve({ link: result.link, errorNeeded: false });
       })
       .catch(function (error) {
         if (process.env.REACT_APP_BITLY_KEY == null) {
           console.error(
             'Error: REACT_APP_BITLY_KEY needs to be set as an environment variable in order to share FSH Online links.'
           );
+          resolve({ link: undefined, errorNeeded: true });
         } else {
-          console.error('Error accessing link shortening service');
+          resolve({ link: undefined, errorNeeded: true });
         }
       });
   });

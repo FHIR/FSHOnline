@@ -223,7 +223,10 @@ describe('#sliceDependency()', () => {
 it('copies link to clipboard on button click', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest.spyOn(bitlyWorker, 'generateLink').mockReset().mockResolvedValue('success');
+  const generateLinkSpy = jest
+    .spyOn(bitlyWorker, 'generateLink')
+    .mockReset()
+    .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
     <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
@@ -245,7 +248,10 @@ it('copies link to clipboard on button click', async () => {
 it('generates link when share button is clicked', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest.spyOn(bitlyWorker, 'generateLink').mockReset().mockResolvedValue('success');
+  const generateLinkSpy = jest
+    .spyOn(bitlyWorker, 'generateLink')
+    .mockReset()
+    .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
     <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
@@ -257,6 +263,29 @@ it('generates link when share button is clicked', async () => {
     fireEvent.click(shareButton);
   });
   await wait(() => {
+    expect(generateLinkSpy).toHaveBeenCalled();
+  });
+});
+
+it('shows an error when the FSH file is too long to share', async () => {
+  const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const generateLinkSpy = jest
+    .spyOn(bitlyWorker, 'generateLink')
+    .mockReset()
+    .mockResolvedValue({ link: undefined, errorNeeded: true });
+
+  const { getByText } = render(
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    container
+  );
+  act(() => {
+    const shareButton = getByText('Share');
+    fireEvent.click(shareButton);
+  });
+  await wait(() => {
+    const swimBtn = getByText(/Keep Swimming!/i);
+    expect(swimBtn).toBeInTheDocument();
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
