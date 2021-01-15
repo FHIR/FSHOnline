@@ -35,7 +35,7 @@ export function cleanDatabase(emptyDependencies, version, databaseName = 'FSH Pl
           objStore.onsuccess = (event) => {
             let items = event.target.result;
             if (items.length === 0 && !mergedEmpties.includes(objectStore)) {
-              emptyDependencies.push(objectStore);
+              mergedEmpties.push(objectStore);
             }
             resolve();
           };
@@ -63,10 +63,14 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
       helperReturn.version = database.version;
-      if (existingObjectStores.contains('resources')) {
-        helperReturn.shouldUpdate = true;
-      }
-      if (existingObjectStores.length === 0 || dependencyArr.length === 0) {
+      // if (existingObjectStores.contains('resources')) {
+      //   helperReturn.shouldUpdate = true;
+      // }
+      if (
+        existingObjectStores.length === 0 ||
+        dependencyArr.length === 0 ||
+        existingObjectStores.contains('resources')
+      ) {
         helperReturn.shouldUpdate = true;
         database.close();
         resolve(helperReturn);
@@ -101,7 +105,7 @@ export async function loadExternalDependencies(
   return new Promise((resolve, reject) => {
     let database = null;
     let newDependencies = [];
-    let returnPackage = { finalDefs: FHIRDefinitions, emptyDependencies: [] };
+    let returnPackage = { defs: FHIRDefinitions, emptyDependencies: [] };
     const OpenIDBRequest = indexedDB.open(databaseName, version);
 
     // If successful the database exists
@@ -126,7 +130,7 @@ export async function loadExternalDependencies(
           }
           await loadDependenciesInStorage(database, unzipReturn.resourceArr, dependency, id);
         }
-        returnPackage.finalDefs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
+        returnPackage.defs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
       }
       database.close();
       resolve(returnPackage);

@@ -20,7 +20,7 @@ describe('#runSUSHI', () => {
     const loadDefsSpy = jest
       .spyOn(processing, 'loadExternalDependencies')
       .mockReset()
-      .mockResolvedValue({ finalDefs: fhirDefs, emptyDependencies: [] });
+      .mockResolvedValue({ defs: fhirDefs, emptyDependencies: [] });
     const checkForDatabaseUpgradeSpy = jest
       .spyOn(processing, 'checkForDatabaseUpgrade')
       .mockReset()
@@ -40,7 +40,7 @@ describe('#runSUSHI', () => {
     const loadSpy = jest
       .spyOn(processing, 'loadExternalDependencies')
       .mockReset()
-      .mockResolvedValue({ finalDefs: FHIRDefs, emptyDependencies: [] });
+      .mockResolvedValue({ defs: FHIRDefs, emptyDependencies: [] });
     const checkForDatabaseUpgradeSpy = jest
       .spyOn(processing, 'checkForDatabaseUpgrade')
       .mockReset()
@@ -60,7 +60,7 @@ describe('#runSUSHI', () => {
     const loadSpy = jest
       .spyOn(processing, 'loadExternalDependencies')
       .mockReset()
-      .mockResolvedValue({ finalDefs: FHIRDefs, emptyDependencies: [] });
+      .mockResolvedValue({ defs: FHIRDefs, emptyDependencies: [] });
     const checkForDatabaseUpgradeSpy = jest
       .spyOn(processing, 'checkForDatabaseUpgrade')
       .mockReset()

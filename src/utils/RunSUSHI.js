@@ -38,10 +38,10 @@ export async function runSUSHI(input, config, dependencyArr) {
 
   if (helperUpdate.shouldUpdate) {
     loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencyArr);
-    defs = loadExternalDependenciesReturn.finalDefs;
+    defs = loadExternalDependenciesReturn.defs;
   } else {
     loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencyArr);
-    defs = loadExternalDependenciesReturn.finalDefs;
+    defs = loadExternalDependenciesReturn.defs;
   }
 
   // Cleans out database of any empty objectStores
