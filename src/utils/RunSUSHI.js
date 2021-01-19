@@ -1,6 +1,6 @@
 import { pad, padStart, sample, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
-import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade } from './Processing';
+import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from './Processing';
 
 const FSHTank = sushiImport.FSHTank;
 const RawFSH = sushiImport.RawFSH;
@@ -34,11 +34,18 @@ export async function runSUSHI(input, config, dependencyArr) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   let helperUpdate = await checkForDatabaseUpgrade(dependencyArr);
+  let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
+
   if (helperUpdate.shouldUpdate) {
-    defs = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencyArr);
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencyArr);
+    defs = loadExternalDependenciesReturn.defs;
   } else {
-    defs = await loadExternalDependencies(defs, helperUpdate.version, dependencyArr);
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencyArr);
+    defs = loadExternalDependenciesReturn.defs;
   }
+
+  // Cleans out database of any empty objectStores
+  await cleanDatabase(loadExternalDependenciesReturn.emptyDependencies, helperUpdate.version + 2);
 
   // Load and fill FSH Tank
   let tank = FSHTank;

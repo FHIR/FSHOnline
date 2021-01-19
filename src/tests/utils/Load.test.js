@@ -1,6 +1,5 @@
 import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs } from '../../utils/Load';
 import { fhirdefs } from 'fsh-sushi';
-import tarStream from 'tar-stream';
 import http from 'http';
 import 'fake-indexeddb/auto';
 
@@ -8,26 +7,32 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 describe('#unzipDependencies', () => {
   let getSpy = jest.SpyInstance;
-  let tarSpy = jest.SpyInstance;
   let resources = [];
+
   beforeAll(() => {
     resources = [];
-    tarSpy = jest.spyOn(tarStream, 'extract').mockImplementation(() => {
-      return undefined;
-    });
     getSpy = jest.spyOn(http, 'get').mockImplementation(() => {
       return 'hl7.fhir.r4.core-4.0.1.tgz';
     });
   });
+
   beforeEach(() => {
-    tarSpy.mockClear();
     getSpy.mockClear();
   });
+
   it('should make an http request and extract data from the resulting zip folder', () => {
     unzipDependencies(resources, 'hl7.fhir.r4.core', '4.0.1');
     const callbackFunction = getSpy.mock.calls[0][1];
     expect(getSpy).toBeCalled();
     expect(getSpy).toBeCalledWith('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunction);
+  });
+
+  it('should add failed http requests to a list of emptyDependencies', async () => {
+    const unzipPromise = unzipDependencies(resources, 'hello', '123');
+    const callbackFunction = getSpy.mock.calls[0][1];
+    callbackFunction({ statusCode: 404 });
+    expect(getSpy).toBeCalled();
+    await expect(unzipPromise).resolves.toEqual({ emptyDependencies: ['hello123'], resourceArr: resources });
   });
 });
 
