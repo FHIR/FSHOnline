@@ -75,7 +75,7 @@ export default function CodeMirrorComponent(props) {
     <Box className={classes.box} borderTop={1}>
       <ReactCodeMirror
         className="react-codemirror2"
-        value={'Edit FSH here!'}
+        value={props.initialText}
         options={{
           mode: 'fsh',
           theme: 'material',
