@@ -24,12 +24,12 @@ const useStyles = makeStyles((theme) => ({
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
-// console.log = function getMessages(message) {
-//   consoleMessages.push(message);
-//   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
-//     errorAndWarningMessages.push(message);
-//   }
-// };
+console.log = function getMessages(message) {
+  consoleMessages.push(message);
+  if (message && (message.startsWith('error') || message.startsWith('warn'))) {
+    errorAndWarningMessages.push(message);
+  }
+};
 
 export async function decodeFSH(encodedFSH) {
   if (encodedFSH.text === undefined) {
@@ -38,8 +38,8 @@ export async function decodeFSH(encodedFSH) {
     const promisedURL = await expandLink(encodedFSH);
 
     // Removes the encoded data from the end of the url, starting at index 38
-    const sliced64 = promisedURL.long_url.slice(38);
-    if (!promisedURL.long_url.includes('fshschool.org/FSHOnline') || sliced64.length === 0) {
+    const sliced64 = promisedURL.long_url.slice(40);
+    if (!promisedURL.long_url.includes('https://fshschool.org/FSHOnline/#/share/') || sliced64.length === 0) {
       return 'Edit FSH here!';
     } else {
       const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
