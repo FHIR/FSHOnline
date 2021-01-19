@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { deflateSync } from 'browserify-zlib';
 import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
-import { Box, Button, TextareaAutosize, ThemeProvider } from '@material-ui/core';
+import { Box, Button, Grid, Link, ThemeProvider, Typography, TextareaAutosize } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,6 +12,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
+import '../style/ExampleGridStyling.css';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -46,6 +47,17 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     color: theme.palette.text.primary,
     fontWeight: 'bold'
+  },
+  link: {
+    color: '#2c4f85',
+    fontWeight: 'bold',
+    '&:hover': {
+      color: '#526580'
+    },
+    fontSize: 14
+  },
+  exampleGrid: {
+    overflow: 'hidden'
   }
 }));
 
@@ -89,6 +101,7 @@ export default function SUSHIControls(props) {
   const [link, setLink] = useState();
   const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
   const [canonical, setCanonical] = useState('http://example.org');
+  const [openExamples, setOpenExamples] = useState(false);
   const [version, setVersion] = useState('1.0.0');
   const [dependencies, setDependencies] = useState('');
 
@@ -126,6 +139,14 @@ export default function SUSHIControls(props) {
 
   const handleCloseShare = () => {
     setOpenShare(false);
+  };
+
+  const handleOpenExamples = () => {
+    setOpenExamples(true);
+  };
+
+  const handleCloseExamples = () => {
+    setOpenExamples(false);
   };
 
   const updateCanonical = (event) => {
@@ -176,6 +197,113 @@ export default function SUSHIControls(props) {
     props.onClick(true, jsonOutput, isObject);
   }
 
+  function ExampleGrid() {
+    return (
+      <React.Fragment>
+        <Grid item container direction="column" xs={3} spacing={3}>
+          <Grid item xs>
+            <Typography variant="subtitle1">Group 1</Typography>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 1
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 2
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 3
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 4
+            </Link>
+          </Grid>
+        </Grid>
+        <Grid item container direction="column" xs={3} spacing={3}>
+          <Grid item xs>
+            <Typography variant="subtitle1">Group 2</Typography>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 1
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 2
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 3
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 4
+            </Link>
+          </Grid>
+        </Grid>
+        <Grid item container direction="column" xs={3} spacing={3}>
+          <Grid item xs>
+            <Typography variant="subtitle1">Group 3</Typography>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 1
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 2
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 3
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 4
+            </Link>
+          </Grid>
+        </Grid>
+        <Grid item container direction="column" xs={3} spacing={3}>
+          <Grid item xs>
+            <Typography variant="subtitle1">Group 4</Typography>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 1
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 2
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 3
+            </Link>
+          </Grid>
+          <Grid item xs>
+            <Link className={classes.link} underline="none">
+              Example Link 4
+            </Link>
+          </Grid>
+        </Grid>
+      </React.Fragment>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={classes.box} borderLeft={1} borderRight={1}>
@@ -187,6 +315,9 @@ export default function SUSHIControls(props) {
         </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenShare}>
           Share
+        </Button>
+        <Button className={classes.secondaryButton} onClick={handleOpenExamples}>
+          Examples
         </Button>
         <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
@@ -261,6 +392,26 @@ export default function SUSHIControls(props) {
           <DialogActions>
             <Button onClick={handleCloseShareError} color="primary" autoFocus>
               Keep Swimming!
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={openExamples}
+          onClose={handleCloseExamples}
+          aria-labelledby="form-dialog-title"
+          maxWidth="xl"
+          fullWidth
+        >
+          <DialogTitle id="form-dialog-title">Examples</DialogTitle>
+          <DialogContent classes={{ root: 'exampleGrid' }}>
+            <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
+            <Grid container direction="row" justify="center" alignItems="flex-start" spacing={3}>
+              <ExampleGrid />
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseExamples} color="primary">
+              Done
             </Button>
           </DialogActions>
         </Dialog>
