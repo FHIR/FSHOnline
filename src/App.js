@@ -38,7 +38,7 @@ export async function decodeFSH(encodedFSH) {
     const promisedURL = await expandLink(encodedFSH);
 
     // Removes the encoded data from the end of the url, starting at index 38
-    const sliced64 = promisedURL.long_url.slice(38);
+    const sliced64 = promisedURL.long_url.slice(40);
     const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
     return displayText;
   }
