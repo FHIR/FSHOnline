@@ -102,14 +102,14 @@ export default function SUSHIControls(props) {
 
   const handleOpenShare = async () => {
     const encoded = deflateSync(props.text).toString('base64');
-    const longLink = `https://fshschool.org/FSHOnline/share/${encoded}`;
+    const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {
       handleOpenShareError();
     } else {
       // Removes the encoded data from the end of the url, starting at index 15
       const bitlySlice = bitlyLink.link.slice(15);
-      const displayLink = `https://fshschool.org/FSHOnline/share/${bitlySlice}`;
+      const displayLink = `https://fshschool.org/FSHOnline/#/share/${bitlySlice}`;
       setLink(displayLink);
       setOpenShare(true);
       setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
