@@ -12,7 +12,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
-import '../style/ExampleGridStyling.css';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -56,8 +55,9 @@ const useStyles = makeStyles((theme) => ({
     },
     fontSize: 14
   },
-  exampleGrid: {
-    overflow: 'hidden'
+  dialogPaper: {
+    maxHeight: '100vh',
+    minHeight: '45vh'
   }
 }));
 
@@ -399,13 +399,14 @@ export default function SUSHIControls(props) {
           open={openExamples}
           onClose={handleCloseExamples}
           aria-labelledby="form-dialog-title"
-          maxWidth="xl"
+          maxWidth="lg"
           fullWidth
+          classes={{ paper: classes.dialogPaper }}
         >
           <DialogTitle id="form-dialog-title">Examples</DialogTitle>
-          <DialogContent classes={{ root: 'exampleGrid' }}>
+          <DialogContent>
             <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
-            <Grid container direction="row" justify="center" alignItems="flex-start" spacing={3}>
+            <Grid container direction="row" justify="space-between" alignItems="center" spacing={0}>
               <ExampleGrid />
             </Grid>
           </DialogContent>
