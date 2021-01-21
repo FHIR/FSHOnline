@@ -3,6 +3,7 @@ import { inflateSync } from 'browserify-zlib';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
+import { setExampleText } from './utils/ParseExamples';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
@@ -50,7 +51,8 @@ export async function decodeFSH(encodedFSH) {
 
 export default function App(props) {
   const classes = useStyles();
-  const text64 = props.match.params;
+  const urlParam = props.match.params;
+  const url = window.location.href;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH here!');
   const [initialText, setInitialText] = useState('Edit FSH here!');
@@ -59,10 +61,15 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      setInitialText(await decodeFSH(text64));
+      if (url.includes('examples')) {
+        let text = await setExampleText(urlParam.text);
+        setInitialText(text);
+      } else {
+        setInitialText(await decodeFSH(urlParam));
+      }
     }
     waitForFSH();
-  }, [text64]);
+  }, [urlParam, url]);
 
   function resetLogMessages() {
     consoleMessages = [];

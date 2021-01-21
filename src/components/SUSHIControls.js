@@ -11,6 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import { generateLink } from '../utils/BitlyWorker';
+import config from '../examples/examples-config.json';
 import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogPaper: {
     maxHeight: '100vh',
-    minHeight: '45vh'
+    minHeight: '47vh'
   }
 }));
 
@@ -198,110 +199,35 @@ export default function SUSHIControls(props) {
   }
 
   function ExampleGrid() {
-    return (
-      <React.Fragment>
-        <Grid item container direction="column" xs={3} spacing={3}>
+    let columns = [];
+    let components = [];
+    let obj = Object.entries(config);
+    for (let group = 0; group < obj.length; group++) {
+      components.push([]);
+      for (let file = 0; file < obj[group][1].files.length; file++) {
+        let fileName = obj[group][1].files[file].name;
+        let linkPath = obj[group][1].files[file].link;
+        components[group].push(
           <Grid item xs>
-            <Typography variant="subtitle1">Group 1</Typography>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 1
+            <Link className={classes.link} underline="none" href={linkPath} onClick={handleCloseExamples}>
+              {fileName}
             </Link>
           </Grid>
+        );
+      }
+    }
+    for (let col = 0; col < obj.length; col++) {
+      let groupName = obj[col][0];
+      columns.push(
+        <Grid item container direction="column" alignItems="flex-start" xs={3} spacing={3}>
           <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 2
-            </Link>
+            <Typography variant="subtitle1">{groupName}</Typography>
           </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 3
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 4
-            </Link>
-          </Grid>
+          {components[col]}
         </Grid>
-        <Grid item container direction="column" xs={3} spacing={3}>
-          <Grid item xs>
-            <Typography variant="subtitle1">Group 2</Typography>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 1
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 2
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 3
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 4
-            </Link>
-          </Grid>
-        </Grid>
-        <Grid item container direction="column" xs={3} spacing={3}>
-          <Grid item xs>
-            <Typography variant="subtitle1">Group 3</Typography>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 1
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 2
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 3
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 4
-            </Link>
-          </Grid>
-        </Grid>
-        <Grid item container direction="column" xs={3} spacing={3}>
-          <Grid item xs>
-            <Typography variant="subtitle1">Group 4</Typography>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 1
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 2
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 3
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Link className={classes.link} underline="none">
-              Example Link 4
-            </Link>
-          </Grid>
-        </Grid>
-      </React.Fragment>
-    );
+      );
+    }
+    return columns;
   }
 
   return (
@@ -406,8 +332,8 @@ export default function SUSHIControls(props) {
           <DialogTitle id="form-dialog-title">Examples</DialogTitle>
           <DialogContent>
             <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
-            <Grid container direction="row" justify="space-between" alignItems="center" spacing={0}>
-              <ExampleGrid />
+            <Grid container direction="row" justify="space-between" alignItems="flex-start" spacing={0}>
+              <React.Fragment>{ExampleGrid()}</React.Fragment>
             </Grid>
           </DialogContent>
           <DialogActions>

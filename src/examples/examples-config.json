@@ -1,0 +1,108 @@
+{
+    "Group 1": {
+        "files": [
+            {
+                "name": "Hello World",
+                "path": "./HelloWorld.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/HelloWorld",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Get Swimming",
+                "path": "./GetSwimming.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/GetSwimming",
+                "description": "blah"
+            },
+            {
+                "name": "Veternarian",
+                "path": "./Veternarian.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Veternarian",
+                "description": "blah"
+            }
+        ]
+    },
+    "Group 2": {
+        "files": [
+            {
+                "name": "Profile",
+                "path": "./Profile.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Profile",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Extension",
+                "path": "./Extension.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Extension",
+                "description": "blah"
+            },
+            {
+                "name": "Value Set",
+                "path": "./ValueSet.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/ValueSet",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Instance",
+                "path": "./Instance.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Instance",
+                "description": "blah"
+            }
+        ]
+    },
+    "Group 3": {
+        "files": [
+            {
+                "name": "Profile",
+                "path": "./Profile.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Profile",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Extension",
+                "path": "./Extension.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Extension",
+                "description": "blah"
+            },
+            {
+                "name": "Value Set",
+                "path": "./ValueSet.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/ValueSet",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Instance",
+                "path": "./Instance.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Instance",
+                "description": "blah"
+            }
+        ]
+    },
+    "Group 4": {
+        "files": [
+            {
+                "name": "Profile",
+                "path": "./Profile.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Profile",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Extension",
+                "path": "./Extension.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Extension",
+                "description": "blah"
+            },
+            {
+                "name": "Value Set",
+                "path": "./ValueSet.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/ValueSet",
+                "description": "A test file for our examples page."
+            },
+            {
+                "name": "Instance",
+                "path": "./Instance.txt",
+                "link": "http://localhost:3001/FSHOnline/#/examples/Instance",
+                "description": "blah"
+            }
+        ]
+    }
+}
