@@ -43,7 +43,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -65,7 +65,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -87,7 +87,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -109,7 +109,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -142,7 +142,7 @@ it('uses user provided version when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -176,7 +176,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -230,7 +230,7 @@ it('copies link to clipboard on button click', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -255,7 +255,7 @@ it('generates link when share button is clicked', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -277,7 +277,7 @@ it('shows an error when the FSH file is too long to share', async () => {
     .mockResolvedValue({ link: undefined, errorNeeded: true });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
   act(() => {
@@ -292,12 +292,41 @@ it('shows an error when the FSH file is too long to share', async () => {
 });
 
 it('opens an example page and renders from config when example button is clicked', async () => {
+  const config = {
+    'Group 1': {
+      files: [
+        {
+          name: 'Hello World',
+          path: './HelloWorld.txt',
+          link: '/examples/HelloWorld',
+          description: 'A test file for our examples page.'
+        },
+        {
+          name: 'Start Swimming',
+          path: './GetSwimming.txt',
+          link: '/examples/GetSwimming',
+          description: 'blah'
+        }
+      ]
+    },
+    'Group 2': {
+      files: [
+        {
+          name: 'Veternarian',
+          path: './Veternarian.txt',
+          link: '/examples/Veternarian',
+          description: 'A test file for our examples page.'
+        }
+      ]
+    }
+  };
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
 
   const { getByText } = render(
     <HashRouter>
-      <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />, container
+      <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} config={config} />,
+      container
     </HashRouter>
   );
   act(() => {

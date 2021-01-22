@@ -12,7 +12,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI } from '../utils/RunSUSHI';
 import { generateLink } from '../utils/BitlyWorker';
-import config from '../examples/examples-config.json';
 import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -202,14 +201,14 @@ export default function SUSHIControls(props) {
   function ExampleGrid() {
     let columns = [];
     let components = [];
-    let obj = Object.entries(config);
+    let obj = Object.entries(props.config);
     for (let group = 0; group < obj.length; group++) {
       components.push([]);
       for (let file = 0; file < obj[group][1].files.length; file++) {
         let fileName = obj[group][1].files[file].name;
         let fileLink = obj[group][1].files[file].link;
         components[group].push(
-          <Grid item xs>
+          <Grid item xs key={fileName}>
             <Link
               className={classes.link}
               underline="none"
@@ -226,7 +225,7 @@ export default function SUSHIControls(props) {
     for (let col = 0; col < obj.length; col++) {
       let groupName = obj[col][0];
       columns.push(
-        <Grid item container direction="column" alignItems="flex-start" xs={3} spacing={3}>
+        <Grid item container direction="column" alignItems="flex-start" key={groupName} xs={3} spacing={3}>
           <Grid item xs>
             <Typography variant="subtitle1">{groupName}</Typography>
           </Grid>
@@ -340,7 +339,7 @@ export default function SUSHIControls(props) {
           <DialogContent>
             <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
             <Grid container direction="row" justify="space-between" alignItems="flex-start" spacing={0}>
-              <React.Fragment>{ExampleGrid()}</React.Fragment>
+              <ExampleGrid />
             </Grid>
           </DialogContent>
           <DialogActions>

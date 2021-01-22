@@ -9,6 +9,7 @@ import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
 import SUSHIControls from './components/SUSHIControls';
+import config from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -51,8 +52,7 @@ export async function decodeFSH(encodedFSH) {
 
 export default function App(props) {
   const classes = useStyles();
-  const urlParam = props.match.params;
-  const url = window.location.href;
+  const urlParam = props.match;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH here!');
   const [initialText, setInitialText] = useState('Edit FSH here!');
@@ -61,14 +61,14 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      if (url.includes('examples')) {
-        setInitialText(await setExampleText(urlParam.text));
+      if (urlParam.path.includes('examples')) {
+        setInitialText(await setExampleText(urlParam.params.text));
       } else {
-        setInitialText(await decodeFSH(urlParam));
+        setInitialText(await decodeFSH(urlParam.params));
       }
     }
     waitForFSH();
-  }, [urlParam, url]);
+  }, [urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
@@ -88,7 +88,12 @@ export default function App(props) {
   return (
     <div className="root">
       <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      <SUSHIControls
+        onClick={handleSUSHIControls}
+        text={inputText}
+        resetLogMessages={resetLogMessages}
+        config={config}
+      />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
