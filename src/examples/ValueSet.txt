@@ -1,3 +1,5 @@
+Alias: SCT = http://snomed.info/sct
+
 ValueSet:  FishSpeciesValueSet
 Id: fish-species-value-set
 Title: "Fish Species Value Set"

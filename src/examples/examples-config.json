@@ -2,50 +2,40 @@
     "Group 1": {
         "files": [
             {
-                "name": "Hello World",
-                "path": "./HelloWorld.txt",
-                "link": "/examples/HelloWorld",
-                "description": "A test file for our examples page."
-            },
-            {
-                "name": "Start Swimming",
-                "path": "./GetSwimming.txt",
-                "link": "/examples/GetSwimming",
-                "description": "blah"
-            },
-            {
                 "name": "Profile",
-                "path": "./Profile.txt",
-                "link": "/examples/Profile",
-                "description": "blah"
+                "link": "/examples/Profile"
+            },
+            {
+                "name": "Extension",
+                "link": "/examples/Extension"
+            },
+            {
+                "name": "Value Set",
+                "link": "/examples/ValueSet"
+            },
+            {
+                "name": "Instance",
+                "link": "/examples/Instance"
             }
         ]
     },
     "Group 2": {
         "files": [
             {
-                "name": "Veternarian",
-                "path": "./Veternarian.txt",
-                "link": "/examples/Veternarian",
-                "description": "A test file for our examples page."
+                "name": "Profile",
+                "link": "/examples/Profile"
             },
             {
                 "name": "Extension",
-                "path": "./Extension.txt",
-                "link": "/examples/Extension",
-                "description": "blah"
+                "link": "/examples/Extension"
             },
             {
                 "name": "Value Set",
-                "path": "./ValueSet.txt",
-                "link": "/examples/ValueSet",
-                "description": "A test file for our examples page."
+                "link": "/examples/ValueSet"
             },
             {
                 "name": "Instance",
-                "path": "./Instance.txt",
-                "link": "/examples/Instance",
-                "description": "blah"
+                "link": "/examples/Instance"
             }
         ]
     },
@@ -53,56 +43,23 @@
         "files": [
             {
                 "name": "Profile",
-                "path": "./Profile.txt",
-                "link": "/examples/Profile",
-                "description": "A test file for our examples page."
+                "link": "/examples/Profile"
             },
             {
                 "name": "Extension",
-                "path": "./Extension.txt",
-                "link": "/examples/Extension",
-                "description": "blah"
+                "link": "/examples/Extension"
             },
             {
                 "name": "Value Set",
-                "path": "./ValueSet.txt",
-                "link": "/examples/ValueSet",
-                "description": "A test file for our examples page."
+                "link": "/examples/ValueSet"
             },
             {
                 "name": "Instance",
-                "path": "./Instance.txt",
-                "link": "/examples/Instance",
-                "description": "blah"
+                "link": "/examples/Instance"
             }
         ]
     },
     "Group 4": {
-        "files": [
-            {
-                "name": "Profile",
-                "path": "./Profile.txt",
-                "link": "/examples/Profile",
-                "description": "A test file for our examples page."
-            },
-            {
-                "name": "Extension",
-                "path": "./Extension.txt",
-                "link": "/examples/Extension",
-                "description": "blah"
-            },
-            {
-                "name": "Value Set",
-                "path": "./ValueSet.txt",
-                "link": "/examples/ValueSet",
-                "description": "A test file for our examples page."
-            },
-            {
-                "name": "Instance",
-                "path": "./Instance.txt",
-                "link": "/examples/Instance",
-                "description": "blah"
-            }
-        ]
+        "files": []
     }
 }
