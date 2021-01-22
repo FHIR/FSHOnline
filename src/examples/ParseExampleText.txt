@@ -1,1 +1,0 @@
-This is an example test file to test our ParseExamples() function.

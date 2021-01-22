@@ -289,3 +289,30 @@ it('shows an error when the FSH file is too long to share', async () => {
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
+
+it('opens an example page and renders from config when example button is clicked', async () => {
+  const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
+
+  const { getByText } = render(
+    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    container
+  );
+  act(() => {
+    const exampleBtn = getByText('Examples');
+    fireEvent.click(exampleBtn);
+  });
+  const textElement = getByText(/Use our pre-created examples to learn FSH and get swimming!/i);
+  const textElement1 = getByText(/Group 1/i);
+  const textElement2 = getByText(/Group 2/i);
+  const textElement3 = getByText(/Hello World/i);
+  const textElement4 = getByText(/Start Swimming/i);
+  const textElement5 = getByText(/Veternarian/i);
+
+  expect(textElement).toBeInTheDocument();
+  expect(textElement1).toBeInTheDocument();
+  expect(textElement2).toBeInTheDocument();
+  expect(textElement3).toBeInTheDocument();
+  expect(textElement4).toBeInTheDocument();
+  expect(textElement5).toBeInTheDocument();
+});

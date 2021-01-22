@@ -62,8 +62,7 @@ export default function App(props) {
   useEffect(() => {
     async function waitForFSH() {
       if (url.includes('examples')) {
-        let text = await setExampleText(urlParam.text);
-        setInitialText(text);
+        setInitialText(await setExampleText(urlParam.text));
       } else {
         setInitialText(await decodeFSH(urlParam));
       }
