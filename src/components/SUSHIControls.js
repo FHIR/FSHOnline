@@ -199,40 +199,33 @@ export default function SUSHIControls(props) {
   }
 
   function ExampleGrid() {
-    let columns = [];
-    let components = [];
     let obj = Object.entries(props.config);
-    for (let group = 0; group < obj.length; group++) {
-      components.push([]);
-      for (let file = 0; file < obj[group][1].files.length; file++) {
-        let fileName = obj[group][1].files[file].name;
-        let fileLink = obj[group][1].files[file].link;
-        components[group].push(
-          <Grid item xs key={fileName}>
-            <Link
-              className={classes.link}
-              underline="none"
-              component={RouterLink}
-              to={fileLink}
-              onClick={handleCloseExamples}
-            >
-              {fileName}
-            </Link>
-          </Grid>
-        );
-      }
-    }
-    for (let col = 0; col < obj.length; col++) {
-      let groupName = obj[col][0];
-      columns.push(
+    let columns = obj.map((group) => {
+      let groupName = group[0];
+      let files = group[1].files;
+      return (
         <Grid item container direction="column" alignItems="flex-start" key={groupName} xs={3} spacing={3}>
           <Grid item xs>
             <Typography variant="subtitle1">{groupName}</Typography>
           </Grid>
-          {components[col]}
+          {files.map((file) => {
+            return (
+              <Grid item xs key={file.name}>
+                <Link
+                  className={classes.link}
+                  underline="none"
+                  component={RouterLink}
+                  to={file.link}
+                  onClick={handleCloseExamples}
+                >
+                  {file.name}
+                </Link>
+              </Grid>
+            );
+          })}
         </Grid>
       );
-    }
+    });
     return columns;
   }
 
