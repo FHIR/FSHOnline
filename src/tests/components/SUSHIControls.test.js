@@ -1,4 +1,5 @@
 import React from 'react';
+import { HashRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
@@ -295,8 +296,9 @@ it('opens an example page and renders from config when example button is clicked
   const resetLogMessages = jest.fn();
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-    container
+    <HashRouter>
+      <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />, container
+    </HashRouter>
   );
   act(() => {
     const exampleBtn = getByText('Examples');

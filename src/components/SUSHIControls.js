@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { deflateSync } from 'browserify-zlib';
 import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
 import { Box, Button, Grid, Link, ThemeProvider, Typography, TextareaAutosize } from '@material-ui/core';
@@ -206,10 +207,16 @@ export default function SUSHIControls(props) {
       components.push([]);
       for (let file = 0; file < obj[group][1].files.length; file++) {
         let fileName = obj[group][1].files[file].name;
-        let linkPath = obj[group][1].files[file].link;
+        let fileLink = obj[group][1].files[file].link;
         components[group].push(
           <Grid item xs>
-            <Link className={classes.link} underline="none" href={linkPath} onClick={handleCloseExamples}>
+            <Link
+              className={classes.link}
+              underline="none"
+              component={RouterLink}
+              to={fileLink}
+              onClick={handleCloseExamples}
+            >
               {fileName}
             </Link>
           </Grid>
