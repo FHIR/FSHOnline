@@ -337,7 +337,7 @@ export default function SUSHIControls(props) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseExamples} color="primary">
-              Done
+              Close
             </Button>
           </DialogActions>
         </Dialog>
