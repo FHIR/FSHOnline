@@ -1,4 +1,4 @@
-import { pad, padStart, sample, padEnd } from 'lodash';
+import { pad, padStart, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from './Processing';
 
@@ -7,6 +7,7 @@ const RawFSH = sushiImport.RawFSH;
 const exportFHIR = sushiExport.exportFHIR;
 const logger = utils.logger;
 const stats = utils.stats;
+const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
@@ -101,7 +102,7 @@ function printResults(pkg, startError, startWarn) {
   } else {
     resultStatus = 'warnings';
   }
-  const aWittyMessageInvolvingABadFishPun = padEnd(sample(MESSAGE_MAP[resultStatus]), 36);
+  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(numError, numWarn), 36);
   const color = COLOR_MAP[resultStatus]; // eslint-disable-line no-unused-vars
 
   /* eslint-disable no-useless-concat */
@@ -122,43 +123,6 @@ function printResults(pkg, startError, startWarn) {
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
   return { errors: numError, warns: numWarn };
 }
-
-const MESSAGE_MAP = {
-  clean: [
-    'That went swimmingly!',
-    'O-fish-ally error free!',
-    "Nice! You're totally krilling it!",
-    'Cool and So-fish-ticated!',
-    'Well hooked and landed!',
-    'You earned a PhD in Ichthyology!',
-    'You rock, lobster!',
-    'Everything is ship-shape!',
-    'Ex-clam-ation point!',
-    'Ac-clam-ations!',
-    'Fin-tastic job!',
-    "You're dolphinitely doing great!"
-  ],
-  warnings: [
-    'Not bad, but you cod do batter!',
-    'Something smells fishy...',
-    'Warnings... Water those about?',
-    'Looks like you are casting about.',
-    'A bit pitchy, but tuna-ble.'
-  ],
-  errors: [
-    'Ick! Errors!',
-    'Some-fin went wrong...',
-    'Unfor-tuna-tely, there are errors.',
-    'That really smelt.',
-    'You spawned some errors.',
-    'Just keep swimming, Dory.',
-    'This is the one that got away.',
-    'The docs might be bene-fish-al.',
-    'This was a turtle disaster.',
-    'Something went eely wrong there.',
-    'Documentation may be kelp-ful.'
-  ]
-};
 
 const COLOR_MAP = {
   clean: 'green',
