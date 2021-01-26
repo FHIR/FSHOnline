@@ -312,9 +312,9 @@ it('opens an example page and renders from config when example button is clicked
     'Group 2': {
       files: [
         {
-          name: 'Veternarian',
-          path: './Veternarian.txt',
-          link: '/examples/Veternarian',
+          name: 'Veterinarian',
+          path: './Veterinarian.txt',
+          link: '/examples/Veterinarian',
           description: 'A test file for our examples page.'
         }
       ]
@@ -338,7 +338,7 @@ it('opens an example page and renders from config when example button is clicked
   const textElement2 = getByText(/Group 2/i);
   const textElement3 = getByText(/Hello World/i);
   const textElement4 = getByText(/Start Swimming/i);
-  const textElement5 = getByText(/Veternarian/i);
+  const textElement5 = getByText(/Veterinarian/i);
 
   expect(textElement).toBeInTheDocument();
   expect(textElement1).toBeInTheDocument();
