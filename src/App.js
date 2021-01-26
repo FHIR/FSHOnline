@@ -3,11 +3,13 @@ import { inflateSync } from 'browserify-zlib';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
+import { setExampleText } from './utils/ParseExamples';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import FSHOutput from './components/FSHOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import FSHControls from './components/FSHControls';
+import config from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -99,7 +101,7 @@ export const ExpandedConsoleContext = createContext(false);
 
 export default function App(props) {
   const classes = useStyles();
-  const text64 = props.match.params;
+  const urlParam = props.match;
   const [showNewFHIRText, setShowNewFHIRText] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
   const [inputFHIRText, setInputFHIRText] = useState(['']);
@@ -110,10 +112,14 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      setInitialText(await decodeFSH(text64));
+      if (urlParam.path.includes('examples')) {
+        setInitialText(await setExampleText(urlParam.params.text));
+      } else {
+        setInitialText(await decodeFSH(urlParam.params));
+      }
     }
     waitForFSH();
-  }, [text64]);
+  }, [urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
@@ -157,6 +163,7 @@ export default function App(props) {
             fshText={inputFSHText}
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
+            config={config}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>

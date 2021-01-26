@@ -1,4 +1,5 @@
 import React from 'react';
+import { HashRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
@@ -35,7 +36,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -57,7 +58,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -79,7 +80,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -112,6 +113,7 @@ it('calls GoFSH function and returns FSH', async () => {
         onGoFSHClick={onGoFSHClick}
         gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
         resetLogMessages={resetLogMessages}
+        config={{}}
       />,
       container
     );
@@ -145,6 +147,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
       onGoFSHClick={onGoFSHClick}
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
       resetLogMessages={resetLogMessages}
+      config={{}}
     />,
     container
   );
@@ -189,7 +192,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -222,7 +225,7 @@ it('uses user provided version when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -256,7 +259,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} config={{}} />,
     container
   );
 
@@ -282,4 +285,61 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
   });
+});
+
+it('opens an example page and renders from config when example button is clicked', async () => {
+  const config = {
+    'Group 1': {
+      files: [
+        {
+          name: 'Hello World',
+          path: './HelloWorld.txt',
+          link: '/examples/HelloWorld',
+          description: 'A test file for our examples page.'
+        },
+        {
+          name: 'Start Swimming',
+          path: './GetSwimming.txt',
+          link: '/examples/GetSwimming',
+          description: 'blah'
+        }
+      ]
+    },
+    'Group 2': {
+      files: [
+        {
+          name: 'Veterinarian',
+          path: './Veterinarian.txt',
+          link: '/examples/Veterinarian',
+          description: 'A test file for our examples page.'
+        }
+      ]
+    }
+  };
+  const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
+
+  const { getByText } = render(
+    <HashRouter>
+      <FSHControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} config={config} />,
+      container
+    </HashRouter>
+  );
+  act(() => {
+    const exampleBtn = getByText('Examples');
+    fireEvent.click(exampleBtn);
+  });
+  const textElement = getByText(/Use our pre-created examples to learn FSH and get swimming!/i);
+  const textElement1 = getByText(/Group 1/i);
+  const textElement2 = getByText(/Group 2/i);
+  const textElement3 = getByText(/Hello World/i);
+  const textElement4 = getByText(/Start Swimming/i);
+  const textElement5 = getByText(/Veterinarian/i);
+
+  expect(textElement).toBeInTheDocument();
+  expect(textElement1).toBeInTheDocument();
+  expect(textElement2).toBeInTheDocument();
+  expect(textElement3).toBeInTheDocument();
+  expect(textElement4).toBeInTheDocument();
+  expect(textElement5).toBeInTheDocument();
 });

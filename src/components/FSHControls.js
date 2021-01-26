@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, IconButton, Tooltip } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, IconButton, Link, Tooltip, Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -54,6 +55,18 @@ const useStyles = makeStyles((theme) => ({
   },
   runIcon: {
     padding: '0px'
+  },
+  link: {
+    color: '#2c4f85',
+    fontWeight: 'bold',
+    '&:hover': {
+      color: '#526580'
+    },
+    fontSize: 14
+  },
+  dialogPaper: {
+    maxHeight: '100vh',
+    minHeight: '47vh'
   }
 }));
 
@@ -66,12 +79,21 @@ function replacer(key, value) {
 
 export default function FSHControls(props) {
   const classes = useStyles();
+  const [openExamples, setOpenExamples] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [canonical, setCanonical] = useState('');
   const [version, setVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
+
+  const handleOpenExamples = () => {
+    setOpenExamples(true);
+  };
+
+  const handleCloseExamples = () => {
+    setOpenExamples(false);
+  };
 
   const handleOpenConfig = () => {
     setOpenConfig(true);
@@ -154,6 +176,37 @@ export default function FSHControls(props) {
     if (version === '' && config.version) setVersion(config.version);
   }
 
+  function ExampleGrid() {
+    let obj = Object.entries(props.config);
+    let columns = obj.map((group) => {
+      let groupName = group[0];
+      let files = group[1].files;
+      return (
+        <Grid item container direction="column" alignItems="flex-start" key={groupName} xs={3} spacing={3}>
+          <Grid item xs>
+            <Typography variant="subtitle1">{groupName}</Typography>
+          </Grid>
+          {files.map((file) => {
+            return (
+              <Grid item xs key={file.name}>
+                <Link
+                  className={classes.link}
+                  underline="none"
+                  component={RouterLink}
+                  to={file.link}
+                  onClick={handleCloseExamples}
+                >
+                  {file.name}
+                </Link>
+              </Grid>
+            );
+          })}
+        </Grid>
+      );
+    });
+    return columns;
+  }
+
   return (
     <Box className={classes.box}>
       <Grid container>
@@ -182,6 +235,10 @@ export default function FSHControls(props) {
           </Button>
         </Grid>
       </Grid>
+
+      <Button className={classes.secondaryButton} onClick={handleOpenExamples}>
+        Examples
+      </Button>
 
       <div className={classes.rightControls}>
         <Tooltip title="Configuration" placement="top" arrow>
@@ -226,6 +283,27 @@ export default function FSHControls(props) {
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
             Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openExamples}
+        onClose={handleCloseExamples}
+        aria-labelledby="form-dialog-title"
+        maxWidth="lg"
+        fullWidth
+        classes={{ paper: classes.dialogPaper }}
+      >
+        <DialogTitle id="form-dialog-title">Examples</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
+          <Grid container direction="row" justify="space-between" alignItems="flex-start" spacing={0}>
+            <ExampleGrid />
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseExamples} color="primary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>

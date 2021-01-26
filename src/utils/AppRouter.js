@@ -6,6 +6,7 @@ export default function AppRouter(props) {
   return (
     <Switch>
       <Route path="/share/:text" component={App} />
+      <Route path="/examples/:text" component={App} />
       <Route path="" exact component={App} />
     </Switch>
   );
