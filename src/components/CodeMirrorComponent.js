@@ -65,7 +65,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CodeMirrorComponent(props) {
   const classes = useStyles();
-
   //Updates both the text state with the codemirror value
   function updateText(text) {
     props.updateTextValue(text);

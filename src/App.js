@@ -3,11 +3,13 @@ import { inflateSync } from 'browserify-zlib';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
+import { setExampleText } from './utils/ParseExamples';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
 import SUSHIControls from './components/SUSHIControls';
+import config from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -50,7 +52,7 @@ export async function decodeFSH(encodedFSH) {
 
 export default function App(props) {
   const classes = useStyles();
-  const text64 = props.match.params;
+  const urlParam = props.match;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputText, setInputText] = useState('Edit FSH here!');
   const [initialText, setInitialText] = useState('Edit FSH here!');
@@ -59,10 +61,14 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      setInitialText(await decodeFSH(text64));
+      if (urlParam.path.includes('examples')) {
+        setInitialText(await setExampleText(urlParam.params.text));
+      } else {
+        setInitialText(await decodeFSH(urlParam.params));
+      }
     }
     waitForFSH();
-  }, [text64]);
+  }, [urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
@@ -82,7 +88,12 @@ export default function App(props) {
   return (
     <div className="root">
       <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      <SUSHIControls
+        onClick={handleSUSHIControls}
+        text={inputText}
+        resetLogMessages={resetLogMessages}
+        config={config}
+      />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
           <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
