@@ -12,14 +12,6 @@ const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 /**
- * TODO: Keep a running tally of errors because the logger stats do not reset between SUSHI runs
- * If we have a way to clear the stats in the logger, these variables should be removed and we can
- * just use stats.numError and stats.numWarn similar to SUSHI.
- */
-let startingErrors = 0;
-let startingWarns = 0;
-
-/**
  * Load dependencies (FHIR R4) and run SUSHI on provided text
  *
  * @param {string} input - string containing FSH text
@@ -32,6 +24,8 @@ let startingWarns = 0;
  * @returns Package with FHIR resources
  */
 export async function runSUSHI(input, config, dependencyArr) {
+  stats.reset();
+
   // Load dependencies
   let defs = new FHIRDefinitions();
   let helperUpdate = await checkForDatabaseUpgrade(dependencyArr);
@@ -72,9 +66,7 @@ export async function runSUSHI(input, config, dependencyArr) {
   const outPackage = exportFHIR(tank, defs);
 
   console.log(' ');
-  const { errors, warns } = printResults(outPackage, startingErrors, startingWarns);
-  startingErrors = errors;
-  startingWarns = warns;
+  printResults(outPackage);
 
   // Remove snapshots
   outPackage.profiles = outPackage.profiles.map((p) => p.toJSON(false));
@@ -83,9 +75,9 @@ export async function runSUSHI(input, config, dependencyArr) {
   return outPackage;
 }
 
-function printResults(pkg, startError, startWarn) {
-  const numError = stats.numError - startError;
-  const numWarn = stats.numWarn - startWarn;
+function printResults(pkg) {
+  const numError = stats.numError;
+  const numWarn = stats.numWarn;
   // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
   const prNum = pad(pkg.profiles.length.toString(), 8);
   const extnNum = pad(pkg.extensions.length.toString(), 10);
@@ -94,16 +86,9 @@ function printResults(pkg, startError, startWarn) {
   const insNum = pad(pkg.instances.length.toString(), 9);
   const errorNumMsg = pad(`${numError} Error${numError !== 1 ? 's' : ''}`, 13);
   const wrNumMsg = padStart(`${numWarn} Warning${numWarn !== 1 ? 's' : ''}`, 12);
-  let resultStatus;
-  if (numError === 0 && numWarn === 0) {
-    resultStatus = 'clean';
-  } else if (numError > 0) {
-    resultStatus = 'errors';
-  } else {
-    resultStatus = 'warnings';
-  }
+
   const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(numError, numWarn), 36);
-  const color = COLOR_MAP[resultStatus]; // eslint-disable-line no-unused-vars
+  const color = numError > 0 ? 'red' : numWarn > 0 ? '#b36200' : 'green'; // eslint-disable-line no-unused-vars
 
   /* eslint-disable no-useless-concat */
   // NOTE: Doing some funky things w/ strings on some lines to keep overall alignment in the code
@@ -121,13 +106,6 @@ function printResults(pkg, startError, startWarn) {
   ];
   results.forEach((r) => console.log(r));
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
-  return { errors: numError, warns: numWarn };
 }
-
-const COLOR_MAP = {
-  clean: 'green',
-  warnings: '#b36200',
-  errors: 'red'
-};
 
 export default runSUSHI;
