@@ -40,7 +40,7 @@ export default function TopBar() {
                 <ThemeProvider theme={theme}>
                   <StylesProvider injectFirst>
                     <Typography order={2} classes={{ root: 'versionText' }}>
-                      Powered by SUSHI v1.1.0
+                      Powered by SUSHI v1.2.0
                     </Typography>
                   </StylesProvider>
                 </ThemeProvider>

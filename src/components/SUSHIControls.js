@@ -215,7 +215,7 @@ export default function SUSHIControls(props) {
               margin="dense"
               fullWidth
               label="Dependencies"
-              helperText="dependencyID#version, dependencyID#version"
+              helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#3.1.1)"
               defaultValue={dependencies}
               onChange={updateDependencyString}
             />
