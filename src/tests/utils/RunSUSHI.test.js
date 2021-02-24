@@ -1,4 +1,4 @@
-import { runSUSHI } from '../../utils/RunSUSHI';
+import { runSUSHI, runGoFSH } from '../../utils/RunSUSHI';
 import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
@@ -77,5 +77,69 @@ describe('#runSUSHI', () => {
     expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
     expect(fillTankSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
+  });
+});
+
+describe('#runGoFSH', () => {
+  const goFSHDefs = [
+    {
+      resourceType: 'Patient',
+      id: 'MyPatient',
+      name: [
+        {
+          family: 'Smith',
+          given: ['Jane']
+        }
+      ],
+      gender: 'female'
+    }
+  ];
+
+  it('should return a FSH definition without rules when we load invalid FHIRDefinitions', async () => {
+    const FHIRDefs = new FHIRDefinitions();
+    const dependencies = [];
+    const loadDefsSpy = jest
+      .spyOn(processing, 'loadExternalDependencies')
+      .mockReset()
+      .mockResolvedValue({ defs: FHIRDefs, emptyDependencies: [] });
+    const checkForDatabaseUpgradeSpy = jest
+      .spyOn(processing, 'checkForDatabaseUpgrade')
+      .mockReset()
+      .mockResolvedValue({ shouldUpdate: false, version: 1 });
+    const expectedFSH = ['Instance: MyPatient-of-Patient', 'InstanceOf: Patient', 'Usage: #example'].join('\n');
+    const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
+    expect(loadDefsSpy).toHaveBeenCalled();
+    expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
+    expect(outputFSH).toEqual(expectedFSH);
+  });
+
+  it('should return a string of FSH when proper JSON is entered and there are valid FHIRDefinitions', async () => {
+    const FHIRDefs = new FHIRDefinitions();
+    FHIRDefs.add(Patient);
+    FHIRDefs.add(StructureDefinition);
+    const dependencies = [];
+    const loadSpy = jest
+      .spyOn(processing, 'loadExternalDependencies')
+      .mockReset()
+      .mockResolvedValue({ defs: FHIRDefs, emptyDependencies: [] });
+    const checkForDatabaseUpgradeSpy = jest
+      .spyOn(processing, 'checkForDatabaseUpgrade')
+      .mockReset()
+      .mockResolvedValue({ shouldUpdate: false, version: 1 });
+
+    const expectedFSH = [
+      'Instance: MyPatient-of-Patient',
+      'InstanceOf: Patient',
+      'Usage: #example',
+      '* name[0].family = "Smith"',
+      '* name[0].given[0] = "Jane"',
+      '* gender = #female'
+    ].join('\n');
+
+    const outputFSH = await runGoFSH(goFSHDefs, { dependencies }, FHIRDefs);
+
+    expect(loadSpy).toHaveBeenCalled();
+    expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
+    expect(outputFSH).toEqual(expectedFSH);
   });
 });

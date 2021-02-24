@@ -4,7 +4,6 @@ import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
-import { sliceDependency } from '../../components/SUSHIControls';
 import SUSHIControls from '../../components/SUSHIControls';
 import * as runSUSHI from '../../utils/RunSUSHI';
 import * as bitlyWorker from '../../utils/BitlyWorker';
@@ -200,23 +199,6 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
 
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
-  });
-});
-
-describe('#sliceDependency()', () => {
-  it('should correctly parse a given array of dependencies', () => {
-    const input = 'hl7.fhir.us.core#3.1.1, , testing#123';
-    const returnArr = sliceDependency(input);
-    expect(returnArr).toEqual([
-      ['hl7.fhir.us.core', '3.1.1'],
-      ['testing', '123']
-    ]);
-  });
-
-  it('should correctly parse an empty array of dependencies', () => {
-    const input = '';
-    const returnArr = sliceDependency(input);
-    expect(returnArr).toEqual([]);
   });
 });
 

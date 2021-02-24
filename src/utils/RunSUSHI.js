@@ -1,6 +1,8 @@
 import { pad, padStart, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
+import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
 import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from './Processing';
+import { sliceDependency } from './helpers';
 
 const FSHTank = sushiImport.FSHTank;
 const RawFSH = sushiImport.RawFSH;
@@ -10,6 +12,73 @@ const stats = utils.stats;
 const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
+
+async function loadAndCleanDatabase(defs, dependencies) {
+  let helperUpdate = await checkForDatabaseUpgrade(dependencies);
+  let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
+
+  if (helperUpdate.shouldUpdate) {
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencies);
+    defs = loadExternalDependenciesReturn.defs;
+  } else {
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencies);
+    defs = loadExternalDependenciesReturn.defs;
+  }
+
+  // Cleans out database of any empty objectStores
+  await cleanDatabase(loadExternalDependenciesReturn.emptyDependencies, helperUpdate.version + 2);
+  return defs;
+}
+
+/**
+ * Run GoFSH
+ * @param {array} input array of JSON definitions to be processed
+ * @param {object} options - config options for GoFSH based on user input and defaults
+ * dependencies: user set, defaults to []
+ * @param {FHIRDefinitions} testDefs - this should only be used by the unit tests so they can provide their own definitions.
+ * @returns {string} the FSH
+ */
+export async function runGoFSH(input, options, testDefs = null) {
+  // Read in the resources, either as JSON objects or as strings
+  const docs = []; // WildFHIR[]
+  input.forEach((resource, i) => {
+    const location = `Input_${i}`;
+    if (typeof resource === 'string') {
+      try {
+        resource = JSON.parse(resource);
+      } catch (e) {
+        logger.error(`Could not parse ${location} to JSON`);
+        return;
+      }
+    }
+    if (gofshUtils.isProcessableContent(resource, location)) {
+      docs.push(new processor.WildFHIR(resource, location));
+    }
+  });
+
+  // Set up the FHIRProcessor
+  const lake = new processor.LakeOfFHIR(docs);
+  let defs = testDefs || new FHIRDefinitions(); // The tests pass in their own set of definitions to use
+  const fisher = new gofshUtils.MasterFisher(lake, defs);
+  const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
+
+  // Process the configuration
+  const configuration = fhirProcessor.processConfig(options.dependencies ?? []);
+
+  // Load dependencies, including those inferred from an IG file, and those given as input
+  let dependencies = configuration.config.dependencies
+    ? configuration.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
+    : [];
+  dependencies = sliceDependency(dependencies.join(','));
+  defs = await loadAndCleanDatabase(defs, dependencies);
+
+  // Process the FHIR to rules, and then export to FSH
+  const pkg = await gofshUtils.getResources(fhirProcessor, configuration);
+
+  // Return the string of FSH definitions
+  const fsh = new gofshExport.FSHExporter(pkg).apiExport('string'); // or use options.style
+  return fsh;
+}
 
 /**
  * Load dependencies (FHIR R4) and run SUSHI on provided text
@@ -28,19 +97,7 @@ export async function runSUSHI(input, config, dependencyArr) {
 
   // Load dependencies
   let defs = new FHIRDefinitions();
-  let helperUpdate = await checkForDatabaseUpgrade(dependencyArr);
-  let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
-
-  if (helperUpdate.shouldUpdate) {
-    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencyArr);
-    defs = loadExternalDependenciesReturn.defs;
-  } else {
-    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencyArr);
-    defs = loadExternalDependenciesReturn.defs;
-  }
-
-  // Cleans out database of any empty objectStores
-  await cleanDatabase(loadExternalDependenciesReturn.emptyDependencies, helperUpdate.version + 2);
+  defs = await loadAndCleanDatabase(defs, dependencyArr);
 
   // Load and fill FSH Tank
   let tank = FSHTank;
@@ -107,5 +164,3 @@ function printResults(pkg) {
   results.forEach((r) => console.log(r));
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
 }
-
-export default runSUSHI;
