@@ -106,7 +106,7 @@ describe('#runGoFSH', () => {
       .spyOn(processing, 'checkForDatabaseUpgrade')
       .mockReset()
       .mockResolvedValue({ shouldUpdate: false, version: 1 });
-    const expectedFSH = ['Instance: MyPatient-of-Patient', 'InstanceOf: Patient', 'Usage: #example'].join('\n');
+    const expectedFSH = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example'].join('\n');
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
     expect(loadDefsSpy).toHaveBeenCalled();
     expect(checkForDatabaseUpgradeSpy).toHaveBeenCalled();
@@ -128,7 +128,7 @@ describe('#runGoFSH', () => {
       .mockResolvedValue({ shouldUpdate: false, version: 1 });
 
     const expectedFSH = [
-      'Instance: MyPatient-of-Patient',
+      'Instance: MyPatient',
       'InstanceOf: Patient',
       'Usage: #example',
       '* name[0].family = "Smith"',
