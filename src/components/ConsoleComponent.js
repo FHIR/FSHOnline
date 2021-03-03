@@ -1,14 +1,32 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Button, Typography } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
+import WarningIcon from '@material-ui/icons/Warning';
+import ErrorIcon from '@material-ui/icons/Error';
 
 const useStyles = makeStyles((theme) => ({
+  consoleControls: {
+    padding: theme.spacing(1),
+    color: '#C0C0C0',
+    background: '#C0C0C0',
+    height: '1vh',
+    display: 'flex;',
+    alignItems: 'center',
+    justifyContent: 'left'
+  },
   box: {
     padding: theme.spacing(2),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
     height: '200%'
+  },
+  warning: {
+    color: 'khaki'
+  },
+  error: {
+    color: 'red'
   },
   pre: {
     margin: '0px'
@@ -24,9 +42,27 @@ const theme = createMuiTheme({
 export default function Console(props) {
   const classes = useStyles();
 
+  const toggleExpandConsole = () => {
+    props.setExpandConsole(!props.expandConsole);
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box} overflow="scroll">
+      <Box className={classes.consoleControls}>
+        <Button onClick={toggleExpandConsole}>
+          {props.expandConsole ? 'Collapse Console   ' : 'Expand Console   '}
+          <ImportExportIcon />
+          <WarningIcon className={classes.warning} />
+          {props.warningCount} Warnings
+          <ErrorIcon className={classes.error} />
+          {props.errorCount} Errors
+        </Button>
+      </Box>
+      <Box
+        style={{ display: props.expandConsole ? 'block' : 'none', height: '30vh' }}
+        className={classes.box}
+        overflow="scroll"
+      >
         <Typography variant="subtitle1">Console</Typography>
         {props.consoleMessages.map((message, i) => {
           return (

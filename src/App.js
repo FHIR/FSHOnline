@@ -14,20 +14,24 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1
   },
   itemTop: {
-    height: '75vh'
+    height: '85vh'
   },
-  itemBottom: {
-    height: '25vh'
+  console: {
+    height: '20vh'
   }
 }));
 
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
+let errorCount = 0;
+let warningCount = 0;
 console.log = function getMessages(message) {
   consoleMessages.push(message);
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     errorAndWarningMessages.push(message);
+    if (message.startsWith('error')) errorCount++;
+    else warningCount++;
   }
 };
 
@@ -56,6 +60,7 @@ export default function App(props) {
   const [initialText, setInitialText] = useState('Edit FSH here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
+  const [expandConsole, setExpandConsole] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -67,6 +72,8 @@ export default function App(props) {
   function resetLogMessages() {
     consoleMessages = [];
     errorAndWarningMessages = [];
+    errorCount = 0;
+    warningCount = 0;
   }
 
   function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject) {
@@ -84,10 +91,10 @@ export default function App(props) {
       <TopBar />
       <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
-        <Grid className={classes.itemTop} item xs={6}>
+        <Grid style={{ height: expandConsole ? '55vh' : '85vh' }} item xs={6}>
           <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
         </Grid>
-        <Grid className={classes.itemTop} item xs={6}>
+        <Grid style={{ height: expandConsole ? '55vh' : '85vh' }} item xs={6}>
           <JSONOutput
             displaySUSHI={doRunSUSHI}
             text={outputText}
@@ -95,8 +102,15 @@ export default function App(props) {
             errorsAndWarnings={errorAndWarningMessages}
           />
         </Grid>
-        <Grid className={classes.itemBottom} item xs={12}>
-          <ConsoleComponent consoleMessages={consoleMessages} />
+        <Grid item xs={12}>
+          <ConsoleComponent
+            style={{ height: expandConsole ? '35vh' : '20vh' }}
+            consoleMessages={consoleMessages}
+            warningCount={warningCount}
+            errorCount={errorCount}
+            expandConsole={expandConsole}
+            setExpandConsole={setExpandConsole}
+          />
         </Grid>
       </Grid>
     </div>

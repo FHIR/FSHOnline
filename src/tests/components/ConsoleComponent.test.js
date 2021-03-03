@@ -17,7 +17,7 @@ afterEach(() => {
 
 it('Renders with the appropriate label', () => {
   const { getByText } = render(<ConsoleComponent consoleMessages={[]} />, container);
-  const textElement = getByText(/Console/i);
+  const textElement = getByText('Console');
 
   expect(textElement).toBeInTheDocument();
 });
