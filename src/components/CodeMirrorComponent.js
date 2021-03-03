@@ -25,7 +25,7 @@ CodeMirror.defineSimpleMode('fsh', {
     },
     {
       // NOTE: Original regex has (?<=\s) at start and (?=\s) at the end. However, there are known shortcomings with look ahead/look behind with the simple mode approach
-      regex: /\b(and|codes|contains|exclude|from|includes|is-a|is-not-a|named|obeys|only|or|system|units|valueset|where|D|MS|N|SU|TU|\\?!)\b/,
+      regex: /\b(and|codes|contains|descendent-of|exclude|exists|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|system|units|valueset|where|D|MS|N|SU|TU|\\?!)\b/,
       token: 'def'
     },
     {
