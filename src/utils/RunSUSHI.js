@@ -32,6 +32,10 @@ async function loadAndCleanDatabase(defs, dependencies) {
 
 /**
  * Run GoFSH
+ * Note: This function is very similar to FhirToFsh in GoFSH.
+ * The only difference is that FSH Online must load dependencies into IndexedDB.
+ * If FhirToFsh ever supports a way to load dependencies in the browser,
+ * we can update this to simply use that function.
  * @param {array} input array of JSON definitions to be processed
  * @param {object} options - config options for GoFSH based on user input and defaults
  * dependencies: user set, defaults to []
@@ -76,7 +80,7 @@ export async function runGoFSH(input, options, testDefs = null) {
   const pkg = await gofshUtils.getResources(fhirProcessor, configuration);
 
   // Return the string of FSH definitions
-  const fsh = new gofshExport.FSHExporter(pkg).apiExport('string'); // or use options.style
+  const fsh = new gofshExport.FSHExporter(pkg).apiExport('string');
   return fsh;
 }
 
