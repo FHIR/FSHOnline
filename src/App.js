@@ -91,10 +91,10 @@ export default function App(props) {
       <TopBar />
       <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
-        <Grid style={{ height: expandConsole ? '55vh' : '85vh' }} item xs={6}>
+        <Grid style={{ height: expandConsole ? '55vh' : '86vh' }} item xs={6}>
           <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
         </Grid>
-        <Grid style={{ height: expandConsole ? '55vh' : '85vh' }} item xs={6}>
+        <Grid style={{ height: expandConsole ? '54.6vh' : '85.6vh' }} item xs={6}>
           <JSONOutput
             displaySUSHI={doRunSUSHI}
             text={outputText}

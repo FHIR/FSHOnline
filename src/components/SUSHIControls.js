@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
     background: theme.palette.background.paper,
-    height: '4vh',
+    height: '3vh',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'center'

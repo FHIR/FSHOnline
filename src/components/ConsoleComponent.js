@@ -9,7 +9,6 @@ import ErrorIcon from '@material-ui/icons/Error';
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
     padding: theme.spacing(1),
-    color: '#C0C0C0',
     background: '#C0C0C0',
     height: '1vh',
     display: 'flex;',
@@ -19,8 +18,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: theme.spacing(2),
     color: theme.palette.common.white,
-    background: theme.palette.common.black,
-    height: '200%'
+    background: theme.palette.common.black
   },
   warning: {
     color: 'khaki'
@@ -48,7 +46,10 @@ export default function Console(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.consoleControls}>
+      <Box
+        className={classes.consoleControls}
+        style={{ borderBottom: !props.expandConsole ? '5px solid #2c4f85' : '' }}
+      >
         <Button onClick={toggleExpandConsole}>
           {props.expandConsole ? 'Collapse Console   ' : 'Expand Console   '}
           <ImportExportIcon />
@@ -59,7 +60,7 @@ export default function Console(props) {
         </Button>
       </Box>
       <Box
-        style={{ display: props.expandConsole ? 'block' : 'none', height: '30vh' }}
+        style={{ display: props.expandConsole ? 'block' : 'none', height: '28vh', borderBottom: '2px solid black' }}
         className={classes.box}
         overflow="scroll"
       >
