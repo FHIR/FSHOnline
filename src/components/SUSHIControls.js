@@ -221,7 +221,9 @@ export default function SUSHIControls(props) {
       ]
     };
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
-    const fsh = await runGoFSH([exInput, exPatient, exIG], { dependencies: parsedDependencies }); //eslint-disable-line no-unused-vars
+    const options = { dependencies: parsedDependencies };
+    //eslint-disable-next-line no-unused-vars
+    const fsh = await runGoFSH([JSON.stringify(exInput), JSON.stringify(exPatient), JSON.stringify(exIG)], options);
   }
 
   return (

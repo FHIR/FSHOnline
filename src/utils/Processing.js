@@ -13,6 +13,23 @@ export function fillTank(rawFSHes, config) {
   return new FSHTank(docs, config);
 }
 
+export async function loadAndCleanDatabase(defs, dependencies) {
+  let helperUpdate = await checkForDatabaseUpgrade(dependencies);
+  let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
+
+  if (helperUpdate.shouldUpdate) {
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencies);
+    defs = loadExternalDependenciesReturn.defs;
+  } else {
+    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencies);
+    defs = loadExternalDependenciesReturn.defs;
+  }
+
+  // Cleans out database of any empty objectStores
+  await cleanDatabase(loadExternalDependenciesReturn.emptyDependencies, helperUpdate.version + 2);
+  return defs;
+}
+
 export function cleanDatabase(emptyDependencies, version, databaseName = 'FSH Playground Dependencies') {
   const mergedEmpties = flatten(emptyDependencies);
   return new Promise((resolve, reject) => {

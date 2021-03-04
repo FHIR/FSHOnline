@@ -1,7 +1,7 @@
 import { pad, padStart, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
-import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from './Processing';
+import { fillTank, loadAndCleanDatabase } from './Processing';
 import { sliceDependency } from './helpers';
 
 const FSHTank = sushiImport.FSHTank;
@@ -12,23 +12,6 @@ const stats = utils.stats;
 const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
-
-async function loadAndCleanDatabase(defs, dependencies) {
-  let helperUpdate = await checkForDatabaseUpgrade(dependencies);
-  let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
-
-  if (helperUpdate.shouldUpdate) {
-    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version + 1, dependencies);
-    defs = loadExternalDependenciesReturn.defs;
-  } else {
-    loadExternalDependenciesReturn = await loadExternalDependencies(defs, helperUpdate.version, dependencies);
-    defs = loadExternalDependenciesReturn.defs;
-  }
-
-  // Cleans out database of any empty objectStores
-  await cleanDatabase(loadExternalDependenciesReturn.emptyDependencies, helperUpdate.version + 2);
-  return defs;
-}
 
 /**
  * Run GoFSH
@@ -42,18 +25,16 @@ async function loadAndCleanDatabase(defs, dependencies) {
  * @param {FHIRDefinitions} testDefs - this should only be used by the unit tests so they can provide their own definitions.
  * @returns {string} the FSH
  */
-export async function runGoFSH(input, options, testDefs = null) {
-  // Read in the resources, either as JSON objects or as strings
-  const docs = []; // WildFHIR[]
+export async function runGoFSH(input, options) {
+  // Read in the resources as strings
+  const docs = [];
   input.forEach((resource, i) => {
     const location = `Input_${i}`;
-    if (typeof resource === 'string') {
-      try {
-        resource = JSON.parse(resource);
-      } catch (e) {
-        logger.error(`Could not parse ${location} to JSON`);
-        return;
-      }
+    try {
+      resource = JSON.parse(resource);
+    } catch (e) {
+      logger.error(`Could not parse ${location} to JSON`);
+      return;
     }
     if (gofshUtils.isProcessableContent(resource, location)) {
       docs.push(new processor.WildFHIR(resource, location));
@@ -62,7 +43,7 @@ export async function runGoFSH(input, options, testDefs = null) {
 
   // Set up the FHIRProcessor
   const lake = new processor.LakeOfFHIR(docs);
-  let defs = testDefs || new FHIRDefinitions(); // The tests pass in their own set of definitions to use
+  let defs = new FHIRDefinitions();
   const fisher = new gofshUtils.MasterFisher(lake, defs);
   const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
 
