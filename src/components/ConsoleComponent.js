@@ -5,6 +5,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
+import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
@@ -25,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
   error: {
     color: 'red'
+  },
+  success: {
+    color: 'green'
   },
   pre: {
     margin: '0px'
@@ -53,10 +57,17 @@ export default function Console(props) {
         <Button onClick={toggleExpandConsole}>
           {props.expandConsole ? 'Collapse Console   ' : 'Expand Console   '}
           <ImportExportIcon />
-          <WarningIcon className={classes.warning} />
-          {props.warningCount} Warnings
-          <ErrorIcon className={classes.error} />
-          {props.errorCount} Errors
+          <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
+          {props.warningCount ? `${props.warningCount}` : ''}
+          <ErrorIcon style={{ display: props.errorCount ? 'block' : 'none' }} className={classes.error} />
+          {props.errorCount ? `${props.errorCount}` : ''}
+          <CheckIcon
+            className={classes.success}
+            style={{
+              display: props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? 'block' : 'none'
+            }}
+          />
+          {props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? `Success!` : ''}
         </Button>
       </Box>
       <Box

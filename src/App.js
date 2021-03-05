@@ -24,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
+let errorString = '';
+let warningString = '';
 let errorCount = 0;
 let warningCount = 0;
 console.log = function getMessages(message) {
@@ -32,6 +34,14 @@ console.log = function getMessages(message) {
     errorAndWarningMessages.push(message);
     if (message.startsWith('error')) errorCount++;
     else warningCount++;
+  }
+  if (errorCount > 0) {
+    errorString = `${errorCount} Error`;
+    if (errorCount !== 1) errorString += 's';
+  }
+  if (warningCount > 0) {
+    warningString = `${warningCount} Warning`;
+    if (warningCount !== 1) warningString += 's';
   }
 };
 
@@ -72,6 +82,8 @@ export default function App(props) {
   function resetLogMessages() {
     consoleMessages = [];
     errorAndWarningMessages = [];
+    errorString = '';
+    warningString = '';
     errorCount = 0;
     warningCount = 0;
   }
@@ -106,8 +118,8 @@ export default function App(props) {
           <ConsoleComponent
             style={{ height: expandConsole ? '35vh' : '20vh' }}
             consoleMessages={consoleMessages}
-            warningCount={warningCount}
-            errorCount={errorCount}
+            warningCount={warningString}
+            errorCount={errorString}
             expandConsole={expandConsole}
             setExpandConsole={setExpandConsole}
           />
