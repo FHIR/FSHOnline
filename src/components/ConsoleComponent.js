@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   consoleControls: {
     padding: theme.spacing(1),
     background: '#C0C0C0',
-    height: '1vh',
+    height: '.8vh',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'left'
@@ -19,7 +19,10 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: theme.spacing(2),
     color: theme.palette.common.white,
-    background: theme.palette.common.black
+    background: theme.palette.common.black,
+    height: '28vh',
+    borderBottom: '4px solid #2c4f85',
+    overflow: 'scroll'
   },
   warning: {
     color: 'khaki'
@@ -52,11 +55,11 @@ export default function Console(props) {
     <ThemeProvider theme={theme}>
       <Box
         className={classes.consoleControls}
-        style={{ borderBottom: !props.expandConsole ? '5px solid #2c4f85' : '' }}
+        style={{ borderBottom: !props.expandConsole ? '6px solid #2c4f85' : '' }}
       >
         <Button onClick={toggleExpandConsole}>
-          {props.expandConsole ? 'Collapse Console   ' : 'Expand Console   '}
           <ImportExportIcon />
+          {props.expandConsole ? 'Collapse Console' : 'Expand Console'}
           <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
           {props.warningCount ? `${props.warningCount}` : ''}
           <ErrorIcon style={{ display: props.errorCount ? 'block' : 'none' }} className={classes.error} />
@@ -70,11 +73,7 @@ export default function Console(props) {
           {props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? `Success!` : ''}
         </Button>
       </Box>
-      <Box
-        style={{ display: props.expandConsole ? 'block' : 'none', height: '28vh', borderBottom: '2px solid black' }}
-        className={classes.box}
-        overflow="scroll"
-      >
+      <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
         <Typography variant="subtitle1">Console</Typography>
         {props.consoleMessages.map((message, i) => {
           return (
