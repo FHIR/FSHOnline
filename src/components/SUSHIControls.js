@@ -89,7 +89,7 @@ export default function SUSHIControls(props) {
   };
 
   const handleOpenShare = async () => {
-    const encoded = deflateSync(props.text).toString('base64');
+    const encoded = deflateSync(props.fshText).toString('base64');
     const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {
@@ -139,11 +139,11 @@ export default function SUSHIControls(props) {
   //Sets the doRunSUSHI to true
   async function handleRunClick() {
     props.resetLogMessages();
-    props.onClick(true, 'Loading...', false);
+    props.onClick(true, 'Loading...', false, true);
     let isObject = true;
     const dependencyArr = sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
-    const outPackage = await runSUSHI(props.text, config, dependencyArr);
+    const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -161,69 +161,15 @@ export default function SUSHIControls(props) {
       jsonOutput = '';
     }
 
-    props.onClick(true, jsonOutput, isObject);
+    props.onClick(true, jsonOutput, isObject, false);
   }
 
   async function handleGoFSHClick() {
-    const exInput = {
-      resourceType: 'Observation',
-      id: 'example',
-      status: 'final',
-      code: {
-        coding: [
-          {
-            code: 'bar',
-            system: 'http://foo.org'
-          }
-        ]
-      },
-      subject: {
-        reference: 'Patient/example'
-      }
-    };
-    const exPatient = {
-      resourceType: 'Patient',
-      id: 'MyPatient',
-      name: [
-        {
-          family: 'Smith',
-          given: ['Jane']
-        }
-      ],
-      maritalStatus: {
-        coding: [
-          {
-            code: 'M',
-            display: 'Married'
-          }
-        ]
-      }
-    };
-    const exIG = {
-      resourceType: 'ImplementationGuide',
-      url: 'http://example.org/tests/ImplementationGuide/bigger.ig',
-      fhirVersion: ['4.0.1'],
-      id: 'bigger.ig',
-      name: 'BiggerImplementationGuideForTesting',
-      status: 'active',
-      version: '0.12',
-      dependsOn: [
-        {
-          uri: 'http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core',
-          packageId: 'hl7.fhir.us.core',
-          version: '3.1.0'
-        },
-        {
-          uri: 'http://hl7.org/fhir/us/mcode/ImplementationGuide/hl7.fhir.us.mcode',
-          packageId: 'hl7.fhir.us.mcode',
-          version: '1.0.0'
-        }
-      ]
-    };
+    const gofshInputStrings = [];
+    props.gofshText.forEach((def) => gofshInputStrings.push(JSON.stringify(def)));
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
     const options = { dependencies: parsedDependencies };
-    //eslint-disable-next-line no-unused-vars
-    const fsh = await runGoFSH([JSON.stringify(exInput), JSON.stringify(exPatient), JSON.stringify(exIG)], options);
+    const fsh = await runGoFSH(gofshInputStrings, options); // eslint-disable-line no-unused-vars
   }
 
   return (

@@ -52,10 +52,11 @@ export default function App(props) {
   const classes = useStyles();
   const text64 = props.match.params;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
-  const [inputText, setInputText] = useState('Edit FSH here!');
+  const [inputFSHText, setInputFSHText] = useState('Edit and view FSH here!');
+  const [inputGoFSHText, setInputGoFSHText] = useState('Edit and view FHIR Definitions here!');
   const [initialText, setInitialText] = useState('Edit FSH here!');
-  const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
+  const [isWaitingForOutput, setIsWaitingForOutput] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -69,30 +70,48 @@ export default function App(props) {
     errorAndWarningMessages = [];
   }
 
-  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject) {
+  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
     setDoRunSUSHI(doRunSUSHI);
-    setOutputText(sushiOutput);
+    setInputGoFSHText(sushiOutput);
     setIsOutputObject(isObject);
+    setIsWaitingForOutput(isWaiting);
   }
 
-  function updateInputTextValue(text) {
-    setInputText(text);
+  function updateInputFSHTextValue(text) {
+    setInputFSHText(text);
+  }
+
+  function updateInputGoFSHTextValue(text) {
+    setInputGoFSHText(text);
   }
 
   return (
     <div className="root">
       <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      <SUSHIControls
+        onClick={handleSUSHIControls}
+        fshText={inputFSHText}
+        gofshText={inputGoFSHText}
+        resetLogMessages={resetLogMessages}
+      />
       <Grid className={classes.container} container>
         <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+          <CodeMirrorComponent
+            value={inputFSHText}
+            initialText={initialText}
+            updateTextValue={updateInputFSHTextValue}
+            mode={'fsh'}
+          />
         </Grid>
         <Grid className={classes.itemTop} item xs={6}>
           <JSONOutput
             displaySUSHI={doRunSUSHI}
-            text={outputText}
+            text={inputGoFSHText}
             isObject={isOutputObject}
+            isWaiting={isWaitingForOutput}
             errorsAndWarnings={errorAndWarningMessages}
+            updateTextValue={updateInputGoFSHTextValue}
+            setIsOutputObject={setIsOutputObject}
           />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>
