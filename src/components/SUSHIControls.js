@@ -9,7 +9,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { runSUSHI } from '../utils/RunSUSHI';
+import { runSUSHI, runGoFSH } from '../utils/RunSUSHI';
+import { sliceDependency } from '../utils/helpers';
 import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
 
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.success.dark,
     textTransform: 'none',
     fontWeight: 'bold',
+    marginLeft: '5px',
     '&:hover': {
       background: theme.palette.success.main
     }
@@ -65,20 +67,6 @@ function replacer(key, value) {
     return undefined;
   }
   return value;
-}
-
-export function sliceDependency(dependencies) {
-  let returnArr = [];
-  const arr = dependencies.split(',');
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = arr[i].trim();
-    if (arr[i] === '') {
-      continue;
-    }
-    let singleDep = arr[i].split('#');
-    returnArr.push([singleDep[0], singleDep[1]]);
-  }
-  return returnArr;
 }
 
 export default function SUSHIControls(props) {
@@ -176,17 +164,82 @@ export default function SUSHIControls(props) {
     props.onClick(true, jsonOutput, isObject);
   }
 
+  async function handleGoFSHClick() {
+    const exInput = {
+      resourceType: 'Observation',
+      id: 'example',
+      status: 'final',
+      code: {
+        coding: [
+          {
+            code: 'bar',
+            system: 'http://foo.org'
+          }
+        ]
+      },
+      subject: {
+        reference: 'Patient/example'
+      }
+    };
+    const exPatient = {
+      resourceType: 'Patient',
+      id: 'MyPatient',
+      name: [
+        {
+          family: 'Smith',
+          given: ['Jane']
+        }
+      ],
+      maritalStatus: {
+        coding: [
+          {
+            code: 'M',
+            display: 'Married'
+          }
+        ]
+      }
+    };
+    const exIG = {
+      resourceType: 'ImplementationGuide',
+      url: 'http://example.org/tests/ImplementationGuide/bigger.ig',
+      fhirVersion: ['4.0.1'],
+      id: 'bigger.ig',
+      name: 'BiggerImplementationGuideForTesting',
+      status: 'active',
+      version: '0.12',
+      dependsOn: [
+        {
+          uri: 'http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core',
+          packageId: 'hl7.fhir.us.core',
+          version: '3.1.0'
+        },
+        {
+          uri: 'http://hl7.org/fhir/us/mcode/ImplementationGuide/hl7.fhir.us.mcode',
+          packageId: 'hl7.fhir.us.mcode',
+          version: '1.0.0'
+        }
+      ]
+    };
+    const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
+    const options = { dependencies: parsedDependencies };
+    //eslint-disable-next-line no-unused-vars
+    const fsh = await runGoFSH([JSON.stringify(exInput), JSON.stringify(exPatient), JSON.stringify(exIG)], options);
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={classes.box} borderLeft={1} borderRight={1}>
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
-          Run
+          Run SUSHI
         </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenConfig}>
           Configuration
         </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenShare}>
           Share
+        </Button>
+        <Button className={classes.button} onClick={handleGoFSHClick}>
+          Run GoFSH
         </Button>
         <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
