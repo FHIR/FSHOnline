@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '30vh',
+    height: '29vh',
     overflow: 'scroll',
     borderBottom: '4px solid #2c4f85'
   },
