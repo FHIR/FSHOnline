@@ -9,20 +9,19 @@ import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
-    padding: theme.spacing(1),
     background: '#C0C0C0',
-    height: '.8vh',
+    height: '2.5vh',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'left'
   },
   box: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '28vh',
-    borderBottom: '4px solid #2c4f85',
-    overflow: 'scroll'
+    height: '30vh',
+    overflow: 'scroll',
+    borderBottom: '4px solid #2c4f85'
   },
   warning: {
     color: 'khaki'

@@ -12,12 +12,6 @@ import SUSHIControls from './components/SUSHIControls';
 const useStyles = makeStyles((theme) => ({
   container: {
     flexGrow: 1
-  },
-  itemTop: {
-    height: '85vh'
-  },
-  console: {
-    height: '20vh'
   }
 }));
 
@@ -99,7 +93,7 @@ export default function App(props) {
   }
 
   return (
-    <div className="root">
+    <div className="root" style={{ overflow: 'hidden', height: '100vh' }}>
       <TopBar />
       <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
       <Grid className={classes.container} container>
@@ -116,7 +110,6 @@ export default function App(props) {
         </Grid>
         <Grid item xs={12}>
           <ConsoleComponent
-            style={{ height: expandConsole ? '35vh' : '20vh' }}
             consoleMessages={consoleMessages}
             warningCount={warningString}
             errorCount={errorString}
