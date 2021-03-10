@@ -186,7 +186,7 @@ export default function SUSHIControls(props) {
         <Button className={classes.secondaryButton} onClick={handleOpenShare}>
           Share
         </Button>
-        <Button className={classes.button} onClick={handleGoFSHClick}>
+        <Button className={classes.button} onClick={handleGoFSHClick} testid="GoFSH-button">
           Run GoFSH
         </Button>
         <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">

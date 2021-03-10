@@ -101,6 +101,27 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   });
 });
 
+it('calls GoFSH function and returns FSH', async () => {
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = jest.fn();
+  const runGoFSHSpy = jest.spyOn(runSUSHI, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
+
+  act(() => {
+    render(<SUSHIControls onGoFSHClick={onGoFSHClick} gofshText={[]} />, container);
+  });
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await wait(() => {
+    expect(runGoFSHSpy).toHaveBeenCalled();
+    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
+    expect(onGoFSHClick).toHaveBeenCalledWith('Loading...', true);
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+  });
+});
+
 it('uses user provided canonical when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
