@@ -89,23 +89,3 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
   expect(resultsElement).toBeInTheDocument(); // isObject is true so results are printed
   expect(resultsElement.parentNode.text).toEqual();
 });
-
-// TODO: determine if/how we display error content somewhere
-it.skip('Renders error messages if present', () => {
-  const { getByText } = render(
-    <JSONOutput
-      displaySUSHI={true}
-      isObject={false}
-      text={'Hello World'}
-      errorsAndWarnings={['error Unexpected input', 'error Something else wrong']}
-    />,
-    container
-  );
-  const errorHeading = getByText(/Errors/);
-  const firstError = getByText(/Unexpected input/);
-  const secondError = getByText(/Something else wrong/);
-
-  expect(errorHeading).toBeInTheDocument();
-  expect(firstError).toBeInTheDocument();
-  expect(secondError).toBeInTheDocument();
-});

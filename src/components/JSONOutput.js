@@ -40,7 +40,7 @@ export default function JSONOutput(props) {
   const classes = useStyles();
   const [fhirDefinitions, setFhirDefinitions] = useState([]);
   const { setIsOutputObject } = props;
-  const [currentDef, setCurrentDef] = useState(0); // JULIA will update with file explorer
+  const [currentDef, setCurrentDef] = useState(0);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
