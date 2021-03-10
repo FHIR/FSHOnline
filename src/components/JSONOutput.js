@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Grid } from '@material-ui/core';
+import { Box, Grid, List, ListItem } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
@@ -10,6 +10,13 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
     height: '100%',
     noWrap: false
+  },
+  list: {
+    padding: 0
+  },
+  listItem: {
+    padding: 0,
+    margin: 0
   }
 }));
 
@@ -47,7 +54,7 @@ export default function JSONOutput(props) {
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet
-    if (props.isWaiting) return;
+    if (props.isWaiting || !props.displaySUSHI) return;
 
     // Update the definition we're currently editing
     const updatedDefs = fhirDefinitions;
@@ -60,8 +67,19 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
-  // TODO: need somewhere to display error content?
-  const displayValue = fhirDefinitions.length ? JSON.stringify(fhirDefinitions[currentDef], null, 2) : props.text;
+  const renderFileTreeView = () => {
+    return (
+      <List component="nav" className={classes.list}>
+        {fhirDefinitions.map((a, i) => (
+          <ListItem button key={i} className={classes.listItem} onClick={() => setCurrentDef(i)}>
+            {`${a.resourceType}/${a.id}`}
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
+
+  const displayValue = fhirDefinitions.length > 0 ? JSON.stringify(fhirDefinitions[currentDef], null, 2) : props.text;
 
   return (
     <ThemeProvider theme={theme}>
@@ -73,12 +91,11 @@ export default function JSONOutput(props) {
               initialText={displayValue}
               updateTextValue={updateTextValue}
               mode={'application/json'}
+              placeholder={'Edit and view FHIR Definitions here!'}
             />
           </Grid>
           <Grid item xs={3}>
-            {fhirDefinitions.map((a, i) => (
-              <button key={i} onClick={() => setCurrentDef(i)}>{`${a.resourceType}/${a.id}`}</button>
-            ))}
+            {renderFileTreeView()}
           </Grid>
         </Grid>
       </Box>

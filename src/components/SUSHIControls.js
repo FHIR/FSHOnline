@@ -165,11 +165,13 @@ export default function SUSHIControls(props) {
   }
 
   async function handleGoFSHClick() {
+    props.onGoFSHClick('Loading...', true);
     const gofshInputStrings = [];
     props.gofshText.forEach((def) => gofshInputStrings.push(JSON.stringify(def)));
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
     const options = { dependencies: parsedDependencies };
-    const fsh = await runGoFSH(gofshInputStrings, options); // eslint-disable-line no-unused-vars
+    const fsh = await runGoFSH(gofshInputStrings, options);
+    props.onGoFSHClick(fsh, false);
   }
 
   return (

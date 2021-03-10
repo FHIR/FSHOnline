@@ -7,6 +7,7 @@ import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 require('codemirror/addon/mode/simple');
+require('codemirror/addon/display/placeholder');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 
@@ -80,6 +81,7 @@ export default function CodeMirrorComponent(props) {
         options={{
           mode: props.mode,
           theme: 'material',
+          placeholder: props.placeholder,
           lineNumbers: true
         }}
         onChange={(editor, data, value) => {
