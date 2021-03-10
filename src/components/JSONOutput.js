@@ -42,7 +42,6 @@ export default function JSONOutput(props) {
       setIsOutputObject(false);
       const packageJSON = JSON.parse(props.text);
       setFhirDefinitions(getIterablePackage(packageJSON));
-      console.log(getIterablePackage(packageJSON));
     }
   }, [props.displaySUSHI, props.text, props.isObject, setIsOutputObject]);
 
