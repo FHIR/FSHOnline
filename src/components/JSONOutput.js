@@ -54,10 +54,10 @@ export default function JSONOutput(props) {
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet
-    if (props.isWaiting || !props.displaySUSHI) return;
+    if (props.isWaiting) return;
 
     // Update the definition we're currently editing
-    const updatedDefs = fhirDefinitions;
+    const updatedDefs = [...fhirDefinitions];
     try {
       updatedDefs[currentDef] = JSON.parse(text);
     } catch (e) {
