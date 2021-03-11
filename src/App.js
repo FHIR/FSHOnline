@@ -11,7 +11,30 @@ import SUSHIControls from './components/SUSHIControls';
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    height: '100%',
     flexGrow: 1
+  },
+  fullHeightGrid: {
+    height: '100%'
+  },
+  collapsedMain: {
+    width: '100%',
+    height: 'calc(100vh - 120px - 300px)'
+  },
+  expandedMain: {
+    width: '100%',
+    height: 'calc(100vh - 120px - 25px)'
+  },
+  collapsedConsole: {
+    height: '25px',
+    width: '100%'
+  },
+  expandedConsole: {
+    height: '300px',
+    width: '100%'
+  },
+  top: {
+    height: '120px'
   }
 }));
 
@@ -93,31 +116,35 @@ export default function App(props) {
   }
 
   return (
-    <div className="root" style={{ overflow: 'hidden', height: '100vh' }}>
-      <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
-      <Grid className={classes.container} container>
-        <Grid style={{ height: expandConsole ? '55vh' : '85.3vh' }} item xs={6}>
-          <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+    <div className="root" style={{ height: '100vh' }}>
+      <div className={classes.top}>
+        <TopBar />
+        <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      </div>
+      <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
+        <Grid className={classes.container} container>
+          <Grid item xs={6} className={classes.fullHeightGrid}>
+            <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+          </Grid>
+          <Grid item xs={6} className={classes.fullHeightGrid}>
+            <JSONOutput
+              displaySUSHI={doRunSUSHI}
+              text={outputText}
+              isObject={isOutputObject}
+              errorsAndWarnings={errorAndWarningMessages}
+            />
+          </Grid>
         </Grid>
-        <Grid style={{ height: expandConsole ? '54.6vh' : '84.9vh' }} item xs={6}>
-          <JSONOutput
-            displaySUSHI={doRunSUSHI}
-            text={outputText}
-            isObject={isOutputObject}
-            errorsAndWarnings={errorAndWarningMessages}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <ConsoleComponent
-            consoleMessages={consoleMessages}
-            warningCount={warningString}
-            errorCount={errorString}
-            expandConsole={expandConsole}
-            setExpandConsole={setExpandConsole}
-          />
-        </Grid>
-      </Grid>
+      </div>
+      <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
+        <ConsoleComponent
+          consoleMessages={consoleMessages}
+          warningCount={warningString}
+          errorCount={errorString}
+          expandConsole={expandConsole}
+          setExpandConsole={setExpandConsole}
+        />
+      </div>
     </div>
   );
 }

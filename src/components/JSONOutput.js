@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     background: theme.palette.background.paper,
     height: '100%',
+    boxSizing: 'border-box',
     noWrap: false
   }
 }));

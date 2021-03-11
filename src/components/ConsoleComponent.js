@@ -10,17 +10,19 @@ import CheckIcon from '@material-ui/icons/Check';
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
     background: '#C0C0C0',
-    height: '2.5vh',
+    height: '25px',
+    boxSizing: 'border-box',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'left'
   },
   box: {
-    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '29vh',
+    height: 'calc(100% - 25px)',
     overflow: 'scroll',
+    boxSizing: 'border-box',
     borderBottom: '4px solid #2c4f85'
   },
   warning: {
@@ -54,9 +56,9 @@ export default function Console(props) {
     <ThemeProvider theme={theme}>
       <Box
         className={classes.consoleControls}
-        style={{ borderBottom: !props.expandConsole ? '6px solid #2c4f85' : '' }}
+        style={{ borderBottom: !props.expandConsole ? '4px solid #2c4f85' : '' }}
       >
-        <Button onClick={toggleExpandConsole}>
+        <Button onClick={toggleExpandConsole} style={{ padding: 0 }}>
           <ImportExportIcon />
           {props.expandConsole ? 'Collapse Console' : 'Expand Console'}
           <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
