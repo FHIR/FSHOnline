@@ -19,11 +19,11 @@ const useStyles = makeStyles((theme) => ({
   },
   collapsedMain: {
     width: '100%',
-    height: 'calc(100vh - 120px - 300px)'
+    height: 'calc(100vh - 116px - 300px)'
   },
   expandedMain: {
     width: '100%',
-    height: 'calc(100vh - 120px - 25px)'
+    height: 'calc(100vh - 116px - 25px)'
   },
   collapsedConsole: {
     height: '25px',
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   top: {
-    height: '120px'
+    height: '116px'
   }
 }));
 
