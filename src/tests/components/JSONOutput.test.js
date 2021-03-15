@@ -24,20 +24,17 @@ afterEach(() => {
   container = null;
 });
 
-it('Renders with the default text if displaySUSHI is false', () => {
+it('Renders with the default text if displaySUSHI is false, isObject is false, and no text', () => {
   // Initial case, nothing from SUSHI is displayed
   const { getByText } = render(
-    <JSONOutput displaySUSHI={false} text={'Hello World'} errorsAndWarnings={[]} />,
+    <JSONOutput displaySUSHI={false} isObject={false} text={''} errorsAndWarnings={[]} />,
     container
   );
 
   // Because the editor is in JSON mode, the text is split up differently than the fsh mode
-  const headerElement = getByText(
-    (content, element) => element.tagName.toLowerCase() === 'span' && content.startsWith('Hello')
-  );
+  const placeholderText = getByText('Edit and view FHIR Definitions here!');
 
-  expect(headerElement).toBeInTheDocument();
-  expect(headerElement.parentNode.textContent).toEqual('Hello World');
+  expect(placeholderText).toBeInTheDocument();
 });
 
 it('Renders with the proper text and updates with proper text when not an object', () => {

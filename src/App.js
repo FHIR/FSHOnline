@@ -77,9 +77,8 @@ export default function App(props) {
     setIsWaitingForOutput(isWaiting);
   }
 
-  function handleGoFSHControls(fshOutput, isWaiting) {
+  function handleGoFSHControls(fshOutput) {
     setInitialText(fshOutput);
-    setIsWaitingForOutput(isWaiting);
   }
 
   function updateInputFSHTextValue(text) {

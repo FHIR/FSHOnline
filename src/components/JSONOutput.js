@@ -38,6 +38,7 @@ const getIterablePackage = (defsPackage) => {
 
 export default function JSONOutput(props) {
   const classes = useStyles();
+  const [initialText, setInitialText] = useState('');
   const [fhirDefinitions, setFhirDefinitions] = useState([]);
   const { setIsOutputObject } = props;
   const [currentDef, setCurrentDef] = useState(0);
@@ -48,9 +49,14 @@ export default function JSONOutput(props) {
       // Indicate that we no longer have new data we need to load so we don't come back here too early
       setIsOutputObject(false);
       const packageJSON = JSON.parse(props.text);
-      setFhirDefinitions(getIterablePackage(packageJSON));
+      const iterablePackage = getIterablePackage(packageJSON);
+      setFhirDefinitions(iterablePackage);
+      setInitialText(iterablePackage.length > 0 ? JSON.stringify(iterablePackage[0], null, 2) : '');
+    } else if (props.isWaiting) {
+      // Set Loading... text
+      setInitialText(props.text);
     }
-  }, [props.displaySUSHI, props.text, props.isObject, setIsOutputObject]);
+  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, setIsOutputObject]);
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet
@@ -88,7 +94,7 @@ export default function JSONOutput(props) {
           <Grid item xs={9} style={{ height: '75vh' }}>
             <CodeMirrorComponent
               value={displayValue}
-              initialText={displayValue}
+              initialText={initialText}
               updateTextValue={updateTextValue}
               mode={'application/json'}
               placeholder={'Edit and view FHIR Definitions here!'}

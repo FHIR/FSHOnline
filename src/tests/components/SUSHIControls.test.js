@@ -117,8 +117,8 @@ it('calls GoFSH function and returns FSH', async () => {
   await wait(() => {
     expect(runGoFSHSpy).toHaveBeenCalled();
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
-    expect(onGoFSHClick).toHaveBeenCalledWith('Loading...', true);
-    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+    expect(onGoFSHClick).toHaveBeenCalledWith('Loading...');
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh);
   });
 });
 
