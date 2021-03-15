@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     background: '#2c4f85',
     position: 'static',
-    height: '50%',
     boxShadow: '0'
   },
   title: {

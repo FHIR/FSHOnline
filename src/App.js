@@ -11,23 +11,54 @@ import SUSHIControls from './components/SUSHIControls';
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    height: '100%',
     flexGrow: 1
   },
-  itemTop: {
-    height: '75vh'
+  fullHeightGrid: {
+    height: '100%'
   },
-  itemBottom: {
-    height: '25vh'
+  collapsedMain: {
+    width: '100%',
+    height: 'calc(100vh - 116px - 300px)'
+  },
+  expandedMain: {
+    width: '100%',
+    height: 'calc(100vh - 116px - 25px)'
+  },
+  collapsedConsole: {
+    height: '25px',
+    width: '100%'
+  },
+  expandedConsole: {
+    height: '300px',
+    width: '100%'
+  },
+  top: {
+    height: '116px'
   }
 }));
 
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
+let errorString = '';
+let warningString = '';
+let errorCount = 0;
+let warningCount = 0;
 console.log = function getMessages(message) {
   consoleMessages.push(message);
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     errorAndWarningMessages.push(message);
+    if (message.startsWith('error')) errorCount++;
+    else warningCount++;
+  }
+  if (errorCount > 0) {
+    errorString = `${errorCount} Error`;
+    if (errorCount !== 1) errorString += 's';
+  }
+  if (warningCount > 0) {
+    warningString = `${warningCount} Warning`;
+    if (warningCount !== 1) warningString += 's';
   }
 };
 
@@ -56,6 +87,7 @@ export default function App(props) {
   const [initialText, setInitialText] = useState('Edit FSH here!');
   const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
   const [isOutputObject, setIsOutputObject] = useState(false);
+  const [expandConsole, setExpandConsole] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -67,6 +99,10 @@ export default function App(props) {
   function resetLogMessages() {
     consoleMessages = [];
     errorAndWarningMessages = [];
+    errorString = '';
+    warningString = '';
+    errorCount = 0;
+    warningCount = 0;
   }
 
   function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject) {
@@ -80,25 +116,35 @@ export default function App(props) {
   }
 
   return (
-    <div className="root">
-      <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
-      <Grid className={classes.container} container>
-        <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+    <div className="root" style={{ height: '100vh' }}>
+      <div className={classes.top}>
+        <TopBar />
+        <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      </div>
+      <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
+        <Grid className={classes.container} container>
+          <Grid item xs={6} className={classes.fullHeightGrid}>
+            <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+          </Grid>
+          <Grid item xs={6} className={classes.fullHeightGrid}>
+            <JSONOutput
+              displaySUSHI={doRunSUSHI}
+              text={outputText}
+              isObject={isOutputObject}
+              errorsAndWarnings={errorAndWarningMessages}
+            />
+          </Grid>
         </Grid>
-        <Grid className={classes.itemTop} item xs={6}>
-          <JSONOutput
-            displaySUSHI={doRunSUSHI}
-            text={outputText}
-            isObject={isOutputObject}
-            errorsAndWarnings={errorAndWarningMessages}
-          />
-        </Grid>
-        <Grid className={classes.itemBottom} item xs={12}>
-          <ConsoleComponent consoleMessages={consoleMessages} />
-        </Grid>
-      </Grid>
+      </div>
+      <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
+        <ConsoleComponent
+          consoleMessages={consoleMessages}
+          warningCount={warningString}
+          errorCount={errorString}
+          expandConsole={expandConsole}
+          setExpandConsole={setExpandConsole}
+        />
+      </div>
     </div>
   );
 }
