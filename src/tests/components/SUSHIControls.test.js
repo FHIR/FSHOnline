@@ -52,8 +52,8 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
-    expect(onClick).toHaveBeenCalledWith(true, '', false);
+    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
+    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
   });
 });
 
@@ -74,8 +74,8 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
-    expect(onClick).toHaveBeenCalledWith(true, '', false);
+    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
+    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
   });
 });
 
@@ -96,8 +96,29 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false);
-    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2), true);
+    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
+    expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2), true, false);
+  });
+});
+
+it('calls GoFSH function and returns FSH', async () => {
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = jest.fn();
+  const runGoFSHSpy = jest.spyOn(runSUSHI, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
+
+  act(() => {
+    render(<SUSHIControls onGoFSHClick={onGoFSHClick} gofshText={[]} />, container);
+  });
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await wait(() => {
+    expect(runGoFSHSpy).toHaveBeenCalled();
+    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
+    expect(onGoFSHClick).toHaveBeenCalledWith('Loading...');
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh);
   });
 });
 
@@ -211,7 +232,7 @@ it('copies link to clipboard on button click', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -236,7 +257,7 @@ it('generates link when share button is clicked', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -258,7 +279,7 @@ it('shows an error when the FSH file is too long to share', async () => {
     .mockResolvedValue({ link: undefined, errorNeeded: true });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} text={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
   act(() => {

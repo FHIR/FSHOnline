@@ -33,14 +33,14 @@ console.log = function getMessages(message) {
 
 export async function decodeFSH(encodedFSH) {
   if (encodedFSH.text === undefined) {
-    return 'Edit FSH here!';
+    return '';
   } else {
     const promisedURL = await expandLink(encodedFSH);
 
     // Removes the encoded data from the end of the url, starting at index 38
     const sliced64 = promisedURL.long_url.slice(40);
     if (!promisedURL.long_url.includes('https://fshschool.org/FSHOnline/#/share/') || sliced64.length === 0) {
-      return 'Edit FSH here!';
+      return '';
     } else {
       const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
       return displayText;
@@ -52,10 +52,11 @@ export default function App(props) {
   const classes = useStyles();
   const text64 = props.match.params;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
-  const [inputText, setInputText] = useState('Edit FSH here!');
-  const [initialText, setInitialText] = useState('Edit FSH here!');
-  const [outputText, setOutputText] = useState('Your JSON Output Will Display Here: ');
+  const [inputFSHText, setInputFSHText] = useState('');
+  const [inputGoFSHText, setInputGoFSHText] = useState('');
+  const [initialText, setInitialText] = useState('');
   const [isOutputObject, setIsOutputObject] = useState(false);
+  const [isWaitingForOutput, setIsWaitingForOutput] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -69,30 +70,54 @@ export default function App(props) {
     errorAndWarningMessages = [];
   }
 
-  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject) {
+  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
     setDoRunSUSHI(doRunSUSHI);
-    setOutputText(sushiOutput);
+    setInputGoFSHText(sushiOutput);
     setIsOutputObject(isObject);
+    setIsWaitingForOutput(isWaiting);
   }
 
-  function updateInputTextValue(text) {
-    setInputText(text);
+  function handleGoFSHControls(fshOutput) {
+    setInitialText(fshOutput);
+  }
+
+  function updateInputFSHTextValue(text) {
+    setInputFSHText(text);
+  }
+
+  function updateInputGoFSHTextValue(text) {
+    setInputGoFSHText(text);
   }
 
   return (
     <div className="root">
       <TopBar />
-      <SUSHIControls onClick={handleSUSHIControls} text={inputText} resetLogMessages={resetLogMessages} />
+      <SUSHIControls
+        onClick={handleSUSHIControls}
+        onGoFSHClick={handleGoFSHControls}
+        fshText={inputFSHText}
+        gofshText={inputGoFSHText}
+        resetLogMessages={resetLogMessages}
+      />
       <Grid className={classes.container} container>
-        <Grid className={classes.itemTop} item xs={6}>
-          <CodeMirrorComponent value={inputText} initialText={initialText} updateTextValue={updateInputTextValue} />
+        <Grid className={classes.itemTop} item xs={5}>
+          <CodeMirrorComponent
+            value={inputFSHText}
+            initialText={initialText}
+            updateTextValue={updateInputFSHTextValue}
+            mode={'fsh'}
+            placeholder={'Edit FSH here!'}
+          />
         </Grid>
-        <Grid className={classes.itemTop} item xs={6}>
+        <Grid className={classes.itemTop} item xs={7}>
           <JSONOutput
             displaySUSHI={doRunSUSHI}
-            text={outputText}
+            text={inputGoFSHText}
             isObject={isOutputObject}
+            isWaiting={isWaitingForOutput}
             errorsAndWarnings={errorAndWarningMessages}
+            updateTextValue={updateInputGoFSHTextValue}
+            setIsOutputObject={setIsOutputObject}
           />
         </Grid>
         <Grid className={classes.itemBottom} item xs={12}>

@@ -20,7 +20,6 @@
     "react-codemirror2": "^7.2.1",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.13.1",
-    "react-json-view": "^1.19.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.4",
     "tar-stream": "^2.1.3"

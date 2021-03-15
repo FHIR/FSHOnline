@@ -7,6 +7,7 @@ import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 require('codemirror/addon/mode/simple');
+require('codemirror/addon/display/placeholder');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 
@@ -59,6 +60,7 @@ CodeMirror.defineSimpleMode('fsh', {
 
 const useStyles = makeStyles((theme) => ({
   box: {
+    'padding-right': '1px',
     height: '100%'
   }
 }));
@@ -72,13 +74,14 @@ export default function CodeMirrorComponent(props) {
   }
 
   return (
-    <Box className={classes.box} borderTop={1}>
+    <Box className={classes.box}>
       <ReactCodeMirror
         className="react-codemirror2"
         value={props.initialText}
         options={{
-          mode: 'fsh',
+          mode: props.mode,
           theme: 'material',
+          placeholder: props.placeholder,
           lineNumbers: true
         }}
         onChange={(editor, data, value) => {
