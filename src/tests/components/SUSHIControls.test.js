@@ -53,7 +53,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
-    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, false);
   });
 });
 
@@ -75,7 +75,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
-    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, false);
   });
 });
 

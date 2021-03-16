@@ -53,7 +53,7 @@ export default function App(props) {
   const text64 = props.match.params;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
-  const [inputGoFSHText, setInputGoFSHText] = useState('');
+  const [inputGoFSHText, setInputGoFSHText] = useState(['']);
   const [initialText, setInitialText] = useState('');
   const [isOutputObject, setIsOutputObject] = useState(false);
   const [isWaitingForOutput, setIsWaitingForOutput] = useState(false);
@@ -106,7 +106,7 @@ export default function App(props) {
             initialText={initialText}
             updateTextValue={updateInputFSHTextValue}
             mode={'fsh'}
-            placeholder={'Edit FSH here!'}
+            placeholder={isWaitingForOutput ? 'Loading...' : 'Edit FSH here!'}
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={7}>

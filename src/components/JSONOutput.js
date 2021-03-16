@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { groupBy } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, List, ListItem } from '@material-ui/core';
+import { CheckCircleOutline, HighlightOff } from '@material-ui/icons';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
@@ -12,11 +14,30 @@ const useStyles = makeStyles((theme) => ({
     noWrap: false
   },
   list: {
-    padding: 0
+    padding: '5px',
+    fontSize: '13px'
+  },
+  listItemError: {
+    color: 'red',
+    fontWeight: 'bold',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    margin: 0
+  },
+  listItemSelected: {
+    background: theme.palette.action.selected,
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    margin: 0
   },
   listItem: {
-    padding: 0,
+    paddingTop: '5px',
+    paddingBottom: '5px',
     margin: 0
+  },
+  listIcon: {
+    fontSize: '13px',
+    padding: '3px'
   }
 }));
 
@@ -26,14 +47,17 @@ const theme = createMuiTheme({
   }
 });
 
+// Flatten the package so we can render and navigate it more easily,
+// but keep high level attributes we'll need accessible
 const getIterablePackage = (defsPackage) => {
-  return [
+  const defArray = [
     ...defsPackage.profiles,
     ...defsPackage.extensions,
     ...defsPackage.instances,
     ...defsPackage.valueSets,
     ...defsPackage.codeSystems
   ];
+  return defArray.map((def) => ({ resourceType: def.resourceType, id: def.id, def: JSON.stringify(def, null, 2) }));
 };
 
 export default function JSONOutput(props) {
@@ -42,6 +66,7 @@ export default function JSONOutput(props) {
   const [fhirDefinitions, setFhirDefinitions] = useState([]);
   const { setIsOutputObject } = props;
   const [currentDef, setCurrentDef] = useState(0);
+  const [defsWithErrors, setDefsWithErrors] = useState([]);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
@@ -51,7 +76,7 @@ export default function JSONOutput(props) {
       const packageJSON = JSON.parse(props.text);
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
-      setInitialText(iterablePackage.length > 0 ? JSON.stringify(iterablePackage[0], null, 2) : '');
+      setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
     } else if (props.isWaiting) {
       // Set Loading... text
       setInitialText(props.text);
@@ -64,28 +89,103 @@ export default function JSONOutput(props) {
 
     // Update the definition we're currently editing
     const updatedDefs = [...fhirDefinitions];
+
+    // Check if there is a JSON syntax error in the editor
     try {
-      updatedDefs[currentDef] = JSON.parse(text);
+      const latestJSON = JSON.parse(text);
+      // If there was an error, mark it as resolved
+      if (defsWithErrors.includes(currentDef)) {
+        const newErrors = [...defsWithErrors];
+        newErrors.splice(defsWithErrors.indexOf(currentDef), 1);
+        setDefsWithErrors(newErrors);
+      }
+
+      // If it's new, set metadata (definition text is set below)
+      if (!fhirDefinitions[currentDef]) {
+        updatedDefs[currentDef] = {
+          resourceType: latestJSON.resourceType,
+          id: latestJSON.id
+        };
+      }
+
+      // Update resource type if it has changed
+      if (!fhirDefinitions[currentDef] || latestJSON.resourceType !== fhirDefinitions[currentDef].resourceType) {
+        updatedDefs[currentDef].resourceType = latestJSON.resourceType;
+      }
+
+      // Update id if it has changed or it is new
+      if (!fhirDefinitions[currentDef] || latestJSON.id !== fhirDefinitions[currentDef].id) {
+        updatedDefs[currentDef].id = latestJSON.id;
+      }
     } catch (e) {
-      // Invalid JSON typed. Decide if/how to alert.
+      // Invalid JSON typed. Keep track of index.
+      if (!defsWithErrors.includes(currentDef)) {
+        const newErrors = [...defsWithErrors];
+        newErrors.push(currentDef);
+        setDefsWithErrors(newErrors);
+      }
+    }
+
+    // Update the text - regardless if it was valid JSON
+    if (updatedDefs[currentDef]) {
+      updatedDefs[currentDef].def = text;
     }
     setFhirDefinitions(updatedDefs);
     props.updateTextValue(updatedDefs);
   };
 
   const renderFileTreeView = () => {
-    return (
-      <List component="nav" className={classes.list}>
-        {fhirDefinitions.map((a, i) => (
-          <ListItem button key={i} className={classes.listItem} onClick={() => setCurrentDef(i)}>
-            {`${a.resourceType}/${a.id}`}
-          </ListItem>
-        ))}
-      </List>
-    );
+    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances'];
+    const grouped = groupBy(fhirDefinitions, (val) => {
+      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val.resourceType)) return `${val.resourceType}s`;
+      return 'Instances';
+    });
+
+    return Object.keys(grouped)
+      .sort((a, b) => order.indexOf(a) - order.indexOf(b)) // Sort so we keep a defined order of types in the tree
+      .map((key) => {
+        return (
+          <List component="nav" key={key} className={classes.list}>
+            {key}
+            {grouped[key]
+              .sort((a, b) =>
+                a.id.toLowerCase() < b.id.toLowerCase() ? -1 : a.id.toLowerCase() > b.id.toLowerCase() ? 1 : 0
+              ) // Sort ids alphabetically
+              .map((def, i) => {
+                const currentIndex = fhirDefinitions.indexOf(def);
+                const isError = defsWithErrors.includes(currentIndex);
+                return (
+                  <ListItem
+                    button
+                    key={i}
+                    data-testid={`${key}-defId`}
+                    className={
+                      isError
+                        ? classes.listItemError
+                        : currentIndex === currentDef
+                        ? classes.listItemSelected
+                        : classes.listItem
+                    }
+                    onClick={() => {
+                      setCurrentDef(currentIndex);
+                      setInitialText(def.def);
+                    }}
+                  >
+                    {defsWithErrors.includes(currentIndex) ? (
+                      <HighlightOff className={classes.listIcon} />
+                    ) : (
+                      <CheckCircleOutline className={classes.listIcon} />
+                    )}
+                    {def.id}
+                  </ListItem>
+                );
+              })}
+          </List>
+        );
+      });
   };
 
-  const displayValue = fhirDefinitions.length > 0 ? JSON.stringify(fhirDefinitions[currentDef], null, 2) : props.text;
+  const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : props.text;
 
   return (
     <ThemeProvider theme={theme}>
@@ -100,7 +200,7 @@ export default function JSONOutput(props) {
               placeholder={'Edit and view FHIR Definitions here!'}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={3} style={{ overflow: 'scroll', height: '75vh' }}>
             {renderFileTreeView()}
           </Grid>
         </Grid>

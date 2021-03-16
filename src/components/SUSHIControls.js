@@ -154,11 +154,11 @@ export default function SUSHIControls(props) {
         !outPackage.valueSets.length
       ) {
         isObject = false;
-        jsonOutput = '';
+        jsonOutput = [''];
       }
     } else {
       isObject = false;
-      jsonOutput = '';
+      jsonOutput = [''];
     }
 
     props.onClick(true, jsonOutput, isObject, false);
@@ -166,8 +166,7 @@ export default function SUSHIControls(props) {
 
   async function handleGoFSHClick() {
     props.onGoFSHClick('Loading...');
-    const gofshInputStrings = [];
-    props.gofshText.forEach((def) => gofshInputStrings.push(JSON.stringify(def)));
+    const gofshInputStrings = props.gofshText.map((def) => def.def);
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
     const options = { dependencies: parsedDependencies };
     const fsh = await runGoFSH(gofshInputStrings, options);
