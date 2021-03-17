@@ -31,7 +31,6 @@ it('Renders with the placeholder text if displaySUSHI is false, isObject is fals
     container
   );
 
-  // Because the editor is in JSON mode, the text is split up differently than the fsh mode
   const placeholderText = getByText('Edit and view FHIR Definitions here!');
 
   expect(placeholderText).toBeInTheDocument();
@@ -39,15 +38,13 @@ it('Renders with the placeholder text if displaySUSHI is false, isObject is fals
 
 it('Renders with the proper text and updates with proper text when not an object', () => {
   const { getByText } = render(
-    <JSONOutput displaySUSHI={true} text={'Loading...'} isObject={false} errorsAndWarnings={[]} isWaiting={true} />,
+    <JSONOutput displaySUSHI={true} text={''} isObject={false} errorsAndWarnings={[]} isWaiting={true} />,
     container
   );
-  const textElement = getByText(
-    (content, element) => element.tagName.toLowerCase() === 'span' && content.startsWith('Loading')
-  );
 
-  expect(textElement).toBeInTheDocument(); // Mimics the 'loading...' case
-  expect(textElement.parentNode.textContent).toEqual('Loading...');
+  const loadingPlaceholderText = getByText('Loading...');
+
+  expect(loadingPlaceholderText).toBeInTheDocument();
 });
 
 // TODO: CodeMirrorComponent doesn't get the package text properly - not sure why
@@ -80,6 +77,7 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
     container
   );
 
+  // Because the editor is in JSON mode, the text is split up differently than the fsh mode
   const resultsElement = getByText(
     (content, element) => element.tagName.toLowerCase() === 'span' && content.startsWith('resourceType')
   );

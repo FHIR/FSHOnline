@@ -56,7 +56,8 @@ export default function App(props) {
   const [inputGoFSHText, setInputGoFSHText] = useState(['']);
   const [initialText, setInitialText] = useState('');
   const [isOutputObject, setIsOutputObject] = useState(false);
-  const [isWaitingForOutput, setIsWaitingForOutput] = useState(false);
+  const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
+  const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -74,10 +75,11 @@ export default function App(props) {
     setDoRunSUSHI(doRunSUSHI);
     setInputGoFSHText(sushiOutput);
     setIsOutputObject(isObject);
-    setIsWaitingForOutput(isWaiting);
+    setIsWaitingForFHIROutput(isWaiting);
   }
 
-  function handleGoFSHControls(fshOutput) {
+  function handleGoFSHControls(fshOutput, isWaiting) {
+    setIsWaitingForFSHOutput(isWaiting);
     setInitialText(fshOutput);
   }
 
@@ -106,7 +108,7 @@ export default function App(props) {
             initialText={initialText}
             updateTextValue={updateInputFSHTextValue}
             mode={'fsh'}
-            placeholder={isWaitingForOutput ? 'Loading...' : 'Edit FSH here!'}
+            placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={7}>
@@ -114,7 +116,7 @@ export default function App(props) {
             displaySUSHI={doRunSUSHI}
             text={inputGoFSHText}
             isObject={isOutputObject}
-            isWaiting={isWaitingForOutput}
+            isWaiting={isWaitingForFHIROutput}
             errorsAndWarnings={errorAndWarningMessages}
             updateTextValue={updateInputGoFSHTextValue}
             setIsOutputObject={setIsOutputObject}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { groupBy } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, List, ListItem } from '@material-ui/core';
-import { CheckCircleOutline, HighlightOff } from '@material-ui/icons';
+import { HighlightOff } from '@material-ui/icons';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
@@ -80,11 +80,8 @@ export default function JSONOutput(props) {
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
       setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
-    } else if (props.isWaiting) {
-      // Set Loading... text
-      setInitialText(props.text);
     }
-  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, setIsOutputObject]);
+  }, [props.displaySUSHI, props.text, props.isObject, setIsOutputObject]);
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet
@@ -200,7 +197,7 @@ export default function JSONOutput(props) {
               initialText={initialText}
               updateTextValue={updateTextValue}
               mode={'application/json'}
-              placeholder={'Edit and view FHIR Definitions here!'}
+              placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
             />
           </Grid>
           <Grid item xs={3} style={{ overflow: 'scroll', height: '75vh' }}>
