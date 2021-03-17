@@ -38,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
   listIcon: {
     fontSize: '13px',
     padding: '3px'
+  },
+  blankIcon: {
+    width: '19px' // width of icon
   }
 }));
 
@@ -174,7 +177,7 @@ export default function JSONOutput(props) {
                     {defsWithErrors.includes(currentIndex) ? (
                       <HighlightOff className={classes.listIcon} />
                     ) : (
-                      <CheckCircleOutline className={classes.listIcon} />
+                      <span className={classes.blankIcon} />
                     )}
                     {def.id}
                   </ListItem>
