@@ -80,8 +80,11 @@ export default function JSONOutput(props) {
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
       setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
+    } else if (props.isWaiting) {
+      setInitialText(null); // Reset the text to null when loading to reset the editor and display placeholder text
+      setFhirDefinitions([]); // Reset FHIR definitions to clear out file tree
     }
-  }, [props.displaySUSHI, props.text, props.isObject, setIsOutputObject]);
+  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, setIsOutputObject]);
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet

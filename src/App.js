@@ -73,14 +73,14 @@ export default function App(props) {
 
   function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
     setDoRunSUSHI(doRunSUSHI);
-    setInputGoFSHText(sushiOutput);
+    setInputGoFSHText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
     setIsOutputObject(isObject);
     setIsWaitingForFHIROutput(isWaiting);
   }
 
   function handleGoFSHControls(fshOutput, isWaiting) {
     setIsWaitingForFSHOutput(isWaiting);
-    setInitialText(fshOutput);
+    setInitialText(fshOutput === '' ? null : fshOutput); // Reset initial text to null if empty in order to display placeholder text
   }
 
   function updateInputFSHTextValue(text) {
