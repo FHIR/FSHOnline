@@ -184,4 +184,33 @@ describe('file tree display', () => {
     expect(extensionDef.className).toContain('listItemSelected');
     // Can also test that the text in the editor updates when we can access the text correctly
   });
+
+  it('displays Untitled if a definition does not have an id', () => {
+    const profileWithoutId = {
+      profiles: [
+        {
+          resourceType: 'StructureDefinition'
+          // No id field - this is to represent the case when someone removed or never included an id. SUSHI packages should always have ids.
+        }
+      ],
+      extensions: [],
+      instances: [],
+      valueSets: [],
+      codeSystems: []
+    };
+    const { getByText } = render(
+      <JSONOutput
+        displaySUSHI={true}
+        isObject={true}
+        isWaiting={false}
+        setIsOutputObject={() => {}}
+        updateTextValue={() => {}}
+        text={JSON.stringify(profileWithoutId, null, 2)}
+      />,
+      container
+    );
+
+    const untitledDef = getByText('Untitled');
+    expect(untitledDef).toBeInTheDocument();
+  });
 });

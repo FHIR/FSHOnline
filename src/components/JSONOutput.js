@@ -152,7 +152,7 @@ export default function JSONOutput(props) {
             {key}
             {grouped[key]
               .sort((a, b) =>
-                a.id.toLowerCase() < b.id.toLowerCase() ? -1 : a.id.toLowerCase() > b.id.toLowerCase() ? 1 : 0
+                a.id?.toLowerCase() < b.id?.toLowerCase() ? -1 : a.id?.toLowerCase() > b.id?.toLowerCase() ? 1 : 0
               ) // Sort ids alphabetically
               .map((def, i) => {
                 const currentIndex = fhirDefinitions.indexOf(def);
@@ -179,7 +179,7 @@ export default function JSONOutput(props) {
                     ) : (
                       <span className={classes.blankIcon} />
                     )}
-                    {def.id}
+                    {def.id || 'Untitled'}
                   </ListItem>
                 );
               })}
