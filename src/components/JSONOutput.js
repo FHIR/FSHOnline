@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { groupBy } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Grid, List, ListItem } from '@material-ui/core';
-import { HighlightOff } from '@material-ui/icons';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemSecondaryAction
+} from '@material-ui/core';
+import { Add, Delete, HighlightOff } from '@material-ui/icons';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
@@ -12,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.paper,
     height: '100%',
     noWrap: false
+  },
+  button: {
+    textTransform: 'none',
+    fontSize: '13px'
   },
   list: {
     padding: '5px',
@@ -66,10 +83,12 @@ const getIterablePackage = (defsPackage) => {
 export default function JSONOutput(props) {
   const classes = useStyles();
   const [initialText, setInitialText] = useState('');
-  const [fhirDefinitions, setFhirDefinitions] = useState([]);
-  const { setIsOutputObject } = props;
+  const [fhirDefinitions, setFhirDefinitions] = useState([{}]);
+  const { setIsOutputObject, updateTextValue: propsUpdateText } = props;
   const [currentDef, setCurrentDef] = useState(0);
   const [defsWithErrors, setDefsWithErrors] = useState([]);
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
@@ -80,11 +99,12 @@ export default function JSONOutput(props) {
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
       setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
+      propsUpdateText(iterablePackage); // The value of text kept on props should be the iterable and stringified package
     } else if (props.isWaiting) {
       setInitialText(null); // Reset the text to null when loading to reset the editor and display placeholder text
       setFhirDefinitions([]); // Reset FHIR definitions to clear out file tree
     }
-  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, setIsOutputObject]);
+  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, propsUpdateText, setIsOutputObject]);
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet
@@ -137,6 +157,67 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
+  const addDefinition = () => {
+    const updatedDefs = [...fhirDefinitions];
+    updatedDefs.push({ resourceType: null, id: 'Untitled', def: null });
+    setCurrentDef(updatedDefs.length - 1);
+    setFhirDefinitions(updatedDefs);
+    setInitialText(null);
+    props.updateTextValue(updatedDefs);
+  };
+
+  const handleCloseAndDelete = (index) => {
+    const updatedDefs = [...fhirDefinitions];
+    updatedDefs.splice(index, 1);
+    setFhirDefinitions(updatedDefs);
+    setCurrentDef(0);
+    const newCurrentDef = updatedDefs.length > 0 ? updatedDefs[0].def : null;
+    setInitialText(newCurrentDef);
+    setOpenDeleteConfirmation(false);
+    props.updateTextValue(updatedDefs);
+  };
+
+  const handleOpenDeleteConfirmation = (i) => {
+    setOpenDeleteConfirmation(true);
+    setDeleteIndex(i);
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setOpenDeleteConfirmation(false);
+    setDeleteIndex(-1);
+  };
+
+  const renderDeleteModal = () => {
+    const defToDelete = fhirDefinitions[deleteIndex];
+    if (!defToDelete) {
+      return;
+    }
+    const type = defToDelete.resourceType || 'Instance';
+    const id = defToDelete.id || 'Untitled';
+    return (
+      <Dialog
+        open={openDeleteConfirmation}
+        onClose={handleCloseDeleteConfirmation}
+        aria-labelledby="delete-confirmation-dialog"
+      >
+        <DialogTitle id="delete-confirmation-dialog-title">Delete FHIR definition</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete the FHIR definition {type}/{id}? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteConfirmation} color="primary" autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={() => handleCloseAndDelete(deleteIndex)} color="secondary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   const renderFileTreeView = () => {
     const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances'];
     const grouped = groupBy(fhirDefinitions, (val) => {
@@ -180,6 +261,17 @@ export default function JSONOutput(props) {
                       <span className={classes.blankIcon} />
                     )}
                     {def.id || 'Untitled'}
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        className={classes.listIcon}
+                        edge="end"
+                        aria-label="delete"
+                        data-testid={`${def.id}-delete-button`}
+                        onClick={() => handleOpenDeleteConfirmation(currentIndex)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               })}
@@ -188,7 +280,7 @@ export default function JSONOutput(props) {
       });
   };
 
-  const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : props.text;
+  const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
 
   return (
     <ThemeProvider theme={theme}>
@@ -196,6 +288,7 @@ export default function JSONOutput(props) {
         <Grid container>
           <Grid item xs={9} style={{ height: '75vh' }}>
             <CodeMirrorComponent
+              key={fhirDefinitions.length} // When adding a new definition, force a re-render. InitialText might not change because it might go from null to null.
               value={displayValue}
               initialText={initialText}
               updateTextValue={updateTextValue}
@@ -204,7 +297,11 @@ export default function JSONOutput(props) {
             />
           </Grid>
           <Grid item xs={3} style={{ overflow: 'scroll', height: '75vh' }}>
+            <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
+              Add FHIR Definition
+            </Button>
             {renderFileTreeView()}
+            {renderDeleteModal()}
           </Grid>
         </Grid>
       </Box>
