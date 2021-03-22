@@ -52,8 +52,8 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
-    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, true); // Loading
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, false);
   });
 });
 
@@ -74,8 +74,8 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
-    expect(onClick).toHaveBeenCalledWith(true, '', false, false);
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, true); // Loading
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, false);
   });
 });
 
@@ -96,7 +96,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
-    expect(onClick).toHaveBeenCalledWith(true, 'Loading...', false, true);
+    expect(onClick).toHaveBeenCalledWith(true, [''], false, true); // Loading
     expect(onClick).toHaveBeenCalledWith(true, JSON.stringify(goodSUSHIPackage, null, 2), true, false);
   });
 });
@@ -117,8 +117,8 @@ it('calls GoFSH function and returns FSH', async () => {
   await wait(() => {
     expect(runGoFSHSpy).toHaveBeenCalled();
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
-    expect(onGoFSHClick).toHaveBeenCalledWith('Loading...');
-    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh);
+    expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
   });
 });
 

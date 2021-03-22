@@ -53,10 +53,11 @@ export default function App(props) {
   const text64 = props.match.params;
   const [doRunSUSHI, setDoRunSUSHI] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
-  const [inputGoFSHText, setInputGoFSHText] = useState('');
+  const [inputGoFSHText, setInputGoFSHText] = useState(['']);
   const [initialText, setInitialText] = useState('');
   const [isOutputObject, setIsOutputObject] = useState(false);
-  const [isWaitingForOutput, setIsWaitingForOutput] = useState(false);
+  const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
+  const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -72,13 +73,14 @@ export default function App(props) {
 
   function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
     setDoRunSUSHI(doRunSUSHI);
-    setInputGoFSHText(sushiOutput);
+    setInputGoFSHText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
     setIsOutputObject(isObject);
-    setIsWaitingForOutput(isWaiting);
+    setIsWaitingForFHIROutput(isWaiting);
   }
 
-  function handleGoFSHControls(fshOutput) {
-    setInitialText(fshOutput);
+  function handleGoFSHControls(fshOutput, isWaiting) {
+    setIsWaitingForFSHOutput(isWaiting);
+    setInitialText(fshOutput === '' ? null : fshOutput); // Reset initial text to null if empty in order to display placeholder text
   }
 
   function updateInputFSHTextValue(text) {
@@ -106,7 +108,7 @@ export default function App(props) {
             initialText={initialText}
             updateTextValue={updateInputFSHTextValue}
             mode={'fsh'}
-            placeholder={'Edit FSH here!'}
+            placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
           />
         </Grid>
         <Grid className={classes.itemTop} item xs={7}>
@@ -114,7 +116,7 @@ export default function App(props) {
             displaySUSHI={doRunSUSHI}
             text={inputGoFSHText}
             isObject={isOutputObject}
-            isWaiting={isWaitingForOutput}
+            isWaiting={isWaitingForFHIROutput}
             errorsAndWarnings={errorAndWarningMessages}
             updateTextValue={updateInputGoFSHTextValue}
             setIsOutputObject={setIsOutputObject}
