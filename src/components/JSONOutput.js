@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     textTransform: 'none',
-    fontSize: '13px'
+    fontSize: '13px',
+    width: '100%'
   },
   list: {
     padding: '5px',
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '3px'
   },
   blankIcon: {
-    width: '19px' // width of icon
+    paddingLeft: '19px' // width of icon
   }
 }));
 
