@@ -99,6 +99,7 @@ export default function JSONOutput(props) {
       const packageJSON = JSON.parse(props.text);
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
+      setCurrentDef(0);
       setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
       propsUpdateText(iterablePackage); // The value of text kept on props should be the iterable and stringified package
     } else if (props.isWaiting) {
@@ -116,7 +117,8 @@ export default function JSONOutput(props) {
 
     // Check if there is a JSON syntax error in the editor
     try {
-      const latestJSON = JSON.parse(text);
+      // If the editor is blank, we want to consider it an empty JSON object so that it is valid JSON
+      const latestJSON = text === '' ? {} : JSON.parse(text);
       // If there was an error, mark it as resolved
       if (defsWithErrors.includes(currentDef)) {
         const newErrors = [...defsWithErrors];
@@ -156,6 +158,11 @@ export default function JSONOutput(props) {
     }
     setFhirDefinitions(updatedDefs);
     props.updateTextValue(updatedDefs);
+
+    // This is a bit of a hack to make sure the editor can be reset by a setInitialText(null)
+    if (initialText === null) {
+      setInitialText(text);
+    }
   };
 
   const addDefinition = () => {
@@ -170,6 +177,9 @@ export default function JSONOutput(props) {
   const handleCloseAndDelete = (index) => {
     const updatedDefs = [...fhirDefinitions];
     updatedDefs.splice(index, 1);
+    if (updatedDefs.length === 0) {
+      updatedDefs.push({ resourceType: null, id: 'Untitled', def: null });
+    }
     setFhirDefinitions(updatedDefs);
     setCurrentDef(0);
     if (defsWithErrors.includes(index)) {
@@ -294,7 +304,6 @@ export default function JSONOutput(props) {
         <Grid container>
           <Grid item xs={9} style={{ height: '75vh' }}>
             <CodeMirrorComponent
-              key={fhirDefinitions.length} // When adding a new definition, force a re-render. InitialText might not change because it might go from null to null.
               value={displayValue}
               initialText={initialText}
               updateTextValue={updateTextValue}
