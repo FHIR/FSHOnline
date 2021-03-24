@@ -6,14 +6,22 @@ import CodeMirror from 'codemirror';
 import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
+import 'codemirror/addon/fold/foldgutter.css';
 require('codemirror/addon/mode/simple');
+require('codemirror/addon/edit/closebrackets');
 require('codemirror/addon/display/placeholder');
+require('codemirror/addon/comment/comment');
+require('codemirror/addon/fold/foldgutter');
+require('codemirror/addon/fold/brace-fold');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 
 // Define FSH syntax highlighting
 // Regular expressions from https://github.com/standardhealth/vscode-language-fsh/blob/master/syntaxes/fsh.tmLanguage.json
 CodeMirror.defineSimpleMode('fsh', {
+  meta: {
+    lineComment: '//'
+  },
   start: [
     // The regex matches the token, the token property contains the type
     {
@@ -82,7 +90,17 @@ export default function CodeMirrorComponent(props) {
           mode: props.mode,
           theme: 'material',
           placeholder: props.placeholder,
-          lineNumbers: true
+          autoCloseBrackets: true,
+          lineNumbers: true,
+          foldGutter: true,
+          gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+          extraKeys: {
+            'Ctrl-/': 'toggleComment',
+            'Cmd-/': 'toggleComment',
+            'Ctrl-Q': (cm) => {
+              cm.foldCode(cm.getCursor());
+            }
+          }
         }}
         onChange={(editor, data, value) => {
           updateText(value);
