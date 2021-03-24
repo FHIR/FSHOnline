@@ -172,6 +172,11 @@ export default function JSONOutput(props) {
     updatedDefs.splice(index, 1);
     setFhirDefinitions(updatedDefs);
     setCurrentDef(0);
+    if (defsWithErrors.includes(index)) {
+      const newErrors = [...defsWithErrors];
+      newErrors.splice(defsWithErrors.indexOf(index), 1);
+      setDefsWithErrors(newErrors);
+    }
     const newCurrentDef = updatedDefs.length > 0 ? updatedDefs[0].def : null;
     setInitialText(newCurrentDef);
     setOpenDeleteConfirmation(false);
