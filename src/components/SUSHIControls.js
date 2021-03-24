@@ -165,6 +165,7 @@ export default function SUSHIControls(props) {
   }
 
   async function handleGoFSHClick() {
+    props.resetLogMessages();
     props.onGoFSHClick('', true);
     const gofshInputStrings = props.gofshText.map((def) => def.def);
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
