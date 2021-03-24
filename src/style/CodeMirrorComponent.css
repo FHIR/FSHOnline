@@ -7,3 +7,7 @@
 .react-codemirror2 > .CodeMirror pre.CodeMirror-placeholder {
   color: #546e7a;
 }
+
+.react-codemirror2 > .CodeMirror span.CodeMirror-foldmarker {
+  color: white;
+}

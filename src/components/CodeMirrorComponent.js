@@ -6,9 +6,12 @@ import CodeMirror from 'codemirror';
 import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
+import 'codemirror/addon/fold/foldgutter.css';
 require('codemirror/addon/mode/simple');
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/addon/display/placeholder');
+require('codemirror/addon/fold/foldgutter');
+require('codemirror/addon/fold/brace-fold');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 
@@ -84,7 +87,14 @@ export default function CodeMirrorComponent(props) {
           theme: 'material',
           placeholder: props.placeholder,
           autoCloseBrackets: true,
-          lineNumbers: true
+          lineNumbers: true,
+          foldGutter: true,
+          gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+          extraKeys: {
+            'Ctrl-Q': (cm) => {
+              cm.foldCode(cm.getCursor());
+            }
+          }
         }}
         onChange={(editor, data, value) => {
           updateText(value);
