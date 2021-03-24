@@ -179,11 +179,11 @@ export default function SUSHIControls(props) {
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
           Run SUSHI
         </Button>
+        <Button className={classes.secondaryButton} onClick={handleOpenShare}>
+          Share FSH
+        </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenConfig}>
           Configuration
-        </Button>
-        <Button className={classes.secondaryButton} onClick={handleOpenShare}>
-          Share
         </Button>
         <Button className={classes.button} onClick={handleGoFSHClick} testid="GoFSH-button">
           Run GoFSH
@@ -229,7 +229,7 @@ export default function SUSHIControls(props) {
         <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
           <DialogTitle id="form-dialog-title">Share</DialogTitle>
           <DialogContent>
-            <DialogContentText>Use this link to share your fsh with others!</DialogContentText>
+            <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
             <TextareaAutosize
               id="link"
               disabled

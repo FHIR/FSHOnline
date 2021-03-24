@@ -237,7 +237,7 @@ it('copies link to clipboard on button click', async () => {
   );
 
   await wait(() => {
-    const shareButton = getByText('Share');
+    const shareButton = getByText('Share FSH');
     fireEvent.click(shareButton);
     expect(generateLinkSpy).toHaveBeenCalled();
   });
@@ -262,7 +262,7 @@ it('generates link when share button is clicked', async () => {
   );
 
   act(() => {
-    const shareButton = getByText('Share');
+    const shareButton = getByText('Share FSH');
     fireEvent.click(shareButton);
   });
   await wait(() => {
@@ -283,7 +283,7 @@ it('shows an error when the FSH file is too long to share', async () => {
     container
   );
   act(() => {
-    const shareButton = getByText('Share');
+    const shareButton = getByText('Share FSH');
     fireEvent.click(shareButton);
   });
   await wait(() => {
