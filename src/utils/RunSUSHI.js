@@ -12,6 +12,7 @@ const stats = utils.stats;
 const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
+const { getRandomSeaCreatures, getRandomSeaCreaturesStat } = gofshUtils;
 
 /**
  * Run GoFSH
@@ -26,6 +27,8 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
  * @returns {string} the FSH
  */
 export async function runGoFSH(input, options) {
+  stats.reset();
+
   // Read in the resources as strings
   const docs = [];
   input.forEach((resource, i) => {
@@ -62,6 +65,8 @@ export async function runGoFSH(input, options) {
 
   // Return the string of FSH definitions
   const fsh = new gofshExport.FSHExporter(pkg).apiExport('string');
+  logger.info('Done converting definitions');
+  printGoFSHresults(pkg);
   return fsh;
 }
 
@@ -108,7 +113,7 @@ export async function runSUSHI(input, config, dependencyArr) {
   const outPackage = exportFHIR(tank, defs);
 
   console.log(' ');
-  printResults(outPackage);
+  printSUSHIResults(outPackage);
 
   // Remove snapshots
   outPackage.profiles = outPackage.profiles.map((p) => p.toJSON(false));
@@ -117,7 +122,7 @@ export async function runSUSHI(input, config, dependencyArr) {
   return outPackage;
 }
 
-function printResults(pkg) {
+function printSUSHIResults(pkg) {
   const numError = stats.numError;
   const numWarn = stats.numWarn;
   // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
@@ -148,4 +153,41 @@ function printResults(pkg) {
   ];
   results.forEach((r) => console.log(r));
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console
+}
+
+function printGoFSHresults(pkg) {
+  const proNum = pad(pkg.profiles.length.toString(), 12);
+  const extNum = pad(pkg.extensions.length.toString(), 13);
+  const vsNum = pad(pkg.valueSets.length.toString(), 12);
+  const csNum = pad(pkg.codeSystems.length.toString(), 13);
+  const instNum = pad(pkg.instances.length.toString(), 12);
+  const invNum = pad(pkg.invariants.length.toString(), 13);
+  const mapNum = pad(pkg.mappings.length.toString(), 12);
+  const errNumMsg = pad(`${stats.numError} Error${stats.numError !== 1 ? 's' : ''}`, 12);
+  const wrnNumMsg = padStart(`${stats.numWarn} Warning${stats.numWarn !== 1 ? 's' : ''}`, 12);
+  const creatures = pad(getRandomSeaCreatures(), 13);
+  const creatrStat = pad(getRandomSeaCreaturesStat(stats.numError, stats.numWarn), 13);
+  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(stats.numError, stats.numWarn), 37);
+
+  // prettier-ignore
+  const results = [
+    '╔'  + '═════════════════════════ GoFSH RESULTS ═════════════════════════' +'╗',
+    '║' + ' ╭──────────────┬───────────────┬──────────────┬───────────────╮ ' + '║',
+    '║' + ' │   Profiles   │  Extensions   │  ValueSets   │  CodeSystems  │ ' + '║',
+    '║' + ' ├──────────────┼───────────────┼──────────────┼───────────────┤ ' + '║',
+    '║' + ` │ ${ proNum  } │ ${  extNum  } │ ${  vsNum  } │ ${  csNum   } │ ` + '║',
+    '║' + ' ╰──────────────┴───────────────┴──────────────┴───────────────╯ ' + '║',
+    '║' + ' ╭──────────────┬───────────────┬──────────────┬───────────────╮ ' + '║',
+    '║' + ` │  Instances   │  Invariants   │   Mappings   │ ${creatures } │ ` + '║',
+    '║' + ' ├──────────────┼───────────────┼──────────────┼───────────────┤ ' + '║',
+    '║' + ` │ ${ instNum } │ ${  invNum  } │ ${ mapNum  } │ ${creatrStat} │ ` + '║',
+    '║' + ' ╰──────────────┴───────────────┴──────────────┴───────────────╯ ' + '║',
+    '║' + '                                                                 ' + '║',
+    '╠'  + '═════════════════════════════════════════════════════════════════' +'╣',
+    '║' + ` ${aWittyMessageInvolvingABadFishPun } ${errNumMsg} ${wrnNumMsg} ` + '║',
+    '╚'  + '═════════════════════════════════════════════════════════════════' +'╝'
+  ];
+
+  console.log(' ');
+  results.forEach((r) => console.log(r));
 }

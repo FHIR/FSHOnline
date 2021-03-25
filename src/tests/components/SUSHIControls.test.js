@@ -104,10 +104,11 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
 it('calls GoFSH function and returns FSH', async () => {
   const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
   const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
   const runGoFSHSpy = jest.spyOn(runSUSHI, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
 
   act(() => {
-    render(<SUSHIControls onGoFSHClick={onGoFSHClick} gofshText={[]} />, container);
+    render(<SUSHIControls onGoFSHClick={onGoFSHClick} gofshText={[]} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
@@ -115,6 +116,7 @@ it('calls GoFSH function and returns FSH', async () => {
   });
 
   await wait(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalled();
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
