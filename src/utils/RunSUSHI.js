@@ -187,6 +187,6 @@ function printGoFSHresults(pkg) {
     '╚'  + '═════════════════════════════════════════════════════════════════' +'╝'
   ];
 
-  console.log();
+  console.log(' ');
   results.forEach((r) => console.log(r));
 }
