@@ -176,19 +176,34 @@ export default function JSONOutput(props) {
 
   const handleCloseAndDelete = (index) => {
     const updatedDefs = [...fhirDefinitions];
-    updatedDefs.splice(index, 1);
+    updatedDefs.splice(index, 1); // Remove definition to be deleted
     if (updatedDefs.length === 0) {
+      // Ensure list is not empty so there is always a definition in the file tree
       updatedDefs.push({ resourceType: null, id: 'Untitled', def: null });
     }
     setFhirDefinitions(updatedDefs);
-    setCurrentDef(0);
-    if (defsWithErrors.includes(index)) {
-      const newErrors = [...defsWithErrors];
-      newErrors.splice(defsWithErrors.indexOf(index), 1);
-      setDefsWithErrors(newErrors);
+
+    // If we deleted the currently viewed definition or any before it, update it
+    if (index <= currentDef) {
+      let newCurrentDef = 0;
+      if (index < currentDef) {
+        newCurrentDef = currentDef - 1;
+      }
+      setCurrentDef(newCurrentDef);
+      const newCurrentDefText = updatedDefs.length > 0 ? updatedDefs[newCurrentDef].def : null;
+      setInitialText(newCurrentDefText);
     }
-    const newCurrentDef = updatedDefs.length > 0 ? updatedDefs[0].def : null;
-    setInitialText(newCurrentDef);
+
+    // Update error tracking
+    const newErrors = [...defsWithErrors];
+    if (defsWithErrors.includes(index)) {
+      // If the definition had an error, remove it from the list
+      newErrors.splice(defsWithErrors.indexOf(index), 1);
+    }
+    // Shift any indices that came after the deleted definition to properly track errors
+    const shiftedErrors = newErrors.map((i) => (i < index ? i : i - 1));
+    setDefsWithErrors(shiftedErrors);
+
     setOpenDeleteConfirmation(false);
     props.updateTextValue(updatedDefs);
   };
