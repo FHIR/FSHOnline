@@ -65,6 +65,7 @@ export async function runGoFSH(input, options) {
 
   // Return the string of FSH definitions
   const fsh = new gofshExport.FSHExporter(pkg).apiExport('string');
+  logger.info('Done converting definitions');
   printGoFSHresults(pkg);
   return fsh;
 }
