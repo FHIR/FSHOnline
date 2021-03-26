@@ -84,7 +84,7 @@ const getIterablePackage = (defsPackage) => {
 export default function JSONOutput(props) {
   const classes = useStyles();
   const [initialText, setInitialText] = useState('');
-  const [fhirDefinitions, setFhirDefinitions] = useState([{}]);
+  const [fhirDefinitions, setFhirDefinitions] = useState([{ resourceType: null, id: 'Untitled', def: null }]);
   const { setIsOutputObject, updateTextValue: propsUpdateText } = props;
   const [currentDef, setCurrentDef] = useState(0);
   const [defsWithErrors, setDefsWithErrors] = useState([]);
@@ -263,9 +263,11 @@ export default function JSONOutput(props) {
           <List component="nav" key={key} className={classes.list}>
             {key}
             {grouped[key]
-              .sort((a, b) =>
-                a.id?.toLowerCase() < b.id?.toLowerCase() ? -1 : a.id?.toLowerCase() > b.id?.toLowerCase() ? 1 : 0
-              ) // Sort ids alphabetically
+              .sort((a, b) => {
+                const aId = a.id ? a.id : 'Untitled'; // Treat missing or blank ids as "Untitled"
+                const bId = b.id ? b.id : 'Untitled';
+                return aId.toLowerCase() < bId.toLowerCase() ? -1 : aId.toLowerCase() > bId.toLowerCase() ? 1 : 0;
+              }) // Sort ids alphabetically
               .map((def, i) => {
                 const currentIndex = fhirDefinitions.indexOf(def);
                 const isError = defsWithErrors.includes(currentIndex);
