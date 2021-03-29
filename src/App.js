@@ -141,7 +141,7 @@ export default function App(props) {
       </div>
       <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
         <Grid className={classes.container} container>
-          <Grid item xs={5} className={classes.fullHeightGrid}>
+          <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
             <CodeMirrorComponent
               value={inputFSHText}
               initialText={initialText}
@@ -150,7 +150,7 @@ export default function App(props) {
               placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
             />
           </Grid>
-          <Grid item xs={7} className={classes.fullHeightGrid}>
+          <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
             <JSONOutput
               displaySUSHI={doRunSUSHI}
               text={inputGoFSHText}

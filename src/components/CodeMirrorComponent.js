@@ -68,7 +68,6 @@ CodeMirror.defineSimpleMode('fsh', {
 
 const useStyles = makeStyles((theme) => ({
   box: {
-    'padding-right': '1px',
     height: '100%'
   }
 }));

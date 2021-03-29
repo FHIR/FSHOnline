@@ -26,6 +26,13 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: 'border-box',
     noWrap: false
   },
+  gridItem: {
+    height: 'inherit'
+  },
+  fileTree: {
+    borderTop: '1px solid #263238', // Editor background color
+    overflow: 'scroll'
+  },
   button: {
     textTransform: 'none',
     fontSize: '13px',
@@ -318,7 +325,7 @@ export default function JSONOutput(props) {
   return (
     <ThemeProvider theme={theme}>
       <Grid container className={classes.box}>
-        <Grid item xs={9}>
+        <Grid item xs={9} className={classes.gridItem}>
           <CodeMirrorComponent
             value={displayValue}
             initialText={initialText}
@@ -327,7 +334,7 @@ export default function JSONOutput(props) {
             placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
           />
         </Grid>
-        <Grid item xs={3} style={{ overflow: 'scroll' }}>
+        <Grid item xs={3} className={(classes.gridItem, classes.fileTree)}>
           <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
             Add FHIR Definition
           </Button>
