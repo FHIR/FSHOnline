@@ -167,7 +167,7 @@ export default function SUSHIControls(props) {
   async function handleGoFSHClick() {
     props.resetLogMessages();
     props.onGoFSHClick('', true);
-    const gofshInputStrings = props.gofshText.map((def) => def.def);
+    const gofshInputStrings = props.gofshText.map((def) => def.def).filter((d) => d);
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
     const options = { dependencies: parsedDependencies };
     const fsh = await runGoFSH(gofshInputStrings, options);
@@ -180,11 +180,11 @@ export default function SUSHIControls(props) {
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
           Run SUSHI
         </Button>
+        <Button className={classes.secondaryButton} onClick={handleOpenShare}>
+          Share FSH
+        </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenConfig}>
           Configuration
-        </Button>
-        <Button className={classes.secondaryButton} onClick={handleOpenShare}>
-          Share
         </Button>
         <Button className={classes.button} onClick={handleGoFSHClick} testid="GoFSH-button">
           Run GoFSH
@@ -230,7 +230,7 @@ export default function SUSHIControls(props) {
         <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
           <DialogTitle id="form-dialog-title">Share</DialogTitle>
           <DialogContent>
-            <DialogContentText>Use this link to share your fsh with others!</DialogContentText>
+            <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
             <TextareaAutosize
               id="link"
               disabled

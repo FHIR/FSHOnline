@@ -85,6 +85,43 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
   expect(resultsElement.parentNode.text).toEqual();
 });
 
+it('Renders an Add Definition button that adds a blank definition', () => {
+  const simpleProfile = {
+    profiles: [
+      {
+        resourceType: 'StructureDefinition',
+        id: 'SimpleProfile'
+      }
+    ],
+    extensions: [],
+    instances: [],
+    valueSets: [],
+    codeSystems: []
+  };
+  const { getByText, queryByText } = render(
+    <JSONOutput
+      displaySUSHI={true}
+      isObject={true}
+      isWaiting={false}
+      setIsOutputObject={() => {}}
+      updateTextValue={() => {}}
+      text={JSON.stringify(simpleProfile, null, 2)}
+    />,
+    container
+  );
+
+  const addButton = getByText('Add FHIR Definition');
+  let placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  expect(addButton).toBeInTheDocument();
+  expect(placeholderText).not.toBeInTheDocument();
+
+  fireEvent.click(addButton);
+
+  // Add clears out the editor for a new blank definition and displays placeholder text
+  placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  expect(placeholderText).toBeInTheDocument();
+});
+
 describe('file tree display', () => {
   let sushiPackage;
   beforeAll(() => {
@@ -212,5 +249,60 @@ describe('file tree display', () => {
 
     const untitledDef = getByText('Untitled');
     expect(untitledDef).toBeInTheDocument();
+  });
+
+  it('renders a delete button that opens a confirmation and then deletes the definition', async () => {
+    const updateText = jest.fn();
+    const simplePackage = {
+      profiles: [
+        {
+          resourceType: 'StructureDefinition',
+          id: 'ProfileA'
+        },
+        {
+          resourceType: 'StructureDefinition',
+          id: 'ProfileB'
+        }
+      ],
+      extensions: [],
+      instances: [],
+      valueSets: [],
+      codeSystems: []
+    };
+    const stringifiedPackageAfterDelete = [
+      { resourceType: 'StructureDefinition', id: 'ProfileA', def: JSON.stringify(sushiPackage.profiles[0], null, 2) }
+    ];
+
+    const { getByTestId, queryByText } = render(
+      <JSONOutput
+        displaySUSHI={true}
+        isObject={true}
+        isWaiting={false}
+        setIsOutputObject={() => {}}
+        updateTextValue={updateText}
+        text={JSON.stringify(simplePackage, null, 2)}
+      />,
+      container
+    );
+
+    const profileBDelete = getByTestId('ProfileB-delete-button');
+    expect(profileBDelete).toBeInTheDocument();
+    let deleteButton = queryByText('Delete');
+    expect(deleteButton).not.toBeInTheDocument();
+
+    // Clicking the delete icon on a profile opens the modal for that definition
+    fireEvent.click(profileBDelete);
+    deleteButton = queryByText('Delete');
+    expect(deleteButton).toBeInTheDocument();
+    const dialogBox = deleteButton.parentNode.parentNode.parentNode; // Not sure why this can't be selected with a label
+    expect(dialogBox.textContent).toContain(
+      'Are you sure you want to delete the FHIR definition StructureDefinition/ProfileB?'
+    );
+
+    // Clicking delete confirmation deletes the definition
+    updateText.mockReset();
+    fireEvent.click(deleteButton);
+    expect(updateText).toHaveBeenCalledTimes(1);
+    expect(updateText).toHaveBeenCalledWith(stringifiedPackageAfterDelete);
   });
 });
