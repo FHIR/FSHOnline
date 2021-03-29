@@ -1,14 +1,38 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Button, Typography } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
+import WarningIcon from '@material-ui/icons/Warning';
+import ErrorIcon from '@material-ui/icons/Error';
+import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
+  consoleControls: {
+    background: '#C0C0C0',
+    height: '25px',
+    boxSizing: 'border-box',
+    display: 'flex;',
+    alignItems: 'center',
+    justifyContent: 'left'
+  },
   box: {
-    padding: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
     color: theme.palette.common.white,
     background: theme.palette.common.black,
-    height: '200%'
+    height: 'calc(100% - 25px)',
+    overflow: 'scroll',
+    boxSizing: 'border-box',
+    borderBottom: '4px solid #2c4f85'
+  },
+  warning: {
+    color: 'khaki'
+  },
+  error: {
+    color: 'red'
+  },
+  success: {
+    color: 'green'
   },
   pre: {
     margin: '0px'
@@ -24,9 +48,33 @@ const theme = createMuiTheme({
 export default function Console(props) {
   const classes = useStyles();
 
+  const toggleExpandConsole = () => {
+    props.setExpandConsole(!props.expandConsole);
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box} overflow="scroll">
+      <Box
+        className={classes.consoleControls}
+        style={{ borderBottom: !props.expandConsole ? '4px solid #2c4f85' : '' }}
+      >
+        <Button onClick={toggleExpandConsole} style={{ padding: 0 }}>
+          <ImportExportIcon />
+          {props.expandConsole ? 'Collapse Console' : 'Expand Console'}
+          <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
+          {props.warningCount ? `${props.warningCount}` : ''}
+          <ErrorIcon style={{ display: props.errorCount ? 'block' : 'none' }} className={classes.error} />
+          {props.errorCount ? `${props.errorCount}` : ''}
+          <CheckIcon
+            className={classes.success}
+            style={{
+              display: props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? 'block' : 'none'
+            }}
+          />
+          {props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? `Success!` : ''}
+        </Button>
+      </Box>
+      <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
         <Typography variant="subtitle1">Console</Typography>
         {props.consoleMessages.map((message, i) => {
           return (

@@ -11,23 +11,54 @@ import SUSHIControls from './components/SUSHIControls';
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    height: '100%',
     flexGrow: 1
   },
-  itemTop: {
-    height: '75vh'
+  fullHeightGrid: {
+    height: '100%'
   },
-  itemBottom: {
-    height: '25vh'
+  collapsedMain: {
+    width: '100%',
+    height: 'calc(100vh - 116px - 300px)'
+  },
+  expandedMain: {
+    width: '100%',
+    height: 'calc(100vh - 116px - 25px)'
+  },
+  collapsedConsole: {
+    height: '25px',
+    width: '100%'
+  },
+  expandedConsole: {
+    height: '300px',
+    width: '100%'
+  },
+  top: {
+    height: '116px'
   }
 }));
 
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let errorAndWarningMessages = [];
+let errorString = '';
+let warningString = '';
+let errorCount = 0;
+let warningCount = 0;
 console.log = function getMessages(message) {
   consoleMessages.push(message);
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     errorAndWarningMessages.push(message);
+    if (message.startsWith('error')) errorCount++;
+    else warningCount++;
+  }
+  if (errorCount > 0) {
+    errorString = `${errorCount} Error`;
+    if (errorCount !== 1) errorString += 's';
+  }
+  if (warningCount > 0) {
+    warningString = `${warningCount} Warning`;
+    if (warningCount !== 1) warningString += 's';
   }
 };
 
@@ -58,6 +89,7 @@ export default function App(props) {
   const [isOutputObject, setIsOutputObject] = useState(false);
   const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
   const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
+  const [expandConsole, setExpandConsole] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -69,6 +101,10 @@ export default function App(props) {
   function resetLogMessages() {
     consoleMessages = [];
     errorAndWarningMessages = [];
+    errorString = '';
+    warningString = '';
+    errorCount = 0;
+    warningCount = 0;
   }
 
   function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
@@ -92,40 +128,50 @@ export default function App(props) {
   }
 
   return (
-    <div className="root">
-      <TopBar />
-      <SUSHIControls
-        onClick={handleSUSHIControls}
-        onGoFSHClick={handleGoFSHControls}
-        fshText={inputFSHText}
-        gofshText={inputGoFSHText}
-        resetLogMessages={resetLogMessages}
-      />
-      <Grid className={classes.container} container>
-        <Grid className={classes.itemTop} item xs={5}>
-          <CodeMirrorComponent
-            value={inputFSHText}
-            initialText={initialText}
-            updateTextValue={updateInputFSHTextValue}
-            mode={'fsh'}
-            placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
-          />
+    <div className="root" style={{ height: '100vh' }}>
+      <div className={classes.top}>
+        <TopBar />
+        <SUSHIControls
+          onClick={handleSUSHIControls}
+          onGoFSHClick={handleGoFSHControls}
+          fshText={inputFSHText}
+          gofshText={inputGoFSHText}
+          resetLogMessages={resetLogMessages}
+        />
+      </div>
+      <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
+        <Grid className={classes.container} container>
+          <Grid item xs={5} className={classes.fullHeightGrid}>
+            <CodeMirrorComponent
+              value={inputFSHText}
+              initialText={initialText}
+              updateTextValue={updateInputFSHTextValue}
+              mode={'fsh'}
+              placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
+            />
+          </Grid>
+          <Grid item xs={7} className={classes.fullHeightGrid}>
+            <JSONOutput
+              displaySUSHI={doRunSUSHI}
+              text={inputGoFSHText}
+              isObject={isOutputObject}
+              isWaiting={isWaitingForFHIROutput}
+              errorsAndWarnings={errorAndWarningMessages}
+              updateTextValue={updateInputGoFSHTextValue}
+              setIsOutputObject={setIsOutputObject}
+            />
+          </Grid>
         </Grid>
-        <Grid className={classes.itemTop} item xs={7}>
-          <JSONOutput
-            displaySUSHI={doRunSUSHI}
-            text={inputGoFSHText}
-            isObject={isOutputObject}
-            isWaiting={isWaitingForFHIROutput}
-            errorsAndWarnings={errorAndWarningMessages}
-            updateTextValue={updateInputGoFSHTextValue}
-            setIsOutputObject={setIsOutputObject}
-          />
-        </Grid>
-        <Grid className={classes.itemBottom} item xs={12}>
-          <ConsoleComponent consoleMessages={consoleMessages} />
-        </Grid>
-      </Grid>
+      </div>
+      <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
+        <ConsoleComponent
+          consoleMessages={consoleMessages}
+          warningCount={warningString}
+          errorCount={errorString}
+          expandConsole={expandConsole}
+          setExpandConsole={setExpandConsole}
+        />
+      </div>
     </div>
   );
 }

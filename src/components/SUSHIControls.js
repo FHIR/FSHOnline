@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
     background: theme.palette.background.paper,
-    height: '4vh',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'center'
@@ -176,7 +175,7 @@ export default function SUSHIControls(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box} borderLeft={1} borderRight={1}>
+      <Box className={classes.box}>
         <Button className={classes.button} onClick={handleRunClick} testid="Button">
           Run SUSHI
         </Button>
