@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { runSUSHI, runGoFSH } from '../utils/RunSUSHI';
+import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
@@ -68,7 +68,7 @@ function replacer(key, value) {
   return value;
 }
 
-export default function SUSHIControls(props) {
+export default function FSHControls(props) {
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState(false);
   const [openShare, setOpenShare] = useState(false);

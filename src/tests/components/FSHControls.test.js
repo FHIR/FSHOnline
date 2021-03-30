@@ -4,8 +4,8 @@ import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
-import SUSHIControls from '../../components/SUSHIControls';
-import * as runSUSHI from '../../utils/RunSUSHI';
+import FSHControls from '../../components/FSHControls';
+import * as fshHelpers from '../../utils/FSHHelpers';
 import * as bitlyWorker from '../../utils/BitlyWorker';
 
 // Mock copy to clipboard since we don't need to test the component itself
@@ -38,10 +38,10 @@ afterEach(() => {
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad package', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -60,10 +60,10 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empty package', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -82,10 +82,10 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
 it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good package', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -105,10 +105,10 @@ it('calls GoFSH function and returns FSH', async () => {
   const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runGoFSHSpy = jest.spyOn(runSUSHI, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
 
   act(() => {
-    render(<SUSHIControls onGoFSHClick={onGoFSHClick} gofshText={[]} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onGoFSHClick={onGoFSHClick} gofshText={[]} resetLogMessages={resetLogMessages} />, container);
   });
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
@@ -127,10 +127,10 @@ it('calls GoFSH function and returns FSH', async () => {
 it('uses user provided canonical when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -160,10 +160,10 @@ it('uses user provided canonical when calling runSUSHI', async () => {
 it('uses user provided version when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -194,10 +194,10 @@ it('uses user provided version when calling runSUSHI', async () => {
 it('uses user provided dependencies when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runSUSHISpy = jest.spyOn(runSUSHI, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByText, getByLabelText } = render(
-    <SUSHIControls onClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -234,7 +234,7 @@ it('copies link to clipboard on button click', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -259,7 +259,7 @@ it('generates link when share button is clicked', async () => {
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
 
@@ -281,7 +281,7 @@ it('shows an error when the FSH file is too long to share', async () => {
     .mockResolvedValue({ link: undefined, errorNeeded: true });
 
   const { getByText } = render(
-    <SUSHIControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
+    <FSHControls onClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
     container
   );
   act(() => {

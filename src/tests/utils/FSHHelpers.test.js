@@ -1,4 +1,4 @@
-import { runSUSHI, runGoFSH } from '../../utils/RunSUSHI';
+import { runSUSHI, runGoFSH } from '../../utils/FSHHelpers';
 import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';

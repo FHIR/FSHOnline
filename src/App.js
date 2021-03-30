@@ -7,7 +7,7 @@ import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import CodeMirrorComponent from './components/CodeMirrorComponent';
-import SUSHIControls from './components/SUSHIControls';
+import FSHControls from './components/FSHControls';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -107,7 +107,7 @@ export default function App(props) {
     warningCount = 0;
   }
 
-  function handleSUSHIControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
+  function handleFSHControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
     setDoRunSUSHI(doRunSUSHI);
     setInputGoFSHText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
     setIsOutputObject(isObject);
@@ -131,8 +131,8 @@ export default function App(props) {
     <div className="root" style={{ height: '100vh' }}>
       <div className={classes.top}>
         <TopBar />
-        <SUSHIControls
-          onClick={handleSUSHIControls}
+        <FSHControls
+          onClick={handleFSHControls}
           onGoFSHClick={handleGoFSHControls}
           fshText={inputFSHText}
           gofshText={inputGoFSHText}
