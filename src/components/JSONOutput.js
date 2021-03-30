@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { groupBy } from 'lodash';
+import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -92,7 +92,7 @@ export default function JSONOutput(props) {
   const classes = useStyles();
   const [initialText, setInitialText] = useState('');
   const [fhirDefinitions, setFhirDefinitions] = useState([{ resourceType: null, id: 'Untitled', def: null }]);
-  const { setIsOutputObject, updateTextValue: propsUpdateText } = props;
+  const { setShowNewText, updateTextValue: propsUpdateText } = props;
   const [currentDef, setCurrentDef] = useState(0);
   const [defsWithErrors, setDefsWithErrors] = useState([]);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
@@ -100,9 +100,8 @@ export default function JSONOutput(props) {
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
-    if (props.displaySUSHI && props.text && props.isObject) {
-      // Indicate that we no longer have new data we need to load so we don't come back here too early
-      setIsOutputObject(false);
+    if (props.showNewText && !isEqual(props.text, [''])) {
+      setShowNewText(false); // Indicate that we no longer have new data we need to load so we don't come back here too early
       const packageJSON = JSON.parse(props.text);
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
@@ -113,7 +112,7 @@ export default function JSONOutput(props) {
       setInitialText(null); // Reset the text to null when loading to reset the editor and display placeholder text
       setFhirDefinitions([]); // Reset FHIR definitions to clear out file tree
     }
-  }, [props.displaySUSHI, props.text, props.isObject, props.isWaiting, propsUpdateText, setIsOutputObject]);
+  }, [props.text, props.showNewText, props.isWaiting, propsUpdateText, setShowNewText]);
 
   const updateTextValue = (text) => {
     // We're waiting for a new package to load, so we don't want the editor to update yet

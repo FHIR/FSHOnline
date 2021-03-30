@@ -24,23 +24,17 @@ afterEach(() => {
   container = null;
 });
 
-it('Renders with the placeholder text if displaySUSHI is false, isObject is false, and no text', () => {
+it('Renders with the placeholder text if showNewText is false and no text', () => {
   // Initial case, nothing from SUSHI is displayed
-  const { getByText } = render(
-    <JSONOutput displaySUSHI={false} isObject={false} text={''} errorsAndWarnings={[]} />,
-    container
-  );
+  const { getByText } = render(<JSONOutput showNewText={false} text={''} />, container);
 
   const placeholderText = getByText('Edit and view FHIR Definitions here!');
 
   expect(placeholderText).toBeInTheDocument();
 });
 
-it('Renders with the proper text and updates with proper text when not an object', () => {
-  const { getByText } = render(
-    <JSONOutput displaySUSHI={true} text={''} isObject={false} errorsAndWarnings={[]} isWaiting={true} />,
-    container
-  );
+it('Renders with the proper text and updates with proper text when loading', () => {
+  const { getByText } = render(<JSONOutput showNewText={false} text={''} isWaiting={true} />, container);
 
   const loadingPlaceholderText = getByText('Loading...');
 
@@ -51,7 +45,7 @@ it('Renders with the proper text and updates with proper text when not an object
 it.skip('Renders with the first profile when text is an object (SUSHI Package)', async () => {
   const { getByText } = render(
     <JSONOutput
-      displaySUSHI={true}
+      showNewText={true}
       text={JSON.stringify(
         {
           profiles: [
@@ -68,11 +62,9 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
         null,
         2
       )}
-      isObject={true}
       isWaiting={true}
-      errorsAndWarnings={[]}
       updateTextValue={(text) => text}
-      setIsOutputObject={() => {}}
+      setShowNewText={() => {}}
     />,
     container
   );
@@ -81,7 +73,7 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
   const resultsElement = getByText(
     (content, element) => element.tagName.toLowerCase() === 'span' && content.startsWith('resourceType')
   );
-  expect(resultsElement).toBeInTheDocument(); // isObject is true so results are printed
+  expect(resultsElement).toBeInTheDocument(); // showNewText is true so results are printed
   expect(resultsElement.parentNode.text).toEqual();
 });
 
@@ -100,10 +92,9 @@ it('Renders an Add Definition button that adds a blank definition', () => {
   };
   const { getByText, queryByText } = render(
     <JSONOutput
-      displaySUSHI={true}
-      isObject={true}
+      showNewText={true}
+      setShowNewText={() => {}}
       isWaiting={false}
-      setIsOutputObject={() => {}}
       updateTextValue={() => {}}
       text={JSON.stringify(simpleProfile, null, 2)}
     />,
@@ -170,10 +161,9 @@ describe('file tree display', () => {
   it('renders a list of JSON definitions in a file tree', () => {
     const { getAllByTestId } = render(
       <JSONOutput
-        displaySUSHI={true}
-        isObject={true}
+        showNewText={true}
+        setShowNewText={() => {}}
         isWaiting={false}
-        setIsOutputObject={() => {}}
         updateTextValue={() => {}}
         text={JSON.stringify(sushiPackage, null, 2)}
       />,
@@ -204,10 +194,9 @@ describe('file tree display', () => {
   it('resets currentDef and initialText of editor when a new definition is clicked', () => {
     const { getByText } = render(
       <JSONOutput
-        displaySUSHI={true}
-        isObject={true}
+        showNewText={true}
+        setShowNewText={() => {}}
         isWaiting={false}
-        setIsOutputObject={() => {}}
         updateTextValue={() => {}}
         text={JSON.stringify(sushiPackage, null, 2)}
       />,
@@ -237,10 +226,9 @@ describe('file tree display', () => {
     };
     const { getByText } = render(
       <JSONOutput
-        displaySUSHI={true}
-        isObject={true}
+        showNewText={true}
+        setShowNewText={() => {}}
         isWaiting={false}
-        setIsOutputObject={() => {}}
         updateTextValue={() => {}}
         text={JSON.stringify(profileWithoutId, null, 2)}
       />,
@@ -275,10 +263,9 @@ describe('file tree display', () => {
 
     const { getByTestId, queryByText } = render(
       <JSONOutput
-        displaySUSHI={true}
-        isObject={true}
+        showNewText={true}
+        setShowNewText={() => {}}
         isWaiting={false}
-        setIsOutputObject={() => {}}
         updateTextValue={updateText}
         text={JSON.stringify(simplePackage, null, 2)}
       />,

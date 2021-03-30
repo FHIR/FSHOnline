@@ -135,11 +135,9 @@ export default function FSHControls(props) {
     setLink(newLink);
   };
 
-  //Sets the doRunSUSHI to true
-  async function handleRunClick() {
+  async function handleSUSHIClick() {
     props.resetLogMessages();
-    props.onClick(true, [''], false, true);
-    let isObject = true;
+    props.onSUSHIClick(true, [''], true);
     const dependencyArr = sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
     const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
@@ -152,15 +150,13 @@ export default function FSHControls(props) {
         !outPackage.profiles.length &&
         !outPackage.valueSets.length
       ) {
-        isObject = false;
         jsonOutput = [''];
       }
     } else {
-      isObject = false;
       jsonOutput = [''];
     }
 
-    props.onClick(true, jsonOutput, isObject, false);
+    props.onSUSHIClick(true, jsonOutput, false);
   }
 
   async function handleGoFSHClick() {
@@ -176,7 +172,7 @@ export default function FSHControls(props) {
   return (
     <ThemeProvider theme={theme}>
       <Box className={classes.box}>
-        <Button className={classes.button} onClick={handleRunClick} testid="Button">
+        <Button className={classes.button} onClick={handleSUSHIClick} testid="Button">
           Run SUSHI
         </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenShare}>

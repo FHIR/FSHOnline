@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
 
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
-let errorAndWarningMessages = [];
 let errorString = '';
 let warningString = '';
 let errorCount = 0;
@@ -48,7 +47,6 @@ let warningCount = 0;
 console.log = function getMessages(message) {
   consoleMessages.push(message);
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
-    errorAndWarningMessages.push(message);
     if (message.startsWith('error')) errorCount++;
     else warningCount++;
   }
@@ -82,11 +80,10 @@ export async function decodeFSH(encodedFSH) {
 export default function App(props) {
   const classes = useStyles();
   const text64 = props.match.params;
-  const [doRunSUSHI, setDoRunSUSHI] = useState(false);
+  const [showNewFHIRText, setShowNewFHIRText] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
-  const [inputGoFSHText, setInputGoFSHText] = useState(['']);
+  const [inputFHIRText, setInputFHIRText] = useState(['']);
   const [initialText, setInitialText] = useState('');
-  const [isOutputObject, setIsOutputObject] = useState(false);
   const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
   const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
   const [expandConsole, setExpandConsole] = useState(false);
@@ -100,17 +97,15 @@ export default function App(props) {
 
   function resetLogMessages() {
     consoleMessages = [];
-    errorAndWarningMessages = [];
     errorString = '';
     warningString = '';
     errorCount = 0;
     warningCount = 0;
   }
 
-  function handleFSHControls(doRunSUSHI, sushiOutput, isObject, isWaiting) {
-    setDoRunSUSHI(doRunSUSHI);
-    setInputGoFSHText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
-    setIsOutputObject(isObject);
+  function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
+    setShowNewFHIRText(showNewText);
+    setInputFHIRText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
     setIsWaitingForFHIROutput(isWaiting);
   }
 
@@ -123,8 +118,8 @@ export default function App(props) {
     setInputFSHText(text);
   }
 
-  function updateInputGoFSHTextValue(text) {
-    setInputGoFSHText(text);
+  function updateInputFHIRTextValue(text) {
+    setInputFHIRText(text);
   }
 
   return (
@@ -132,10 +127,10 @@ export default function App(props) {
       <div className={classes.top}>
         <TopBar />
         <FSHControls
-          onClick={handleFSHControls}
+          onSUSHIClick={handleSUSHIControls}
           onGoFSHClick={handleGoFSHControls}
           fshText={inputFSHText}
-          gofshText={inputGoFSHText}
+          gofshText={inputFHIRText}
           resetLogMessages={resetLogMessages}
         />
       </div>
@@ -152,13 +147,11 @@ export default function App(props) {
           </Grid>
           <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
             <JSONOutput
-              displaySUSHI={doRunSUSHI}
-              text={inputGoFSHText}
-              isObject={isOutputObject}
+              text={inputFHIRText}
+              showNewText={showNewFHIRText}
+              setShowNewText={setShowNewFHIRText}
               isWaiting={isWaitingForFHIROutput}
-              errorsAndWarnings={errorAndWarningMessages}
-              updateTextValue={updateInputGoFSHTextValue}
-              setIsOutputObject={setIsOutputObject}
+              updateTextValue={updateInputFHIRTextValue}
             />
           </Grid>
         </Grid>
