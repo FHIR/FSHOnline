@@ -334,7 +334,7 @@ export default function JSONOutput(props) {
             placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
           />
         </Grid>
-        <Grid item xs={3} className={(classes.gridItem, classes.fileTree)}>
+        <Grid item xs={3} className={`${classes.gridItem} ${classes.fileTree}`}>
           <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
             Add FHIR Definition
           </Button>
