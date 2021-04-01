@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { groupBy } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -24,7 +23,15 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     background: theme.palette.background.paper,
     height: '100%',
+    boxSizing: 'border-box',
     noWrap: false
+  },
+  gridItem: {
+    height: 'inherit'
+  },
+  fileTree: {
+    borderTop: '1px solid #263238', // Editor background color
+    overflow: 'scroll'
   },
   button: {
     textTransform: 'none',
@@ -317,26 +324,24 @@ export default function JSONOutput(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className={classes.box} border={1} overflow="scroll">
-        <Grid container>
-          <Grid item xs={9} style={{ height: '75vh' }}>
-            <CodeMirrorComponent
-              value={displayValue}
-              initialText={initialText}
-              updateTextValue={updateTextValue}
-              mode={'application/json'}
-              placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
-            />
-          </Grid>
-          <Grid item xs={3} style={{ overflow: 'scroll', height: '75vh' }}>
-            <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-              Add FHIR Definition
-            </Button>
-            {renderFileTreeView()}
-            {renderDeleteModal()}
-          </Grid>
+      <Grid container className={classes.box}>
+        <Grid item xs={9} className={classes.gridItem}>
+          <CodeMirrorComponent
+            value={displayValue}
+            initialText={initialText}
+            updateTextValue={updateTextValue}
+            mode={'application/json'}
+            placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
+          />
         </Grid>
-      </Box>
+        <Grid item xs={3} className={`${classes.gridItem} ${classes.fileTree}`}>
+          <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
+            Add FHIR Definition
+          </Button>
+          {renderFileTreeView()}
+          {renderDeleteModal()}
+        </Grid>
+      </Grid>
     </ThemeProvider>
   );
 }
