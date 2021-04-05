@@ -1,6 +1,6 @@
 # FSH Online
 
-FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It is available on https://fshschool.org/FSHOnline/.
+FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It also runs the [GoFSH](https://github.com/FHIR/GoFSH) decompiler to translate FHIR definitions into FSH. It is available on https://fshschool.org/FSHOnline/.
 
 NOTE: This application is an early alpha release and is designed to be used for initial exploration.
 
@@ -92,7 +92,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ### FHIR Shorthand
 
-To learn more about FHIR Shorthand (FSH), check out the [specification](https://build.fhir.org/ig/HL7/fhir-shorthand/). To learn more about SUSHI, check out the [documentation](https://fshschool.org/docs/sushi/). For other resources and tools to use with FHIR Shorthand, check out [FSH School](https://fshschool.org/).
+To learn more about FHIR Shorthand (FSH), check out the [specification](https://build.fhir.org/ig/HL7/fhir-shorthand/). To learn more about SUSHI, check out the [documentation](https://fshschool.org/docs/sushi/) and to learn more about GoFSH, visit the [documentation](https://fshschool.org/docs/gofsh/). For other resources and tools to use with FHIR Shorthand, check out [FSH School](https://fshschool.org/).
 
 ### React
 

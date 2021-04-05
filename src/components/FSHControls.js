@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { runSUSHI, runGoFSH } from '../utils/RunSUSHI';
+import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { generateLink } from '../utils/BitlyWorker';
 import './CodeMirrorComponent';
@@ -68,7 +68,7 @@ function replacer(key, value) {
   return value;
 }
 
-export default function SUSHIControls(props) {
+export default function FSHControls(props) {
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState(false);
   const [openShare, setOpenShare] = useState(false);
@@ -135,11 +135,9 @@ export default function SUSHIControls(props) {
     setLink(newLink);
   };
 
-  //Sets the doRunSUSHI to true
-  async function handleRunClick() {
+  async function handleSUSHIClick() {
     props.resetLogMessages();
-    props.onClick(true, [''], false, true);
-    let isObject = true;
+    props.onSUSHIClick(true, [''], true);
     const dependencyArr = sliceDependency(dependencies);
     const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
     const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
@@ -152,15 +150,13 @@ export default function SUSHIControls(props) {
         !outPackage.profiles.length &&
         !outPackage.valueSets.length
       ) {
-        isObject = false;
         jsonOutput = [''];
       }
     } else {
-      isObject = false;
       jsonOutput = [''];
     }
 
-    props.onClick(true, jsonOutput, isObject, false);
+    props.onSUSHIClick(true, jsonOutput, false);
   }
 
   async function handleGoFSHClick() {
@@ -176,7 +172,7 @@ export default function SUSHIControls(props) {
   return (
     <ThemeProvider theme={theme}>
       <Box className={classes.box}>
-        <Button className={classes.button} onClick={handleRunClick} testid="Button">
+        <Button className={classes.button} onClick={handleSUSHIClick} testid="Button">
           Run SUSHI
         </Button>
         <Button className={classes.secondaryButton} onClick={handleOpenShare}>
