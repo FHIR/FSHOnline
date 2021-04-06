@@ -54,8 +54,8 @@ export async function runGoFSH(input, options) {
   const configuration = fhirProcessor.processConfig(options.dependencies ?? []);
 
   // Load dependencies, including those inferred from an IG file, and those given as input
-  let dependencies = configuration.config.dependencies
-    ? configuration.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
+  let dependencies = configuration?.config.dependencies
+    ? configuration?.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
     : [];
   dependencies = sliceDependency(dependencies.join(','));
   defs = await loadAndCleanDatabase(defs, dependencies);
@@ -67,7 +67,7 @@ export async function runGoFSH(input, options) {
   const fsh = new gofshExport.FSHExporter(pkg).apiExport('string');
   logger.info('Done converting definitions');
   printGoFSHresults(pkg);
-  return fsh;
+  return { fsh, config: configuration?.config ?? {} };
 }
 
 /**

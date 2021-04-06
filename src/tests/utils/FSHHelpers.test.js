@@ -93,9 +93,17 @@ describe('#runGoFSH', () => {
         return Promise.resolve(defs);
       });
     const expectedFSH = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example'].join('\n');
+    const expectedConfig = {
+      FSHOnly: true,
+      applyExtensionMetadataToRoot: false,
+      canonical: 'http://sample.org',
+      fhirVersion: ['4.0.1'],
+      id: 'sample',
+      name: 'Sample'
+    };
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
-    expect(outputFSH).toEqual(expectedFSH);
+    expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
   });
 
   it('should return a string of FSH when proper JSON is entered and there are valid FHIRDefinitions', async () => {
@@ -118,10 +126,18 @@ describe('#runGoFSH', () => {
       '* name[0].given[0] = "Jane"',
       '* gender = #female'
     ].join('\n');
+    const expectedConfig = {
+      FSHOnly: true,
+      applyExtensionMetadataToRoot: false,
+      canonical: 'http://sample.org',
+      fhirVersion: ['4.0.1'],
+      id: 'sample',
+      name: 'Sample'
+    };
 
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
 
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
-    expect(outputFSH).toEqual(expectedFSH);
+    expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
   });
 });

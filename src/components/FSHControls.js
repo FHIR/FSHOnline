@@ -75,8 +75,8 @@ export default function FSHControls(props) {
   const [openShareError, setOpenShareError] = useState(false);
   const [link, setLink] = useState();
   const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
-  const [canonical, setCanonical] = useState('http://example.org');
-  const [version, setVersion] = useState('1.0.0');
+  const [canonical, setCanonical] = useState('');
+  const [version, setVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
 
   const handleOpenConfig = () => {
@@ -139,7 +139,12 @@ export default function FSHControls(props) {
     props.resetLogMessages();
     props.onSUSHIClick(true, [''], true);
     const dependencyArr = sliceDependency(dependencies);
-    const config = { canonical, version, FSHOnly: true, fhirVersion: ['4.0.1'] };
+    const config = {
+      canonical: canonical ? canonical : 'http://example.org',
+      version: version ? version : '1.0.0',
+      FSHOnly: true,
+      fhirVersion: ['4.0.1']
+    };
     const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
@@ -164,9 +169,23 @@ export default function FSHControls(props) {
     props.onGoFSHClick('', true);
     const gofshInputStrings = props.gofshText.map((def) => def.def).filter((d) => d);
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
+
+    // Create small ImplementationGuide resource to send canonical and version information
+    if (canonical || version) {
+      const igResource = {
+        resourceType: 'ImplementationGuide',
+        fhirVersion: ['4.0.1'],
+        ...(canonical && { url: canonical }),
+        ...(version && { version: version })
+      };
+      gofshInputStrings.push(JSON.stringify(igResource, null, 2));
+    }
+
     const options = { dependencies: parsedDependencies };
-    const fsh = await runGoFSH(gofshInputStrings, options);
+    const { fsh, config } = await runGoFSH(gofshInputStrings, options);
     props.onGoFSHClick(fsh, false);
+    if (canonical === '' && config.canonical) setCanonical(config.canonical);
+    if (version === '' && config.version) setVersion(config.version);
   }
 
   return (
@@ -195,6 +214,7 @@ export default function FSHControls(props) {
               margin="dense"
               fullWidth
               label="Canonical URL"
+              helperText="Default: http://example.org"
               defaultValue={canonical}
               onChange={updateCanonical}
             />
@@ -203,6 +223,7 @@ export default function FSHControls(props) {
               margin="dense"
               fullWidth
               label="Version"
+              helperText="Default: 1.0.0"
               defaultValue={version}
               onChange={updateVersion}
             />
