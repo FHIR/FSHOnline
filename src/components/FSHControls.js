@@ -204,11 +204,9 @@ export default function FSHControls(props) {
           Run GoFSH
         </Button>
         <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">SUSHI Configuration Settings</DialogTitle>
+          <DialogTitle id="form-dialog-title">Configuration Settings</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Change the configuration options to use when running SUSHI on your FSH
-            </DialogContentText>
+            <DialogContentText>Change the configuration options to use when running SUSHI and GoFSH</DialogContentText>
             <TextField
               id="canonical"
               margin="dense"
