@@ -172,7 +172,8 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
   const expectedIgResource = {
     resourceType: 'ImplementationGuide',
     fhirVersion: ['4.0.1'],
-    url: 'http://other.org',
+    id: '1',
+    url: 'http://other.org/ImplementationGuide/1',
     version: '2.0.0'
   };
 

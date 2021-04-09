@@ -175,7 +175,8 @@ export default function FSHControls(props) {
       const igResource = {
         resourceType: 'ImplementationGuide',
         fhirVersion: ['4.0.1'],
-        ...(canonical && { url: canonical }),
+        id: '1',
+        ...(canonical && { url: `${canonical}/ImplementationGuide/1` }),
         ...(version && { version: version })
       };
       gofshInputStrings.push(JSON.stringify(igResource, null, 2));
