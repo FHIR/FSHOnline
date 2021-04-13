@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { inflateSync } from 'browserify-zlib';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   expandedMain: {
     width: '100%',
-    height: 'calc(100vh - 116px - 25px)'
+    height: 'calc(100vh - 116px - 34px)'
   },
   collapsedConsole: {
     height: '25px',
@@ -37,6 +37,24 @@ const useStyles = makeStyles((theme) => ({
     height: '116px'
   }
 }));
+
+const theme = createMuiTheme({
+  palette: {
+    success: {
+      main: '#057AAD'
+    }
+  },
+  typography: {
+    fontFamily: 'Open Sans'
+  },
+  overrides: {
+    MuiTooltip: {
+      tooltip: {
+        backgroundColor: 'rgba(97, 97, 97, 1)'
+      }
+    }
+  }
+});
 
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
@@ -123,48 +141,51 @@ export default function App(props) {
   }
 
   return (
-    <div className="root" style={{ height: '100vh' }}>
-      <div className={classes.top}>
-        <TopBar />
-        <FSHControls
-          onSUSHIClick={handleSUSHIControls}
-          onGoFSHClick={handleGoFSHControls}
-          fshText={inputFSHText}
-          gofshText={inputFHIRText}
-          resetLogMessages={resetLogMessages}
-        />
-      </div>
-      <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
-        <Grid className={classes.container} container>
-          <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
-            <CodeMirrorComponent
-              value={inputFSHText}
-              initialText={initialText}
-              updateTextValue={updateInputFSHTextValue}
-              mode={'fsh'}
-              placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Edit FSH here!'}
-            />
+    <ThemeProvider theme={theme}>
+      <div className="root" style={{ height: '100vh' }}>
+        <div className={classes.top}>
+          <TopBar />
+          <FSHControls
+            onSUSHIClick={handleSUSHIControls}
+            onGoFSHClick={handleGoFSHControls}
+            fshText={inputFSHText}
+            gofshText={inputFHIRText}
+            resetLogMessages={resetLogMessages}
+          />
+        </div>
+        <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
+          <Grid className={classes.container} container>
+            <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
+              <CodeMirrorComponent
+                name={'FSH'}
+                value={inputFSHText}
+                initialText={initialText}
+                updateTextValue={updateInputFSHTextValue}
+                mode={'fsh'}
+                placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Write FSH here...'}
+              />
+            </Grid>
+            <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
+              <JSONOutput
+                text={inputFHIRText}
+                showNewText={showNewFHIRText}
+                setShowNewText={setShowNewFHIRText}
+                isWaiting={isWaitingForFHIROutput}
+                updateTextValue={updateInputFHIRTextValue}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
-            <JSONOutput
-              text={inputFHIRText}
-              showNewText={showNewFHIRText}
-              setShowNewText={setShowNewFHIRText}
-              isWaiting={isWaitingForFHIROutput}
-              updateTextValue={updateInputFHIRTextValue}
-            />
-          </Grid>
-        </Grid>
+        </div>
+        <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
+          <ConsoleComponent
+            consoleMessages={consoleMessages}
+            warningCount={warningString}
+            errorCount={errorString}
+            expandConsole={expandConsole}
+            setExpandConsole={setExpandConsole}
+          />
+        </div>
       </div>
-      <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
-        <ConsoleComponent
-          consoleMessages={consoleMessages}
-          warningCount={warningString}
-          errorCount={errorString}
-          expandConsole={expandConsole}
-          setExpandConsole={setExpandConsole}
-        />
-      </div>
-    </div>
+    </ThemeProvider>
   );
 }

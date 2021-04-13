@@ -1,5 +1,7 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import { upperFirst } from 'lodash';
+import { Box, IconButton, Tooltip } from '@material-ui/core';
+import { Delete, FileCopy, Link, SaveAlt } from '@material-ui/icons';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import { makeStyles } from '@material-ui/core/styles';
 import CodeMirror from 'codemirror';
@@ -69,6 +71,25 @@ CodeMirror.defineSimpleMode('fsh', {
 const useStyles = makeStyles((theme) => ({
   box: {
     height: '100%'
+  },
+  header: {
+    fontFamily: 'Open Sans',
+    color: theme.palette.common.white,
+    background: '#424242', // Dark mode background
+    padding: '5px',
+    paddingLeft: '29px', // width of code mirror gutter
+    height: '24px', // 24px + 10px of padding is total height
+    lineHeight: '24px'
+  },
+  headerLabel: {
+    float: 'left'
+  },
+  headerActions: {
+    float: 'right'
+  },
+  iconButton: {
+    color: theme.palette.common.white,
+    padding: '3px'
   }
 }));
 
@@ -80,8 +101,33 @@ export default function CodeMirrorComponent(props) {
     props.updateTextValue(text);
   }
 
+  const renderActionIcon = (Icon, label, onClick, style = {}) => {
+    return (
+      <Tooltip title={upperFirst(label)} placement="top" arrow>
+        <IconButton className={classes.iconButton} aria-label={label} onClick={onClick}>
+          <Icon fontSize="small" style={style} />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const renderActionIcons = () => {
+    return (
+      <div className={classes.headerActions}>
+        {props.mode === 'fsh' && renderActionIcon(Link, 'share', () => {}, { transform: 'rotate(-45deg)' })}
+        {renderActionIcon(FileCopy, 'copy', () => {})}
+        {renderActionIcon(SaveAlt, 'save', () => {})}
+        {renderActionIcon(Delete, 'delete', () => {})}
+      </div>
+    );
+  };
+
   return (
     <Box className={classes.box}>
+      <div className={classes.header}>
+        <div className={classes.headerLabel}>{props.name}</div>
+        {renderActionIcons()}
+      </div>
       <ReactCodeMirror
         className="react-codemirror2"
         value={props.initialText}

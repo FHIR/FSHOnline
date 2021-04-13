@@ -14,8 +14,7 @@ import {
   ListItem,
   ListItemSecondaryAction
 } from '@material-ui/core';
-import { Add, Delete, HighlightOff } from '@material-ui/icons';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { Add, ChevronRight, ChevronLeft, Delete, HighlightOff } from '@material-ui/icons';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +28,34 @@ const useStyles = makeStyles((theme) => ({
   gridItem: {
     height: 'inherit'
   },
+  header: {
+    color: theme.palette.common.white,
+    background: '#424242', // Dark mode background
+    height: '34px' // Same height as headers on CodeMirror editors
+  },
+  headerIconButton: {
+    padding: '0px',
+    color: theme.palette.common.white,
+    background: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.success.light
+    },
+    borderRadius: 0,
+    height: '100%',
+    width: '34px',
+    minWidth: '34px' // width and minWidth match the height so button is a square
+  },
   fileTree: {
     borderTop: '1px solid #263238', // Editor background color
     overflow: 'scroll'
   },
   button: {
+    color: theme.palette.common.white,
+    background: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.success.light
+    },
+    border: '3px solid white',
     textTransform: 'none',
     fontSize: '13px',
     width: '100%'
@@ -61,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 0
   },
   listIcon: {
+    color: theme.palette.success.main,
     fontSize: '13px',
     padding: '3px'
   },
@@ -68,12 +91,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '19px' // width of icon
   }
 }));
-
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Open Sans'
-  }
-});
 
 // Flatten the package so we can render and navigate it more easily,
 // but keep high level attributes we'll need accessible
@@ -97,6 +114,7 @@ export default function JSONOutput(props) {
   const [defsWithErrors, setDefsWithErrors] = useState([]);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [showFileTree, setShowFileTree] = useState(true);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
@@ -322,25 +340,33 @@ export default function JSONOutput(props) {
   const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
 
   return (
-    <ThemeProvider theme={theme}>
-      <Grid container className={classes.box}>
-        <Grid item xs={9} className={classes.gridItem}>
-          <CodeMirrorComponent
-            value={displayValue}
-            initialText={initialText}
-            updateTextValue={updateTextValue}
-            mode={'application/json'}
-            placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
-          />
-        </Grid>
-        <Grid item xs={3} className={`${classes.gridItem} ${classes.fileTree}`}>
-          <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-            Add FHIR Definition
-          </Button>
-          {renderFileTreeView()}
-          {renderDeleteModal()}
-        </Grid>
+    <Grid container className={classes.box}>
+      <Grid item xs={9} className={classes.gridItem}>
+        <CodeMirrorComponent
+          name={'FHIR'}
+          value={displayValue}
+          initialText={initialText}
+          updateTextValue={updateTextValue}
+          mode={'application/json'}
+          placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR Definitions here...'}
+        />
       </Grid>
-    </ThemeProvider>
+      <Grid item xs={3} className={`${classes.gridItem} ${classes.fileTree}`}>
+        <div className={classes.header}>
+          <Button
+            className={classes.headerIconButton}
+            aria-label="collapse"
+            onClick={() => setShowFileTree(!showFileTree)}
+          >
+            {showFileTree ? <ChevronRight fontSize="small" /> : <ChevronLeft fontSize="small" />}
+          </Button>
+        </div>
+        <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
+          Add FHIR Definition
+        </Button>
+        {renderFileTreeView()}
+        {renderDeleteModal()}
+      </Grid>
+    </Grid>
   );
 }

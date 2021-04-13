@@ -1,29 +1,35 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button, Typography } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import ImportExportIcon from '@material-ui/icons/ImportExport';
+import { Box, Button } from '@material-ui/core';
+import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
-    background: '#C0C0C0',
-    height: '25px',
+    background: '#191919',
+    height: '34px',
     boxSizing: 'border-box',
     display: 'flex;',
     alignItems: 'center',
     justifyContent: 'left'
   },
   box: {
-    paddingLeft: theme.spacing(1),
+    paddingLeft: '29px', // Same padding as header of code mirror
     color: theme.palette.common.white,
-    background: theme.palette.common.black,
-    height: 'calc(100% - 25px)',
+    background: '#191919',
+    height: 'calc(100% - 34px)',
     overflow: 'scroll',
-    boxSizing: 'border-box',
-    borderBottom: '4px solid #2c4f85'
+    boxSizing: 'border-box'
+  },
+  button: {
+    padding: 0,
+    color: theme.palette.common.white,
+    textTransform: 'none'
+  },
+  expandIcon: {
+    width: '29px' // Lines up with padding
   },
   warning: {
     color: 'khaki'
@@ -39,12 +45,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Open Sans'
-  }
-});
-
 export default function Console(props) {
   const classes = useStyles();
 
@@ -53,14 +53,15 @@ export default function Console(props) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        className={classes.consoleControls}
-        style={{ borderBottom: !props.expandConsole ? '4px solid #2c4f85' : '' }}
-      >
-        <Button onClick={toggleExpandConsole} style={{ padding: 0 }}>
-          <ImportExportIcon />
-          {props.expandConsole ? 'Collapse Console' : 'Expand Console'}
+    <>
+      <Box className={classes.consoleControls}>
+        <Button onClick={toggleExpandConsole} className={classes.button}>
+          {props.expandConsole ? (
+            <ExpandMore className={classes.expandIcon} />
+          ) : (
+            <ExpandLess className={classes.expandIcon} />
+          )}
+          Console
           <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
           {props.warningCount ? `${props.warningCount}` : ''}
           <ErrorIcon style={{ display: props.errorCount ? 'block' : 'none' }} className={classes.error} />
@@ -75,7 +76,6 @@ export default function Console(props) {
         </Button>
       </Box>
       <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
-        <Typography variant="subtitle1">Console</Typography>
         {props.consoleMessages.map((message, i) => {
           return (
             <pre key={i} className={classes.pre}>
@@ -84,6 +84,6 @@ export default function Console(props) {
           );
         })}
       </Box>
-    </ThemeProvider>
+    </>
   );
 }
