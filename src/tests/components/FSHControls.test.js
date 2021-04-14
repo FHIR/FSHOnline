@@ -102,13 +102,25 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
 });
 
 it('calls GoFSH function and returns FSH', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
   const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue(simpleFsh);
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
 
   act(() => {
-    render(<FSHControls onGoFSHClick={onGoFSHClick} gofshText={[]} resetLogMessages={resetLogMessages} />, container);
+    render(
+      <FSHControls
+        onGoFSHClick={onGoFSHClick}
+        gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+        resetLogMessages={resetLogMessages}
+      />,
+      container
+    );
   });
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
@@ -117,7 +129,60 @@ it('calls GoFSH function and returns FSH', async () => {
 
   await wait(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
-    expect(runGoFSHSpy).toHaveBeenCalled();
+    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], { dependencies: [] }); // No IG resource added because canonical and version set to defaults
+    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
+    expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+  });
+});
+
+it('calls GoFSH with user provided canonical and version in mini ImplementationGuide resource if either are set', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
+  const { getByText, getByLabelText } = render(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+    />,
+    container
+  );
+
+  const configButton = getByText('Configuration');
+  fireEvent.click(configButton);
+  const canonicalInput = getByLabelText('Canonical URL');
+  expect(canonicalInput.value).toEqual(''); // Default
+  fireEvent.change(canonicalInput, { target: { value: 'http://other.org' } });
+  const versionInput = getByLabelText('Version');
+  expect(versionInput.value).toEqual(''); // Default
+  fireEvent.change(versionInput, { target: { value: '2.0.0' } });
+
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  const expectedIgResource = {
+    resourceType: 'ImplementationGuide',
+    fhirVersion: ['4.0.1'],
+    id: '1',
+    url: 'http://other.org/ImplementationGuide/1',
+    version: '2.0.0'
+  };
+
+  await wait(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
+    expect(runGoFSHSpy).toHaveBeenCalledWith(
+      [JSON.stringify(examplePatient, null, 2), JSON.stringify(expectedIgResource, null, 2)], // Adds IG resource with canonical and version
+      { dependencies: [] }
+    );
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
     expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
@@ -137,7 +202,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const configButton = getByText('Configuration');
   fireEvent.click(configButton);
   const canonicalInput = getByLabelText('Canonical URL');
-  expect(canonicalInput.value).toEqual('http://example.org'); // Default
+  expect(canonicalInput.value).toEqual(''); // Default
 
   fireEvent.change(canonicalInput, { target: { value: 'http://other.org' } });
 
@@ -169,10 +234,10 @@ it('uses user provided version when calling runSUSHI', async () => {
 
   const configButton = getByText('Configuration');
   fireEvent.click(configButton);
-  const canonicalInput = getByLabelText('Version');
-  expect(canonicalInput.value).toEqual('1.0.0'); // Default
+  const versionInput = getByLabelText('Version');
+  expect(versionInput.value).toEqual(''); // Default
 
-  fireEvent.change(canonicalInput, { target: { value: '2.0.0' } });
+  fireEvent.change(versionInput, { target: { value: '2.0.0' } });
 
   const button = document.querySelector('[testid=Button]');
   act(() => {
