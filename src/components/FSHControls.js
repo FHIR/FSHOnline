@@ -218,7 +218,9 @@ export default function FSHControls(props) {
         <Grid item xs={7}>
           <Button className={classes.button} onClick={handleGoFSHClick} testid="GoFSH-button">
             {isGoFSHRunning ? (
-              <CircularProgress className={classes.progress} />
+              <div className={classes.progressContainer}>
+                <CircularProgress className={classes.progress} />
+              </div>
             ) : (
               <PlayArrow className={classes.runIcon} style={{ transform: 'scaleX(-1)' }} />
             )}
@@ -229,12 +231,12 @@ export default function FSHControls(props) {
 
       <div className={classes.rightControls}>
         <Tooltip title="Share FSH" placement="top" arrow>
-          <IconButton className={classes.iconButton} onClick={handleOpenShare}>
+          <IconButton name="Share FSH" className={classes.iconButton} onClick={handleOpenShare}>
             <Link style={{ transform: 'rotate(-45deg)' }} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Configuration" placement="top" arrow>
-          <IconButton className={classes.iconButton} onClick={handleOpenConfig}>
+          <IconButton name="Configuration" className={classes.iconButton} onClick={handleOpenConfig}>
             <Settings />
           </IconButton>
         </Tooltip>

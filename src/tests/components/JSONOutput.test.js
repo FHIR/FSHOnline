@@ -28,7 +28,7 @@ it('Renders with the placeholder text if showNewText is false and no text', () =
   // Initial case, nothing from SUSHI is displayed
   const { getByText } = render(<JSONOutput showNewText={false} text={''} />, container);
 
-  const placeholderText = getByText('Edit and view FHIR Definitions here!');
+  const placeholderText = getByText('Write FHIR definitions here...');
 
   expect(placeholderText).toBeInTheDocument();
 });
@@ -102,14 +102,14 @@ it('Renders an Add Definition button that adds a blank definition', () => {
   );
 
   const addButton = getByText('Add FHIR Definition');
-  let placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  let placeholderText = queryByText('Write FHIR definitions here...');
   expect(addButton).toBeInTheDocument();
   expect(placeholderText).not.toBeInTheDocument();
 
   fireEvent.click(addButton);
 
   // Add clears out the editor for a new blank definition and displays placeholder text
-  placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  placeholderText = queryByText('Write FHIR definitions here...');
   expect(placeholderText).toBeInTheDocument();
 });
 

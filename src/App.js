@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { inflateSync } from 'browserify-zlib';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
@@ -95,6 +95,8 @@ export async function decodeFSH(encodedFSH) {
   }
 }
 
+export const ExpandedConsoleContext = createContext(false);
+
 export default function App(props) {
   const classes = useStyles();
   const text64 = props.match.params;
@@ -154,27 +156,29 @@ export default function App(props) {
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
-          <Grid className={classes.container} container>
-            <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
-              <CodeMirrorComponent
-                name={'FSH'}
-                value={inputFSHText}
-                initialText={initialText}
-                updateTextValue={updateInputFSHTextValue}
-                mode={'fsh'}
-                placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Write FSH here...'}
-              />
+          <ExpandedConsoleContext.Provider value={expandConsole}>
+            <Grid className={classes.container} container>
+              <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
+                <CodeMirrorComponent
+                  name={'FSH'}
+                  value={inputFSHText}
+                  initialText={initialText}
+                  updateTextValue={updateInputFSHTextValue}
+                  mode={'fsh'}
+                  placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Write FSH here...'}
+                />
+              </Grid>
+              <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
+                <JSONOutput
+                  text={inputFHIRText}
+                  showNewText={showNewFHIRText}
+                  setShowNewText={setShowNewFHIRText}
+                  isWaiting={isWaitingForFHIROutput}
+                  updateTextValue={updateInputFHIRTextValue}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
-              <JSONOutput
-                text={inputFHIRText}
-                showNewText={showNewFHIRText}
-                setShowNewText={setShowNewFHIRText}
-                isWaiting={isWaitingForFHIROutput}
-                updateTextValue={updateInputFHIRTextValue}
-              />
-            </Grid>
-          </Grid>
+          </ExpandedConsoleContext.Provider>
         </div>
         <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
           <ConsoleComponent
