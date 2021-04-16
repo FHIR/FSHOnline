@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { deflateSync } from 'browserify-zlib';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, IconButton, TextareaAutosize, Tooltip } from '@material-ui/core';
+import { PlayArrow, Settings } from '@material-ui/icons';
+import { Box, Button, CircularProgress, Grid, IconButton, Tooltip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
-import { generateLink } from '../utils/BitlyWorker';
-import './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -58,11 +54,6 @@ const useStyles = makeStyles((theme) => ({
   },
   runIcon: {
     padding: '0px'
-  },
-  textArea: {
-    width: '100%',
-    color: theme.palette.text.primary,
-    fontWeight: 'bold'
   }
 }));
 
@@ -76,10 +67,6 @@ function replacer(key, value) {
 export default function FSHControls(props) {
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState(false);
-  const [openShare, setOpenShare] = useState(false);
-  const [openShareError, setOpenShareError] = useState(false);
-  const [link, setLink] = useState();
-  const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
   const [canonical, setCanonical] = useState('');
   const [version, setVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
@@ -92,34 +79,6 @@ export default function FSHControls(props) {
 
   const handleCloseConfig = () => {
     setOpenConfig(false);
-  };
-
-  const handleOpenShare = async () => {
-    const encoded = deflateSync(props.fshText).toString('base64');
-    const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
-    const bitlyLink = await generateLink(longLink);
-    if (bitlyLink.errorNeeded === true) {
-      handleOpenShareError();
-    } else {
-      // Removes the encoded data from the end of the url, starting at index 15
-      const bitlySlice = bitlyLink.link.slice(15);
-      const displayLink = `https://fshschool.org/FSHOnline/#/share/${bitlySlice}`;
-      setLink(displayLink);
-      setOpenShare(true);
-      setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
-    }
-  };
-
-  const handleOpenShareError = () => {
-    setOpenShareError(true);
-  };
-
-  const handleCloseShareError = () => {
-    setOpenShareError(false);
-  };
-
-  const handleCloseShare = () => {
-    setOpenShare(false);
   };
 
   const updateCanonical = (event) => {
@@ -135,11 +94,6 @@ export default function FSHControls(props) {
   const updateDependencyString = (event) => {
     const dependencyString = event.target.value;
     setDependencies(dependencyString);
-  };
-
-  const updateLink = (event) => {
-    const newLink = event.target.value;
-    setLink(newLink);
   };
 
   async function handleSUSHIClick() {
@@ -230,11 +184,6 @@ export default function FSHControls(props) {
       </Grid>
 
       <div className={classes.rightControls}>
-        <Tooltip title="Share FSH" placement="top" arrow>
-          <IconButton name="Share FSH" className={classes.iconButton} onClick={handleOpenShare}>
-            <Link style={{ transform: 'rotate(-45deg)' }} />
-          </IconButton>
-        </Tooltip>
         <Tooltip title="Configuration" placement="top" arrow>
           <IconButton name="Configuration" className={classes.iconButton} onClick={handleOpenConfig}>
             <Settings />
@@ -245,7 +194,7 @@ export default function FSHControls(props) {
       <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Configuration Settings</DialogTitle>
         <DialogContent>
-          <DialogContentText>Change the configuration options to use when running SUSHI and GoFSH</DialogContentText>
+          <DialogContentText>Change the configuration options to use with SUSHI and GoFSH</DialogContentText>
           <TextField
             id="canonical"
             margin="dense"
@@ -277,39 +226,6 @@ export default function FSHControls(props) {
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
             Done
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
-        <DialogTitle id="form-dialog-title">Share</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
-          <TextareaAutosize
-            id="link"
-            disabled
-            label="Your Link"
-            defaultValue={link}
-            onChange={updateLink}
-            className={classes.textArea}
-          ></TextareaAutosize>
-        </DialogContent>
-        <DialogActions>
-          <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>
-            <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
-          </CopyToClipboard>
-          <Button onClick={handleCloseShare} color="primary">
-            Done
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openShareError} onClose={handleCloseShareError} aria-labelledby="alert-dialog-title" maxWidth="lg">
-        <DialogTitle id="alert-dialog-title">Share Error</DialogTitle>
-        <DialogContent>
-          <DialogContentText>There was a problem sharing your FSH. Your FSH file may be too long.</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseShareError} color="primary" autoFocus>
-            Keep Swimming!
           </Button>
         </DialogActions>
       </Dialog>

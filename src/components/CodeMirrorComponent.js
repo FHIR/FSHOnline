@@ -2,11 +2,12 @@ import React, { useState, useContext } from 'react';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash';
 import { Button, Box, Drawer, IconButton, Tooltip } from '@material-ui/core';
-import { ChevronLeft, ChevronRight, Delete, FileCopy, Link, SaveAlt } from '@material-ui/icons';
+import { ChevronLeft, ChevronRight, Delete, FileCopy, SaveAlt } from '@material-ui/icons';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import { makeStyles } from '@material-ui/core/styles';
 import CodeMirror from 'codemirror';
 import { ExpandedConsoleContext } from '../App';
+import ShareLink from './ShareLink';
 import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -193,7 +194,7 @@ export default function CodeMirrorComponent(props) {
   const renderActionIcons = () => {
     return (
       <div className={classes.headerActions}>
-        {props.mode === 'fsh' && renderActionIcon(Link, 'share', () => {}, { transform: 'rotate(-45deg)' })}
+        {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
         {renderActionIcon(FileCopy, 'copy', () => {})}
         {renderActionIcon(SaveAlt, 'save', () => {})}
         {renderActionIcon(Delete, 'delete', () => {})}
