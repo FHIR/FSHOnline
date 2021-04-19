@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import {
   Button,
   Dialog,
@@ -11,15 +12,16 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Tooltip
 } from '@material-ui/core';
-import { Add, Delete, HighlightOff } from '@material-ui/icons';
+import { Add, Delete, ErrorOutline } from '@material-ui/icons';
 import CodeMirrorComponent from './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
-  fileTree: {
-    borderTop: '1px solid #263238', // Editor background color
-    overflow: 'scroll'
+  fileTreeContent: {
+    overflow: 'scroll',
+    height: '100%'
   },
   button: {
     color: theme.palette.common.white,
@@ -33,13 +35,11 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   list: {
-    overflow: 'scroll',
     padding: '5px',
     fontSize: '13px'
   },
   listItemError: {
     color: 'red',
-    fontWeight: 'bold',
     paddingTop: '5px',
     paddingBottom: '5px',
     margin: 0
@@ -58,7 +58,11 @@ const useStyles = makeStyles((theme) => ({
   listIcon: {
     color: theme.palette.success.main,
     fontSize: '13px',
-    padding: '3px'
+    paddingLeft: '3px',
+    paddingRight: '3px'
+  },
+  listIconError: {
+    color: 'red'
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon
@@ -272,20 +276,19 @@ export default function JSONOutput(props) {
                     button
                     key={i}
                     data-testid={`${key}-defId`}
-                    className={
-                      isError
-                        ? classes.listItemError
-                        : currentIndex === currentDef
-                        ? classes.listItemSelected
-                        : classes.listItem
-                    }
+                    className={clsx(
+                      isError && classes.listItemError,
+                      currentIndex === currentDef ? classes.listItemSelected : classes.listItem
+                    )}
                     onClick={() => {
                       setCurrentDef(currentIndex);
                       setInitialText(def.def);
                     }}
                   >
                     {defsWithErrors.includes(currentIndex) ? (
-                      <HighlightOff className={classes.listIcon} />
+                      <Tooltip title="Invalid JSON" placement="top" arrow>
+                        <ErrorOutline className={clsx(classes.listIcon, classes.listIconError)} />
+                      </Tooltip>
                     ) : (
                       <span className={classes.blankIcon} />
                     )}
@@ -315,8 +318,10 @@ export default function JSONOutput(props) {
         <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
           Add FHIR Definition
         </Button>
-        {renderFileTreeView()}
-        {renderDeleteModal()}
+        <div className={classes.fileTreeContent}>
+          {renderFileTreeView()}
+          {renderDeleteModal()}
+        </div>
       </>
     );
   };

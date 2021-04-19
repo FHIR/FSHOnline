@@ -131,7 +131,8 @@ const useStyles = makeStyles((theme) => ({
     // Color to match header
     color: theme.palette.common.white,
     background: '#424242', // Dark mode background
-    height: '34px' // Same height as headers on CodeMirror editors
+    height: '34px', // Same height as headers on CodeMirror editors
+    minHeight: '34px'
   },
   drawerHeaderIcon: {
     padding: '0px',
@@ -199,7 +200,7 @@ export default function CodeMirrorComponent(props) {
         {renderActionIcon(SaveAlt, 'save', () => {})}
         {renderActionIcon(Delete, 'delete', () => {})}
         {props.renderDrawer && !drawerOpen && (
-          <IconButton className={classes.drawerHeaderIcon} aria-label={'expand'} onClick={handleDrawerOpen}>
+          <IconButton name="expand" className={classes.drawerHeaderIcon} aria-label="expand" onClick={handleDrawerOpen}>
             <ChevronLeft />
           </IconButton>
         )}
@@ -211,6 +212,7 @@ export default function CodeMirrorComponent(props) {
     return (
       <Drawer
         className={classes.drawer}
+        data-testid={'editor-drawer'}
         variant="persistent"
         anchor="right"
         open={drawerOpen}
@@ -219,7 +221,12 @@ export default function CodeMirrorComponent(props) {
         }}
       >
         <div className={classes.drawerHeader}>
-          <Button className={classes.drawerHeaderIcon} onClick={handleDrawerClose}>
+          <Button
+            name="collapse"
+            aria-label="collapse"
+            className={classes.drawerHeaderIcon}
+            onClick={handleDrawerClose}
+          >
             <ChevronRight />
           </Button>
         </div>
