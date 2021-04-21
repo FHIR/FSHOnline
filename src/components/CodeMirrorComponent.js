@@ -185,7 +185,7 @@ export default function CodeMirrorComponent(props) {
   const renderActionIcon = (Icon, label, onClick, style = {}) => {
     return (
       <Tooltip title={upperFirst(label)} placement="top" arrow>
-        <IconButton className={classes.iconButton} aria-label={label} onClick={onClick}>
+        <IconButton name={label} className={classes.iconButton} aria-label={label} onClick={onClick}>
           <Icon fontSize="small" style={style} />
         </IconButton>
       </Tooltip>
@@ -193,12 +193,13 @@ export default function CodeMirrorComponent(props) {
   };
 
   const renderActionIcons = () => {
+    // Render only specified actions
     return (
       <div className={classes.headerActions}>
         {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
-        {renderActionIcon(FileCopy, 'copy', () => {})}
-        {renderActionIcon(SaveAlt, 'save', () => {})}
-        {renderActionIcon(Delete, 'delete', () => {})}
+        {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
+        {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
+        {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
         {props.renderDrawer && !drawerOpen && (
           <IconButton name="expand" className={classes.drawerHeaderIcon} aria-label="expand" onClick={handleDrawerOpen}>
             <ChevronLeft />

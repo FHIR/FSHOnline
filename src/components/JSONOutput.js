@@ -2,21 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  Tooltip
-} from '@material-ui/core';
-import { Add, Delete, ErrorOutline } from '@material-ui/icons';
+import { Button, List, ListItem, Tooltip } from '@material-ui/core';
+import { Add, ErrorOutline } from '@material-ui/icons';
 import CodeMirrorComponent from './CodeMirrorComponent';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
   fileTreeContent: {
@@ -90,7 +79,6 @@ export default function JSONOutput(props) {
   const [currentDef, setCurrentDef] = useState(0);
   const [defsWithErrors, setDefsWithErrors] = useState([]);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
@@ -130,7 +118,7 @@ export default function JSONOutput(props) {
       if (!fhirDefinitions[currentDef]) {
         updatedDefs[currentDef] = {
           resourceType: latestJSON.resourceType,
-          id: latestJSON.id
+          id: latestJSON.id ?? 'Untitled'
         };
       }
 
@@ -141,7 +129,7 @@ export default function JSONOutput(props) {
 
       // Update id if it has changed or it is new
       if (!fhirDefinitions[currentDef] || latestJSON.id !== fhirDefinitions[currentDef].id) {
-        updatedDefs[currentDef].id = latestJSON.id;
+        updatedDefs[currentDef].id = latestJSON.id ?? 'Untitled';
       }
     } catch (e) {
       // Invalid JSON typed. Keep track of index.
@@ -174,7 +162,8 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
-  const handleCloseAndDelete = (index) => {
+  const handleCloseAndDelete = () => {
+    const index = currentDef;
     const updatedDefs = [...fhirDefinitions];
     updatedDefs.splice(index, 1); // Remove definition to be deleted
     if (updatedDefs.length === 0) {
@@ -208,44 +197,29 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
-  const handleOpenDeleteConfirmation = (i) => {
+  const handleOpenDeleteConfirmation = () => {
     setOpenDeleteConfirmation(true);
-    setDeleteIndex(i);
   };
 
   const handleCloseDeleteConfirmation = () => {
     setOpenDeleteConfirmation(false);
-    setDeleteIndex(-1);
   };
 
   const renderDeleteModal = () => {
-    const defToDelete = fhirDefinitions[deleteIndex];
+    const defToDelete = fhirDefinitions[currentDef];
     if (!defToDelete) {
       return;
     }
     const type = defToDelete.resourceType || 'Instance';
     const id = defToDelete.id || 'Untitled';
     return (
-      <Dialog
-        open={openDeleteConfirmation}
-        onClose={handleCloseDeleteConfirmation}
-        aria-labelledby="delete-confirmation-dialog"
-      >
-        <DialogTitle id="delete-confirmation-dialog-title">Delete FHIR definition</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete the FHIR definition {type}/{id}? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} color="primary" autoFocus>
-            Cancel
-          </Button>
-          <Button onClick={() => handleCloseAndDelete(deleteIndex)} color="secondary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteConfirmationModal
+        title={'FHIR definition'}
+        item={`${type}/${id}`}
+        isOpen={openDeleteConfirmation}
+        handleCloseModal={handleCloseDeleteConfirmation}
+        handleDelete={handleCloseAndDelete}
+      />
     );
   };
 
@@ -293,17 +267,6 @@ export default function JSONOutput(props) {
                       <span className={classes.blankIcon} />
                     )}
                     {def.id || 'Untitled'}
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        className={classes.listIcon}
-                        edge="end"
-                        aria-label="delete"
-                        data-testid={`${def.id}-delete-button`}
-                        onClick={() => handleOpenDeleteConfirmation(currentIndex)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               })}
@@ -318,10 +281,7 @@ export default function JSONOutput(props) {
         <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
           Add FHIR Definition
         </Button>
-        <div className={classes.fileTreeContent}>
-          {renderFileTreeView()}
-          {renderDeleteModal()}
-        </div>
+        <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
       </>
     );
   };
@@ -329,14 +289,18 @@ export default function JSONOutput(props) {
   const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
 
   return (
-    <CodeMirrorComponent
-      name={'FHIR'}
-      value={displayValue}
-      initialText={initialText}
-      updateTextValue={updateTextValue}
-      mode={'application/json'}
-      placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
-      renderDrawer={renderDrawer}
-    />
+    <>
+      <CodeMirrorComponent
+        name={`FHIR Definition: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        value={displayValue}
+        initialText={initialText}
+        updateTextValue={updateTextValue}
+        mode={'application/json'}
+        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
+        renderDrawer={renderDrawer}
+        delete={handleOpenDeleteConfirmation}
+      />
+      {openDeleteConfirmation && renderDeleteModal()}
+    </>
   );
 }

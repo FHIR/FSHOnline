@@ -80,3 +80,54 @@ it('Does not renders a drawer or expand button when one is not provided in props
   expect(expandButton).not.toBeInTheDocument();
   expect(collapseButton).not.toBeInTheDocument();
 });
+
+it('Renders action buttons for specified actions', () => {
+  const copyMock = jest.fn();
+  const saveMock = jest.fn();
+  const deleteMock = jest.fn();
+  const { getByRole } = render(
+    <CodeMirrorComponent initialText="Edit FSH here!" copy={copyMock} save={saveMock} delete={deleteMock} />,
+    container
+  );
+
+  const copyButton = getByRole('button', { name: /copy/i });
+  const saveButton = getByRole('button', { name: /save/i });
+  const deleteButton = getByRole('button', { name: /delete/i });
+
+  expect(copyButton).toBeInTheDocument();
+  expect(saveButton).toBeInTheDocument();
+  expect(deleteButton).toBeInTheDocument();
+});
+
+it('Does not render action buttons for unspecified actions', () => {
+  const deleteMock = jest.fn();
+  const { queryByRole } = render(<CodeMirrorComponent initialText="Edit FSH here!" delete={deleteMock} />, container);
+
+  const copyButton = queryByRole('button', { name: /copy/i });
+  const saveButton = queryByRole('button', { name: /save/i });
+  const deleteButton = queryByRole('button', { name: /delete/i });
+
+  // Copy and save not defined, but delete is
+  expect(copyButton).not.toBeInTheDocument();
+  expect(saveButton).not.toBeInTheDocument();
+  expect(deleteButton).toBeInTheDocument();
+});
+
+it('Renders Share option for fsh mode', () => {
+  // set mode to fsh
+  const { getByRole } = render(<CodeMirrorComponent initialText="Edit FSH here!" mode={'fsh'} />, container);
+
+  const shareButton = getByRole('button', { name: /share fsh/i });
+  expect(shareButton).toBeInTheDocument();
+});
+
+it('Does not render Share option for non-fsh mode', () => {
+  // mode is anything but fsh
+  const { queryByRole } = render(
+    <CodeMirrorComponent initialText="Edit FSH here!" mode={'application/json'} />,
+    container
+  );
+
+  const shareButton = queryByRole('button', { name: /share fsh/i });
+  expect(shareButton).not.toBeInTheDocument();
+});

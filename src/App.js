@@ -5,8 +5,8 @@ import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
+import FSHOutput from './components/FSHOutput';
 import ConsoleComponent from './components/ConsoleComponent';
-import CodeMirrorComponent from './components/CodeMirrorComponent';
 import FSHControls from './components/FSHControls';
 
 const useStyles = makeStyles((theme) => ({
@@ -135,6 +135,10 @@ export default function App(props) {
   }
 
   function updateInputFSHTextValue(text) {
+    // This is a bit of a hack to make sure the editor can be reset by a setInitialText(null)
+    if (initialText === '' || initialText === null) {
+      setInitialText(text);
+    }
     setInputFSHText(text);
   }
 
@@ -159,13 +163,12 @@ export default function App(props) {
           <ExpandedConsoleContext.Provider value={expandConsole}>
             <Grid className={classes.container} container>
               <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
-                <CodeMirrorComponent
-                  name={'FSH'}
-                  value={inputFSHText}
+                <FSHOutput
+                  text={inputFSHText}
                   initialText={initialText}
                   updateTextValue={updateInputFSHTextValue}
-                  mode={'fsh'}
-                  placeholder={isWaitingForFSHOutput ? 'Loading...' : 'Write FSH here...'}
+                  isWaiting={isWaitingForFSHOutput}
+                  setInitialText={setInitialText}
                 />
               </Grid>
               <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
