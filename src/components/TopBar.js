@@ -8,7 +8,7 @@ import logo from '../style/FSH-online-logo.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: '#065171',
+    background: '#30638e',
     position: 'static',
     boxShadow: '0'
   },

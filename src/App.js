@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 const theme = createMuiTheme({
   palette: {
     success: {
-      main: '#057AAD'
+      main: '#30638e'
     }
   },
   typography: {
