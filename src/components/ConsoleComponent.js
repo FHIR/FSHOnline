@@ -32,12 +32,18 @@ const useStyles = makeStyles((theme) => ({
     width: '29px' // Lines up with padding
   },
   warning: {
+    paddingRight: '5px',
+    paddingLeft: '20px',
     color: 'khaki'
   },
   error: {
+    paddingRight: '5px',
+    paddingLeft: '20px',
     color: 'red'
   },
   success: {
+    paddingRight: '5px',
+    paddingLeft: '20px',
     color: 'green'
   },
   pre: {
