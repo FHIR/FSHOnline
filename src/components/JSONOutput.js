@@ -1,39 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction
-} from '@material-ui/core';
-import { Add, Delete, HighlightOff } from '@material-ui/icons';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { Button, List, ListItem, Tooltip } from '@material-ui/core';
+import { Add, ErrorOutline } from '@material-ui/icons';
 import CodeMirrorComponent from './CodeMirrorComponent';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
-  box: {
-    color: theme.palette.text.primary,
-    background: theme.palette.background.paper,
-    height: '100%',
-    boxSizing: 'border-box',
-    noWrap: false
-  },
-  gridItem: {
-    height: 'inherit'
-  },
-  fileTree: {
-    borderTop: '1px solid #263238', // Editor background color
-    overflow: 'scroll'
+  fileTreeContent: {
+    overflow: 'scroll',
+    height: '100%'
   },
   button: {
+    color: theme.palette.common.white,
+    background: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.success.light
+    },
+    border: '3px solid white',
     textTransform: 'none',
     fontSize: '13px',
     width: '100%'
@@ -44,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
   },
   listItemError: {
     color: 'red',
-    fontWeight: 'bold',
     paddingTop: '5px',
     paddingBottom: '5px',
     margin: 0
@@ -61,19 +45,18 @@ const useStyles = makeStyles((theme) => ({
     margin: 0
   },
   listIcon: {
+    color: theme.palette.success.main,
     fontSize: '13px',
-    padding: '3px'
+    paddingLeft: '3px',
+    paddingRight: '3px'
+  },
+  listIconError: {
+    color: 'red'
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon
   }
 }));
-
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Open Sans'
-  }
-});
 
 // Flatten the package so we can render and navigate it more easily,
 // but keep high level attributes we'll need accessible
@@ -96,7 +79,6 @@ export default function JSONOutput(props) {
   const [currentDef, setCurrentDef] = useState(0);
   const [defsWithErrors, setDefsWithErrors] = useState([]);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   useEffect(() => {
     // This case represents when we receive a new Package from SUSHI
@@ -136,7 +118,7 @@ export default function JSONOutput(props) {
       if (!fhirDefinitions[currentDef]) {
         updatedDefs[currentDef] = {
           resourceType: latestJSON.resourceType,
-          id: latestJSON.id
+          id: latestJSON.id ?? 'Untitled'
         };
       }
 
@@ -147,7 +129,7 @@ export default function JSONOutput(props) {
 
       // Update id if it has changed or it is new
       if (!fhirDefinitions[currentDef] || latestJSON.id !== fhirDefinitions[currentDef].id) {
-        updatedDefs[currentDef].id = latestJSON.id;
+        updatedDefs[currentDef].id = latestJSON.id ?? 'Untitled';
       }
     } catch (e) {
       // Invalid JSON typed. Keep track of index.
@@ -180,7 +162,8 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
-  const handleCloseAndDelete = (index) => {
+  const handleCloseAndDelete = () => {
+    const index = currentDef;
     const updatedDefs = [...fhirDefinitions];
     updatedDefs.splice(index, 1); // Remove definition to be deleted
     if (updatedDefs.length === 0) {
@@ -214,44 +197,29 @@ export default function JSONOutput(props) {
     props.updateTextValue(updatedDefs);
   };
 
-  const handleOpenDeleteConfirmation = (i) => {
+  const handleOpenDeleteConfirmation = () => {
     setOpenDeleteConfirmation(true);
-    setDeleteIndex(i);
   };
 
   const handleCloseDeleteConfirmation = () => {
     setOpenDeleteConfirmation(false);
-    setDeleteIndex(-1);
   };
 
   const renderDeleteModal = () => {
-    const defToDelete = fhirDefinitions[deleteIndex];
+    const defToDelete = fhirDefinitions[currentDef];
     if (!defToDelete) {
       return;
     }
     const type = defToDelete.resourceType || 'Instance';
     const id = defToDelete.id || 'Untitled';
     return (
-      <Dialog
-        open={openDeleteConfirmation}
-        onClose={handleCloseDeleteConfirmation}
-        aria-labelledby="delete-confirmation-dialog"
-      >
-        <DialogTitle id="delete-confirmation-dialog-title">Delete FHIR definition</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete the FHIR definition {type}/{id}? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteConfirmation} color="primary" autoFocus>
-            Cancel
-          </Button>
-          <Button onClick={() => handleCloseAndDelete(deleteIndex)} color="secondary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteConfirmationModal
+        title={'FHIR definition'}
+        item={`${type}/${id}`}
+        isOpen={openDeleteConfirmation}
+        handleCloseModal={handleCloseDeleteConfirmation}
+        handleDelete={handleCloseAndDelete}
+      />
     );
   };
 
@@ -282,35 +250,23 @@ export default function JSONOutput(props) {
                     button
                     key={i}
                     data-testid={`${key}-defId`}
-                    className={
-                      isError
-                        ? classes.listItemError
-                        : currentIndex === currentDef
-                        ? classes.listItemSelected
-                        : classes.listItem
-                    }
+                    className={clsx(
+                      isError && classes.listItemError,
+                      currentIndex === currentDef ? classes.listItemSelected : classes.listItem
+                    )}
                     onClick={() => {
                       setCurrentDef(currentIndex);
                       setInitialText(def.def);
                     }}
                   >
                     {defsWithErrors.includes(currentIndex) ? (
-                      <HighlightOff className={classes.listIcon} />
+                      <Tooltip title="Invalid JSON" placement="top" arrow>
+                        <ErrorOutline className={clsx(classes.listIcon, classes.listIconError)} />
+                      </Tooltip>
                     ) : (
                       <span className={classes.blankIcon} />
                     )}
                     {def.id || 'Untitled'}
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        className={classes.listIcon}
-                        edge="end"
-                        aria-label="delete"
-                        data-testid={`${def.id}-delete-button`}
-                        onClick={() => handleOpenDeleteConfirmation(currentIndex)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               })}
@@ -319,28 +275,32 @@ export default function JSONOutput(props) {
       });
   };
 
+  const renderDrawer = () => {
+    return (
+      <>
+        <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
+          Add FHIR Definition
+        </Button>
+        <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
+      </>
+    );
+  };
+
   const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
 
   return (
-    <ThemeProvider theme={theme}>
-      <Grid container className={classes.box}>
-        <Grid item xs={9} className={classes.gridItem}>
-          <CodeMirrorComponent
-            value={displayValue}
-            initialText={initialText}
-            updateTextValue={updateTextValue}
-            mode={'application/json'}
-            placeholder={props.isWaiting ? 'Loading...' : 'Edit and view FHIR Definitions here!'}
-          />
-        </Grid>
-        <Grid item xs={3} className={`${classes.gridItem} ${classes.fileTree}`}>
-          <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-            Add FHIR Definition
-          </Button>
-          {renderFileTreeView()}
-          {renderDeleteModal()}
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+    <>
+      <CodeMirrorComponent
+        name={`FHIR Definition: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        value={displayValue}
+        initialText={initialText}
+        updateTextValue={updateTextValue}
+        mode={'application/json'}
+        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
+        renderDrawer={renderDrawer}
+        delete={handleOpenDeleteConfirmation}
+      />
+      {openDeleteConfirmation && renderDeleteModal()}
+    </>
   );
 }

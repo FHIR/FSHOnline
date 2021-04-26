@@ -28,7 +28,7 @@ it('Renders with the placeholder text if showNewText is false and no text', () =
   // Initial case, nothing from SUSHI is displayed
   const { getByText } = render(<JSONOutput showNewText={false} text={''} />, container);
 
-  const placeholderText = getByText('Edit and view FHIR Definitions here!');
+  const placeholderText = getByText('Write FHIR definitions here...');
 
   expect(placeholderText).toBeInTheDocument();
 });
@@ -77,6 +77,64 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
   expect(resultsElement.parentNode.text).toEqual();
 });
 
+it('renders a delete button in editor header that opens a confirmation and then deletes the definition', () => {
+  const updateText = jest.fn();
+  const simplePackage = {
+    profiles: [
+      {
+        resourceType: 'StructureDefinition',
+        id: 'ProfileA'
+      },
+      {
+        resourceType: 'StructureDefinition',
+        id: 'ProfileB'
+      }
+    ],
+    extensions: [],
+    instances: [],
+    valueSets: [],
+    codeSystems: []
+  };
+  const stringifiedPackageAfterDelete = [
+    { resourceType: 'StructureDefinition', id: 'ProfileA', def: JSON.stringify(simplePackage.profiles[0], null, 2) }
+  ];
+
+  const { getByRole, getByText, queryByText } = render(
+    <JSONOutput
+      showNewText={true}
+      setShowNewText={() => {}}
+      isWaiting={false}
+      updateTextValue={updateText}
+      text={JSON.stringify(simplePackage, null, 2)}
+    />,
+    container
+  );
+
+  // Switch to ProfileB in order to delete it
+  updateText.mockReset();
+  const profileBDef = getByText('ProfileB');
+  fireEvent.click(profileBDef);
+  expect(updateText).toHaveBeenCalledTimes(1);
+
+  const deleteActionButton = getByRole('button', { name: /delete/i });
+  expect(deleteActionButton).toBeInTheDocument();
+  let deleteButton = queryByText('Delete');
+  expect(deleteButton).not.toBeInTheDocument();
+
+  // Clicking the delete button the editor header opens the modal for that definition
+  fireEvent.click(deleteActionButton);
+  deleteButton = queryByText('Delete');
+  expect(deleteButton).toBeInTheDocument();
+  const dialogBox = deleteButton.parentNode.parentNode.parentNode; // Not sure why this can't be selected with a label
+  expect(dialogBox.textContent).toContain('Are you sure you want to delete StructureDefinition/ProfileB?');
+
+  // Clicking delete confirmation deletes the definition
+  updateText.mockReset();
+  fireEvent.click(deleteButton);
+  expect(updateText).toHaveBeenCalledTimes(2); // Called once from handleCloseAndDelete and once from updateTextValue
+  expect(updateText).toHaveBeenCalledWith(stringifiedPackageAfterDelete);
+});
+
 it('Renders an Add Definition button that adds a blank definition', () => {
   const simpleProfile = {
     profiles: [
@@ -102,14 +160,14 @@ it('Renders an Add Definition button that adds a blank definition', () => {
   );
 
   const addButton = getByText('Add FHIR Definition');
-  let placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  let placeholderText = queryByText('Write FHIR definitions here...');
   expect(addButton).toBeInTheDocument();
   expect(placeholderText).not.toBeInTheDocument();
 
   fireEvent.click(addButton);
 
   // Add clears out the editor for a new blank definition and displays placeholder text
-  placeholderText = queryByText('Edit and view FHIR Definitions here!');
+  placeholderText = queryByText('Write FHIR definitions here...');
   expect(placeholderText).toBeInTheDocument();
 });
 
@@ -237,59 +295,5 @@ describe('file tree display', () => {
 
     const untitledDef = getByText('Untitled');
     expect(untitledDef).toBeInTheDocument();
-  });
-
-  it('renders a delete button that opens a confirmation and then deletes the definition', async () => {
-    const updateText = jest.fn();
-    const simplePackage = {
-      profiles: [
-        {
-          resourceType: 'StructureDefinition',
-          id: 'ProfileA'
-        },
-        {
-          resourceType: 'StructureDefinition',
-          id: 'ProfileB'
-        }
-      ],
-      extensions: [],
-      instances: [],
-      valueSets: [],
-      codeSystems: []
-    };
-    const stringifiedPackageAfterDelete = [
-      { resourceType: 'StructureDefinition', id: 'ProfileA', def: JSON.stringify(sushiPackage.profiles[0], null, 2) }
-    ];
-
-    const { getByTestId, queryByText } = render(
-      <JSONOutput
-        showNewText={true}
-        setShowNewText={() => {}}
-        isWaiting={false}
-        updateTextValue={updateText}
-        text={JSON.stringify(simplePackage, null, 2)}
-      />,
-      container
-    );
-
-    const profileBDelete = getByTestId('ProfileB-delete-button');
-    expect(profileBDelete).toBeInTheDocument();
-    let deleteButton = queryByText('Delete');
-    expect(deleteButton).not.toBeInTheDocument();
-
-    // Clicking the delete icon on a profile opens the modal for that definition
-    fireEvent.click(profileBDelete);
-    deleteButton = queryByText('Delete');
-    expect(deleteButton).toBeInTheDocument();
-    const dialogBox = deleteButton.parentNode.parentNode.parentNode; // Not sure why this can't be selected with a label
-    expect(dialogBox.textContent).toContain(
-      'Are you sure you want to delete the FHIR definition StructureDefinition/ProfileB?'
-    );
-
-    // Clicking delete confirmation deletes the definition
-    updateText.mockReset();
-    fireEvent.click(deleteButton);
-    expect(updateText).toHaveBeenCalledTimes(1);
-    expect(updateText).toHaveBeenCalledWith(stringifiedPackageAfterDelete);
   });
 });

@@ -1,8 +1,13 @@
-import React from 'react';
-import { Box } from '@material-ui/core';
+import React, { useState, useContext } from 'react';
+import clsx from 'clsx';
+import { upperFirst } from 'lodash';
+import { Button, Box, Drawer, IconButton, Tooltip } from '@material-ui/core';
+import { ChevronLeft, ChevronRight, Delete, FileCopy, SaveAlt } from '@material-ui/icons';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import { makeStyles } from '@material-ui/core/styles';
 import CodeMirror from 'codemirror';
+import { ExpandedConsoleContext } from '../App';
+import ShareLink from './ShareLink';
 import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -66,24 +71,185 @@ CodeMirror.defineSimpleMode('fsh', {
   ]
 });
 
+const drawerWidth = 200;
+
 const useStyles = makeStyles((theme) => ({
   box: {
     height: '100%'
+  },
+  header: {
+    fontFamily: 'Open Sans',
+    color: theme.palette.common.white,
+    background: '#424242', // Dark mode background
+    padding: '0px',
+    paddingLeft: '29px', // width of code mirror gutter
+    height: '34px', // 24px + 10px of padding is total height
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
+  },
+  headerShift: {
+    width: `calc(100% - ${drawerWidth}px - 29px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginRight: drawerWidth
+  },
+  headerLabel: {
+    lineHeight: '34px',
+    float: 'left'
+  },
+  headerActions: {
+    height: '100%',
+    float: 'right'
+  },
+  iconButton: {
+    color: theme.palette.common.white,
+    minHeight: '34px',
+    padding: '3px'
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    border: 'none',
+    // necessary for content to be TopBar and in line with editor
+    height: 'calc(100vh - 116px - 34px)',
+    top: '116px'
+  },
+  drawerPaperExpandedConsole: {
+    height: 'calc(100vh - 116px - 300px)'
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    // Color to match header
+    color: theme.palette.common.white,
+    background: '#424242', // Dark mode background
+    height: '34px', // Same height as headers on CodeMirror editors
+    minHeight: '34px'
+  },
+  drawerHeaderIcon: {
+    padding: '0px',
+    color: theme.palette.common.white,
+    background: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.success.light
+    },
+    borderRadius: 0,
+    height: '100%',
+    width: '34px',
+    minWidth: '34px' // width and minWidth match the height so button is a square
+  },
+  content: {
+    flexGrow: 1,
+    width: '100%',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
+  },
+  contentShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginRight: 0
   }
 }));
 
 export default function CodeMirrorComponent(props) {
   const classes = useStyles();
+  const expandedConsoleContext = useContext(ExpandedConsoleContext);
+  const [drawerOpen, setDrawerOpen] = useState(true);
+
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
 
   //Updates both the text state with the codemirror value
   function updateText(text) {
     props.updateTextValue(text);
   }
 
+  const renderActionIcon = (Icon, label, onClick, style = {}) => {
+    return (
+      <Tooltip title={upperFirst(label)} placement="top" arrow>
+        <IconButton name={label} className={classes.iconButton} aria-label={label} onClick={onClick}>
+          <Icon fontSize="small" style={style} />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const renderActionIcons = () => {
+    // Render only specified actions
+    return (
+      <div className={classes.headerActions}>
+        {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
+        {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
+        {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
+        {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
+        {props.renderDrawer && !drawerOpen && (
+          <IconButton name="expand" className={classes.drawerHeaderIcon} aria-label="expand" onClick={handleDrawerOpen}>
+            <ChevronLeft />
+          </IconButton>
+        )}
+      </div>
+    );
+  };
+
+  const renderDrawer = () => {
+    return (
+      <Drawer
+        className={classes.drawer}
+        data-testid={'editor-drawer'}
+        variant="persistent"
+        anchor="right"
+        open={drawerOpen}
+        classes={{
+          paper: clsx(classes.drawerPaper, expandedConsoleContext && classes.drawerPaperExpandedConsole)
+        }}
+      >
+        <div className={classes.drawerHeader}>
+          <Button
+            name="collapse"
+            aria-label="collapse"
+            className={classes.drawerHeaderIcon}
+            onClick={handleDrawerClose}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+        {props.renderDrawer()}
+      </Drawer>
+    );
+  };
+
   return (
     <Box className={classes.box}>
+      <div
+        className={clsx(classes.header, {
+          [classes.headerShift]: props.renderDrawer && drawerOpen
+        })}
+      >
+        <div className={classes.headerLabel}>{props.name}</div>
+        {renderActionIcons()}
+      </div>
       <ReactCodeMirror
-        className="react-codemirror2"
+        className={clsx('react-codemirror2', props.renderDrawer && classes.content, {
+          [classes.contentShift]: props.renderDrawer && drawerOpen
+        })}
         value={props.initialText}
         options={{
           mode: props.mode,
@@ -105,6 +271,7 @@ export default function CodeMirrorComponent(props) {
           updateText(value);
         }}
       />
+      {props.renderDrawer && renderDrawer()}
     </Box>
   );
 }

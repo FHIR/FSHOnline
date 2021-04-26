@@ -6,12 +6,6 @@ import { act } from 'react-dom/test-utils';
 import { render, wait, fireEvent } from '@testing-library/react';
 import FSHControls from '../../components/FSHControls';
 import * as fshHelpers from '../../utils/FSHHelpers';
-import * as bitlyWorker from '../../utils/BitlyWorker';
-
-// Mock copy to clipboard since we don't need to test the component itself
-jest.mock('copy-to-clipboard', () => {
-  return jest.fn();
-});
 
 const badSUSHIPackage = { a: '1', b: '2' };
 const emptySUSHIPackage = { config: {}, profiles: [], extensions: [], instances: [], valueSets: [], codeSystems: [] };
@@ -146,7 +140,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
   const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
-  const { getByText, getByLabelText } = render(
+  const { getByRole, getByLabelText } = render(
     <FSHControls
       onGoFSHClick={onGoFSHClick}
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
@@ -155,7 +149,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
     container
   );
 
-  const configButton = getByText('Configuration');
+  const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
   const canonicalInput = getByLabelText('Canonical URL');
   expect(canonicalInput.value).toEqual(''); // Default
@@ -194,12 +188,12 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
-  const { getByText, getByLabelText } = render(
+  const { getByRole, getByLabelText } = render(
     <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
-  const configButton = getByText('Configuration');
+  const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
   const canonicalInput = getByLabelText('Canonical URL');
   expect(canonicalInput.value).toEqual(''); // Default
@@ -227,12 +221,12 @@ it('uses user provided version when calling runSUSHI', async () => {
   const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
-  const { getByText, getByLabelText } = render(
+  const { getByRole, getByLabelText } = render(
     <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
-  const configButton = getByText('Configuration');
+  const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
   const versionInput = getByLabelText('Version');
   expect(versionInput.value).toEqual(''); // Default
@@ -261,12 +255,12 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
-  const { getByText, getByLabelText } = render(
+  const { getByRole, getByLabelText } = render(
     <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
     container
   );
 
-  const configButton = getByText('Configuration');
+  const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
   const dependencyInput = getByLabelText('Dependencies');
   expect(dependencyInput.value).toEqual(''); // Default
@@ -287,75 +281,5 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
 
   await wait(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
-  });
-});
-
-it('copies link to clipboard on button click', async () => {
-  const onClick = jest.fn();
-  const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
-
-  const { getByText } = render(
-    <FSHControls onSUSHIClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-    container
-  );
-
-  await wait(() => {
-    const shareButton = getByText('Share FSH');
-    fireEvent.click(shareButton);
-    expect(generateLinkSpy).toHaveBeenCalled();
-  });
-
-  const copyBtn = getByText('Copy to Clipboard');
-  fireEvent.click(copyBtn);
-  const linkCopiedBtn = getByText('Link Copied');
-  expect(linkCopiedBtn).toBeDefined();
-});
-
-it('generates link when share button is clicked', async () => {
-  const onClick = jest.fn();
-  const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
-
-  const { getByText } = render(
-    <FSHControls onSUSHIClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-    container
-  );
-
-  act(() => {
-    const shareButton = getByText('Share FSH');
-    fireEvent.click(shareButton);
-  });
-  await wait(() => {
-    expect(generateLinkSpy).toHaveBeenCalled();
-  });
-});
-
-it('shows an error when the FSH file is too long to share', async () => {
-  const onClick = jest.fn();
-  const resetLogMessages = jest.fn();
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: undefined, errorNeeded: true });
-
-  const { getByText } = render(
-    <FSHControls onSUSHIClick={onClick} fshText={'Edit FSH Here'} resetLogMessages={resetLogMessages} />,
-    container
-  );
-  act(() => {
-    const shareButton = getByText('Share FSH');
-    fireEvent.click(shareButton);
-  });
-  await wait(() => {
-    const swimBtn = getByText(/Keep Swimming!/i);
-    expect(swimBtn).toBeInTheDocument();
-    expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
