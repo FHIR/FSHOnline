@@ -96,10 +96,10 @@ describe('#runGoFSH', () => {
     const expectedConfig = {
       FSHOnly: true,
       applyExtensionMetadataToRoot: false,
-      canonical: 'http://sample.org',
+      canonical: 'http://example.org',
       fhirVersion: ['4.0.1'],
-      id: 'sample',
-      name: 'Sample'
+      id: 'example',
+      name: 'Example'
     };
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
@@ -122,17 +122,17 @@ describe('#runGoFSH', () => {
       'Instance: MyPatient',
       'InstanceOf: Patient',
       'Usage: #example',
-      '* name[0].family = "Smith"',
-      '* name[0].given[0] = "Jane"',
+      '* name.family = "Smith"',
+      '* name.given = "Jane"',
       '* gender = #female'
     ].join('\n');
     const expectedConfig = {
       FSHOnly: true,
       applyExtensionMetadataToRoot: false,
-      canonical: 'http://sample.org',
+      canonical: 'http://example.org',
       fhirVersion: ['4.0.1'],
-      id: 'sample',
-      name: 'Sample'
+      id: 'example',
+      name: 'Example'
     };
 
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
