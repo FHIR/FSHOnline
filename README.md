@@ -2,8 +2,6 @@
 
 FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It also runs the [GoFSH](https://github.com/FHIR/GoFSH) decompiler to translate FHIR definitions into FSH. It is available on https://fshschool.org/FSHOnline/.
 
-NOTE: This application is an early alpha release and is designed to be used for initial exploration.
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Getting Started
