@@ -1,0 +1,59 @@
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import { unmountComponentAtNode } from 'react-dom';
+import FSHOutput from '../../components/FSHOutput';
+
+beforeAll(() => {
+  document.body.createTextRange = () => {
+    return {
+      getBoundingClientRect: () => ({ right: 0 }),
+      getClientRects: () => ({ left: 0 })
+    };
+  };
+});
+
+let container = null;
+beforeEach(() => {
+  container = document.createElement('div');
+  document.body.appendChild(container);
+});
+
+afterEach(() => {
+  unmountComponentAtNode(container);
+  container.remove();
+  container = null;
+});
+
+it('should render a delete button in editor header that opens a confirmation and then delete the FSH', () => {
+  const setInitialText = jest.fn();
+  const fshText = 'Profile: MyImportantProfile';
+
+  const { getByRole, queryByText } = render(
+    <FSHOutput
+      text={fshText}
+      initialText={fshText}
+      updateTextValue={jest.fn()}
+      isWaiting={false}
+      setInitialText={setInitialText}
+    />,
+    container
+  );
+
+  const deleteActionButton = getByRole('button', { name: /delete/i });
+  expect(deleteActionButton).toBeInTheDocument();
+  let deleteButton = queryByText('Delete');
+  expect(deleteButton).not.toBeInTheDocument();
+
+  // Clicking the delete button the editor header opens the modal for that definition
+  fireEvent.click(deleteActionButton);
+  deleteButton = queryByText('Delete');
+  expect(deleteButton).toBeInTheDocument();
+  const dialogBox = deleteButton.parentNode.parentNode.parentNode; // Not sure why this can't be selected with a label
+  expect(dialogBox.textContent).toContain('Are you sure you want to delete all FSH?');
+
+  // Clicking delete confirmation deletes the definition
+  setInitialText.mockReset();
+  fireEvent.click(deleteButton);
+  expect(setInitialText).toHaveBeenCalledTimes(1);
+  expect(setInitialText).toHaveBeenCalledWith('');
+});

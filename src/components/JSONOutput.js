@@ -1,70 +1,306 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
-import ReactJson from 'react-json-view';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { Button, List, ListItem, Tooltip } from '@material-ui/core';
+import { Add, ErrorOutline } from '@material-ui/icons';
+import CodeMirrorComponent from './CodeMirrorComponent';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
-  box: {
-    padding: theme.spacing(0.2, 2),
-    color: theme.palette.text.primary,
-    background: theme.palette.background.paper,
-    height: '100%',
-    noWrap: false
+  fileTreeContent: {
+    overflow: 'scroll',
+    height: '100%'
+  },
+  button: {
+    color: theme.palette.common.white,
+    background: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.success.light
+    },
+    border: '3px solid white',
+    textTransform: 'none',
+    fontSize: '13px',
+    width: '100%'
+  },
+  list: {
+    padding: '5px',
+    fontSize: '13px'
+  },
+  listItemError: {
+    color: 'red',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    margin: 0
+  },
+  listItemSelected: {
+    background: theme.palette.action.selected,
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    margin: 0
+  },
+  listItem: {
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    margin: 0
+  },
+  listIcon: {
+    color: theme.palette.success.main,
+    fontSize: '13px',
+    paddingLeft: '3px',
+    paddingRight: '3px'
+  },
+  listIconError: {
+    color: 'red'
+  },
+  blankIcon: {
+    paddingLeft: '19px' // width of icon
   }
 }));
 
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Open Sans'
-  }
-});
-
-const renderErrorAndWarningContent = (errorsAndWarnings = []) => {
-  if (errorsAndWarnings.length > 0) {
-    return (
-      <ThemeProvider theme={theme}>
-        <span>
-          <Typography variant="subtitle2">Errors and Warnings</Typography>
-          {errorsAndWarnings.map((message, i) => (
-            <pre key={i}>{message}</pre>
-          ))}
-        </span>
-      </ThemeProvider>
-    );
-  }
-  return;
-};
-
-const renderDisplayContent = (displaySUSHI, text, isObject) => {
-  if (displaySUSHI && text && isObject) {
-    const packageJSON = JSON.parse(text);
-    return (
-      <ThemeProvider theme={theme}>
-        <span>
-          <Typography variant="subtitle2">Results</Typography>
-          <ReactJson src={packageJSON} displayDataTypes={false} collapsed={false} name={false} />
-        </span>
-      </ThemeProvider>
-    );
-  } else if (displaySUSHI && text) {
-    return <pre>{text}</pre>;
-  }
-  return '';
+// Flatten the package so we can render and navigate it more easily,
+// but keep high level attributes we'll need accessible
+const getIterablePackage = (defsPackage) => {
+  const defArray = [
+    ...defsPackage.profiles,
+    ...defsPackage.extensions,
+    ...defsPackage.instances,
+    ...defsPackage.valueSets,
+    ...defsPackage.codeSystems
+  ];
+  return defArray.map((def) => ({ resourceType: def.resourceType, id: def.id, def: JSON.stringify(def, null, 2) }));
 };
 
 export default function JSONOutput(props) {
   const classes = useStyles();
-  const errorAndWarningContent = renderErrorAndWarningContent(props.errorsAndWarnings);
-  const displayContent = renderDisplayContent(props.displaySUSHI, props.text, props.isObject);
+  const [initialText, setInitialText] = useState('');
+  const [fhirDefinitions, setFhirDefinitions] = useState([{ resourceType: null, id: 'Untitled', def: null }]);
+  const { setShowNewText, updateTextValue: propsUpdateText } = props;
+  const [currentDef, setCurrentDef] = useState(0);
+  const [defsWithErrors, setDefsWithErrors] = useState([]);
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+
+  useEffect(() => {
+    // This case represents when we receive a new Package from SUSHI
+    if (props.showNewText && !isEqual(props.text, [''])) {
+      setShowNewText(false); // Indicate that we no longer have new data we need to load so we don't come back here too early
+      const packageJSON = JSON.parse(props.text);
+      const iterablePackage = getIterablePackage(packageJSON);
+      setFhirDefinitions(iterablePackage);
+      setCurrentDef(0);
+      setInitialText(iterablePackage.length > 0 ? iterablePackage[0].def : '');
+      propsUpdateText(iterablePackage); // The value of text kept on props should be the iterable and stringified package
+    } else if (props.isWaiting) {
+      setInitialText(null); // Reset the text to null when loading to reset the editor and display placeholder text
+      setFhirDefinitions([]); // Reset FHIR definitions to clear out file tree
+    }
+  }, [props.text, props.showNewText, props.isWaiting, propsUpdateText, setShowNewText]);
+
+  const updateTextValue = (text) => {
+    // We're waiting for a new package to load, so we don't want the editor to update yet
+    if (props.isWaiting) return;
+
+    // Update the definition we're currently editing
+    const updatedDefs = [...fhirDefinitions];
+
+    // Check if there is a JSON syntax error in the editor
+    try {
+      // If the editor is blank, we want to consider it an empty JSON object so that it is valid JSON
+      const latestJSON = text === '' ? {} : JSON.parse(text);
+      // If there was an error, mark it as resolved
+      if (defsWithErrors.includes(currentDef)) {
+        const newErrors = [...defsWithErrors];
+        newErrors.splice(defsWithErrors.indexOf(currentDef), 1);
+        setDefsWithErrors(newErrors);
+      }
+
+      // If it's new, set metadata (definition text is set below)
+      if (!fhirDefinitions[currentDef]) {
+        updatedDefs[currentDef] = {
+          resourceType: latestJSON.resourceType,
+          id: latestJSON.id ?? 'Untitled'
+        };
+      }
+
+      // Update resource type if it has changed
+      if (!fhirDefinitions[currentDef] || latestJSON.resourceType !== fhirDefinitions[currentDef].resourceType) {
+        updatedDefs[currentDef].resourceType = latestJSON.resourceType;
+      }
+
+      // Update id if it has changed or it is new
+      if (!fhirDefinitions[currentDef] || latestJSON.id !== fhirDefinitions[currentDef].id) {
+        updatedDefs[currentDef].id = latestJSON.id ?? 'Untitled';
+      }
+    } catch (e) {
+      // Invalid JSON typed. Keep track of index.
+      if (!defsWithErrors.includes(currentDef)) {
+        const newErrors = [...defsWithErrors];
+        newErrors.push(currentDef);
+        setDefsWithErrors(newErrors);
+      }
+    }
+
+    // Update the text - regardless if it was valid JSON
+    if (updatedDefs[currentDef]) {
+      updatedDefs[currentDef].def = text;
+    }
+    setFhirDefinitions(updatedDefs);
+    props.updateTextValue(updatedDefs);
+
+    // This is a bit of a hack to make sure the editor can be reset by a setInitialText(null)
+    if (initialText === null) {
+      setInitialText(text);
+    }
+  };
+
+  const addDefinition = () => {
+    const updatedDefs = [...fhirDefinitions];
+    updatedDefs.push({ resourceType: null, id: 'Untitled', def: null });
+    setCurrentDef(updatedDefs.length - 1);
+    setFhirDefinitions(updatedDefs);
+    setInitialText(null);
+    props.updateTextValue(updatedDefs);
+  };
+
+  const handleCloseAndDelete = () => {
+    const index = currentDef;
+    const updatedDefs = [...fhirDefinitions];
+    updatedDefs.splice(index, 1); // Remove definition to be deleted
+    if (updatedDefs.length === 0) {
+      // Ensure list is not empty so there is always a definition in the file tree
+      updatedDefs.push({ resourceType: null, id: 'Untitled', def: null });
+    }
+    setFhirDefinitions(updatedDefs);
+
+    // If we deleted the currently viewed definition or any before it, update it
+    if (index <= currentDef) {
+      let newCurrentDef = 0;
+      if (index < currentDef) {
+        newCurrentDef = currentDef - 1;
+      }
+      setCurrentDef(newCurrentDef);
+      const newCurrentDefText = updatedDefs.length > 0 ? updatedDefs[newCurrentDef].def : null;
+      setInitialText(newCurrentDefText);
+    }
+
+    // Update error tracking
+    const newErrors = [...defsWithErrors];
+    if (defsWithErrors.includes(index)) {
+      // If the definition had an error, remove it from the list
+      newErrors.splice(defsWithErrors.indexOf(index), 1);
+    }
+    // Shift any indices that came after the deleted definition to properly track errors
+    const shiftedErrors = newErrors.map((i) => (i < index ? i : i - 1));
+    setDefsWithErrors(shiftedErrors);
+
+    setOpenDeleteConfirmation(false);
+    props.updateTextValue(updatedDefs);
+  };
+
+  const handleOpenDeleteConfirmation = () => {
+    setOpenDeleteConfirmation(true);
+  };
+
+  const handleCloseDeleteConfirmation = () => {
+    setOpenDeleteConfirmation(false);
+  };
+
+  const renderDeleteModal = () => {
+    const defToDelete = fhirDefinitions[currentDef];
+    if (!defToDelete) {
+      return;
+    }
+    const type = defToDelete.resourceType || 'Instance';
+    const id = defToDelete.id || 'Untitled';
+    return (
+      <DeleteConfirmationModal
+        title={'FHIR definition'}
+        item={`${type}/${id}`}
+        isOpen={openDeleteConfirmation}
+        handleCloseModal={handleCloseDeleteConfirmation}
+        handleDelete={handleCloseAndDelete}
+      />
+    );
+  };
+
+  const renderFileTreeView = () => {
+    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances'];
+    const grouped = groupBy(fhirDefinitions, (val) => {
+      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val.resourceType)) return `${val.resourceType}s`;
+      return 'Instances';
+    });
+
+    return Object.keys(grouped)
+      .sort((a, b) => order.indexOf(a) - order.indexOf(b)) // Sort so we keep a defined order of types in the tree
+      .map((key) => {
+        return (
+          <List component="nav" key={key} className={classes.list}>
+            {key}
+            {grouped[key]
+              .sort((a, b) => {
+                const aId = a.id ? a.id : 'Untitled'; // Treat missing or blank ids as "Untitled"
+                const bId = b.id ? b.id : 'Untitled';
+                return aId.toLowerCase() < bId.toLowerCase() ? -1 : aId.toLowerCase() > bId.toLowerCase() ? 1 : 0;
+              }) // Sort ids alphabetically
+              .map((def, i) => {
+                const currentIndex = fhirDefinitions.indexOf(def);
+                const isError = defsWithErrors.includes(currentIndex);
+                return (
+                  <ListItem
+                    button
+                    key={i}
+                    data-testid={`${key}-defId`}
+                    className={clsx(
+                      isError && classes.listItemError,
+                      currentIndex === currentDef ? classes.listItemSelected : classes.listItem
+                    )}
+                    onClick={() => {
+                      setCurrentDef(currentIndex);
+                      setInitialText(def.def);
+                    }}
+                  >
+                    {defsWithErrors.includes(currentIndex) ? (
+                      <Tooltip title="Invalid JSON" placement="top" arrow>
+                        <ErrorOutline className={clsx(classes.listIcon, classes.listIconError)} />
+                      </Tooltip>
+                    ) : (
+                      <span className={classes.blankIcon} />
+                    )}
+                    {def.id || 'Untitled'}
+                  </ListItem>
+                );
+              })}
+          </List>
+        );
+      });
+  };
+
+  const renderDrawer = () => {
+    return (
+      <>
+        <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
+          Add FHIR Definition
+        </Button>
+        <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
+      </>
+    );
+  };
+
+  const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box className={classes.box} border={1} overflow="scroll">
-        <Typography variant="subtitle1">SUSHI Output</Typography>
-        {errorAndWarningContent}
-        {displayContent}
-      </Box>
-    </ThemeProvider>
+    <>
+      <CodeMirrorComponent
+        name={`FHIR Definition: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        value={displayValue}
+        initialText={initialText}
+        updateTextValue={updateTextValue}
+        mode={'application/json'}
+        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
+        renderDrawer={renderDrawer}
+        delete={handleOpenDeleteConfirmation}
+      />
+      {openDeleteConfirmation && renderDeleteModal()}
+    </>
   );
 }

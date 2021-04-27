@@ -20,6 +20,10 @@ module.exports = function override(config, env) {
     {
       test: /.*uglify.*/,
       use: 'null-loader'
+    },
+    {
+      test: /.*gofsh.*.d\.ts$/,
+      loader: 'null-loader'
     }
   );
   return config;
