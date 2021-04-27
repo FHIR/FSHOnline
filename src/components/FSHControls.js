@@ -236,11 +236,10 @@ export default function FSHControls(props) {
         </Grid>
       </Grid>
 
-      <Button className={classes.secondaryButton} onClick={handleOpenExamples}>
-        Examples
-      </Button>
-
       <div className={classes.rightControls}>
+        <Button className={classes.button} onClick={handleOpenExamples}>
+          Examples
+        </Button>
         <Tooltip title="Configuration" placement="top" arrow>
           <IconButton name="Configuration" className={classes.iconButton} onClick={handleOpenConfig}>
             <Settings />
