@@ -9,7 +9,7 @@ import JSONOutput from './components/JSONOutput';
 import FSHOutput from './components/FSHOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import FSHControls from './components/FSHControls';
-import config from './examples/examples-config.json';
+import exampleConfig from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -163,7 +163,7 @@ export default function App(props) {
             fshText={inputFSHText}
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
-            config={config}
+            exampleConfig={exampleConfig}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
