@@ -177,7 +177,7 @@ export default function FSHControls(props) {
   }
 
   function ExampleGrid() {
-    let obj = Object.entries(props.config);
+    let obj = Object.entries(props.exampleConfig);
     let columns = obj.map((group) => {
       let groupName = group[0];
       let files = group[1].files;
