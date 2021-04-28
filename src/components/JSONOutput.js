@@ -84,7 +84,18 @@ export default function JSONOutput(props) {
     // This case represents when we receive a new Package from SUSHI
     if (props.showNewText && !isEqual(props.text, [''])) {
       setShowNewText(false); // Indicate that we no longer have new data we need to load so we don't come back here too early
-      const packageJSON = JSON.parse(props.text);
+      let packageJSON;
+      try {
+        packageJSON = JSON.parse(props.text);
+      } catch (e) {
+        packageJSON = {
+          profiles: [],
+          extensions: [],
+          instances: [],
+          valueSets: [],
+          codeSystems: []
+        };
+      }
       const iterablePackage = getIterablePackage(packageJSON);
       setFhirDefinitions(iterablePackage);
       setCurrentDef(0);
