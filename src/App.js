@@ -157,6 +157,7 @@ export default function App(props) {
             fshText={inputFSHText}
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
+            isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>

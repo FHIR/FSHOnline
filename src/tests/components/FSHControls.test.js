@@ -283,3 +283,41 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
   });
 });
+
+it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
+  const onClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
+
+  act(() => {
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+  });
+  const button = document.querySelector('[testid=Button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await wait(() => {
+    expect(runSUSHISpy).toHaveBeenCalledTimes(0);
+  });
+});
+
+it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
+  const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: '', config: {} });
+
+  act(() => {
+    render(<FSHControls onGoFSHClick={onGoFSHClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+  });
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await wait(() => {
+    expect(runGoFSHSpy).toHaveBeenCalledTimes(0);
+  });
+});

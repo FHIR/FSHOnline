@@ -97,6 +97,11 @@ export default function FSHControls(props) {
   };
 
   async function handleSUSHIClick() {
+    if (props.isWaiting) {
+      // If SUSHI or GoFSH is in the middle of processes, don't do anything
+      return;
+    }
+
     props.resetLogMessages();
     props.onSUSHIClick(true, [''], true);
     setIsSUSHIRunning(true);
@@ -128,6 +133,11 @@ export default function FSHControls(props) {
   }
 
   async function handleGoFSHClick() {
+    if (props.isWaiting) {
+      // If SUSHI or GoFSH is in the middle of processes, don't do anything
+      return;
+    }
+
     props.resetLogMessages();
     props.onGoFSHClick('', true);
     setIsGoFSHRunning(true);
