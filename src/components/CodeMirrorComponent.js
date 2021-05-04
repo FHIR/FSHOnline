@@ -108,13 +108,15 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
+  headerActionGroup: {
+    paddingRight: '10px'
+  },
   headerActions: {
-    height: '100%',
-    float: 'right'
+    alignItems: 'center',
+    display: 'flex'
   },
   iconButton: {
     color: theme.palette.common.white,
-    minHeight: '34px',
     padding: '3px'
   },
   drawer: {
@@ -203,10 +205,12 @@ export default function CodeMirrorComponent(props) {
     // Render only specified actions
     return (
       <div className={classes.headerActions}>
-        {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
-        {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
-        {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
-        {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
+        <div className={classes.headerActionGroup}>
+          {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
+          {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
+          {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
+          {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
+        </div>
         {props.renderDrawer && !drawerOpen && (
           <IconButton name="expand" className={classes.drawerHeaderIcon} aria-label="expand" onClick={handleDrawerOpen}>
             <ChevronLeft />

@@ -19,7 +19,6 @@ import { generateLink } from '../utils/BitlyWorker';
 const useStyles = makeStyles((theme) => ({
   iconButton: {
     color: theme.palette.common.white,
-    minHeight: '34px',
     padding: '3px'
   },
   textArea: {
@@ -73,7 +72,7 @@ export default function ShareLink(props) {
     <>
       <Tooltip title="Share FSH" placement="top" arrow>
         <IconButton name="Share FSH" className={classes.iconButton} onClick={handleOpenShare}>
-          <Link style={{ transform: 'rotate(-45deg)' }} />
+          <Link fontSize="small" style={{ transform: 'rotate(-45deg)' }} />
         </IconButton>
       </Tooltip>
       <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>

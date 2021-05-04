@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -23,10 +23,9 @@ const useStyles = makeStyles((theme) => ({
   },
   rightControls: {
     position: 'absolute',
-    right: '0'
+    right: '24px'
   },
   secondaryButton: {
-    textTransform: 'none',
     color: theme.palette.success.main
   },
   progressContainer: {
@@ -43,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
     background: theme.palette.success.main,
     borderRadius: '0',
-    textTransform: 'none',
-    fontWeight: 'bold',
+    paddingRight: '15px',
+    paddingLeft: '15px',
     '&:hover': {
       background: theme.palette.success.light
     }
@@ -195,11 +194,9 @@ export default function FSHControls(props) {
       </Grid>
 
       <div className={classes.rightControls}>
-        <Tooltip title="Configuration" placement="top" arrow>
-          <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
-            <Settings /> Configuration
-          </Button>
-        </Tooltip>
+        <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
+          <Settings /> Configuration
+        </Button>
       </div>
 
       <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">

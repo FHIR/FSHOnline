@@ -41,7 +41,8 @@ const useStyles = makeStyles((theme) => ({
 const theme = createMuiTheme({
   palette: {
     success: {
-      main: '#30638e'
+      main: '#30638e',
+      light: '#575B5C'
     }
   },
   typography: {
@@ -51,6 +52,19 @@ const theme = createMuiTheme({
     MuiTooltip: {
       tooltip: {
         backgroundColor: 'rgba(97, 97, 97, 1)'
+      }
+    },
+    MuiButton: {
+      text: {
+        textTransform: 'none',
+        fontWeight: 600
+      }
+    },
+    MuiIconButton: {
+      root: {
+        '&:hover': {
+          backgroundColor: 'rgba(255, 255, 255, 0.3)'
+        }
       }
     }
   }

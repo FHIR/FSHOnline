@@ -26,6 +26,21 @@ const useStyles = makeStyles((theme) => ({
   exitIcon: {
     paddingLeft: '3px',
     transform: 'scaleX(-1)'
+  },
+  docButton: {
+    color: theme.palette.common.white,
+    backgroundColor: '#30638e',
+    fontSize: '0.875rem',
+    fontWeight: 700,
+    '&:hover': {
+      background: theme.palette.success.light
+    }
+  },
+  versionText: {
+    color: theme.palette.common.white,
+    fontSize: '0.8rem',
+    fontStyle: 'italic',
+    marginTop: '-5px'
   }
 }));
 
@@ -44,7 +59,7 @@ export default function TopBar() {
                 <Typography order={1} className={classes.title}>
                   FSH ONLINE
                 </Typography>
-                <Typography order={2} classes={{ root: 'versionText' }}>
+                <Typography order={2} className={classes.versionText}>
                   Powered by SUSHI v1.3.2 and GoFSH v1.1.0
                 </Typography>
               </StylesProvider>
@@ -52,7 +67,7 @@ export default function TopBar() {
           </Box>
           <Box order={1}>
             <StylesProvider injectFirst>
-              <Button classes={{ root: 'docButton' }} href="https://fshschool.org/" target="_blank">
+              <Button className={classes.docButton} href="https://fshschool.org/" target="_blank">
                 <ExitToApp className={classes.exitIcon} fontSize="small" />
                 Back to School
               </Button>

@@ -1,20 +1,3 @@
-.docButton {
-  background-color: #30638e;
-  text-transform: none;
-  font-family: 'Open Sans';
-  font-size: 0.875rem;
-  flex-grow: 0;
-  font-weight: 700;
-  color: #ffffff;
-  opacity: 0.75;
-  text-shadow: 1px 1px 2px #403f4c;
-}
-
-.docButton:hover {
-  color: rgba(188, 194, 206, 1);
-  background-color: transparent;
-}
-
 .versionText {
   text-transform: none;
   font-family: 'Open Sans';
@@ -22,6 +5,5 @@
   flex-grow: 0;
   font-weight: 700;
   color: #ffffff;
-  opacity: 0.75;
-  text-shadow: 1px 1px 2px #403f4c;
+  margin-top: -5px;
 }

@@ -18,14 +18,14 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: theme.palette.success.light
     },
-    border: '3px solid white',
-    textTransform: 'none',
+    border: '8px solid white',
     fontSize: '13px',
     width: '100%'
   },
   list: {
-    padding: '5px',
+    padding: '8px',
     paddingLeft: '0px',
+    paddingBottom: '0px',
     fontSize: '13px'
   },
   listItemError: {
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     // paddingRight is driven by ListItem (16px)
     margin: 0,
     '&:hover': {
-      background: 'rgba(38, 50, 56, 0.4)'
+      background: 'rgba(38, 50, 56, 0.3)'
     },
 
     // Ellipse for long resource ids
@@ -54,10 +54,14 @@ const useStyles = makeStyles((theme) => ({
   },
   listItemSelected: {
     background: '#263238', // editor background color
-    color: theme.palette.common.white
+    color: theme.palette.common.white,
+    '&:hover': {
+      background: 'rgba(38, 50, 56, 0.8)'
+    }
   },
   listHeader: {
-    padding: '5px'
+    padding: '5px',
+    paddingLeft: '15px'
   },
   listIcon: {
     color: theme.palette.success.main,
@@ -324,7 +328,7 @@ export default function JSONOutput(props) {
         initialText={initialText}
         updateTextValue={updateTextValue}
         mode={'application/json'}
-        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
+        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definition JSON here...'}
         renderDrawer={renderDrawer}
         delete={handleOpenDeleteConfirmation}
       />
