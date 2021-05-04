@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, IconButton, Tooltip } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: '0'
   },
-  iconButton: {
+  secondaryButton: {
+    textTransform: 'none',
     color: theme.palette.success.main
   },
   progressContainer: {
@@ -195,9 +196,9 @@ export default function FSHControls(props) {
 
       <div className={classes.rightControls}>
         <Tooltip title="Configuration" placement="top" arrow>
-          <IconButton name="Configuration" className={classes.iconButton} onClick={handleOpenConfig}>
-            <Settings />
-          </IconButton>
+          <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
+            <Settings /> Configuration
+          </Button>
         </Tooltip>
       </div>
 

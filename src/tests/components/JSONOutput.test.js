@@ -159,7 +159,7 @@ it('Renders an Add Definition button that adds a blank definition', () => {
     container
   );
 
-  const addButton = getByText('Add FHIR Definition');
+  const addButton = getByText('Create FHIR Definition');
   let placeholderText = queryByText('Write FHIR definitions here...');
   expect(addButton).toBeInTheDocument();
   expect(placeholderText).not.toBeInTheDocument();

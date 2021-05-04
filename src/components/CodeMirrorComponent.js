@@ -84,6 +84,8 @@ const useStyles = makeStyles((theme) => ({
     padding: '0px',
     paddingLeft: '29px', // width of code mirror gutter
     height: '34px', // 24px + 10px of padding is total height
+    display: 'flex',
+    justifyContent: 'space-between',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -99,7 +101,12 @@ const useStyles = makeStyles((theme) => ({
   },
   headerLabel: {
     lineHeight: '34px',
-    float: 'left'
+    float: 'left',
+
+    // Ellipse for long resource ids
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   headerActions: {
     height: '100%',
@@ -243,7 +250,9 @@ export default function CodeMirrorComponent(props) {
           [classes.headerShift]: props.renderDrawer && drawerOpen
         })}
       >
-        <div className={classes.headerLabel}>{props.name}</div>
+        <div title={props.name} className={classes.headerLabel}>
+          {props.name}
+        </div>
         {renderActionIcons()}
       </div>
       <ReactCodeMirror

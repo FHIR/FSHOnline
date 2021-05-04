@@ -9,7 +9,7 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
   fileTreeContent: {
-    overflow: 'scroll',
+    overflow: 'hidden',
     height: '100%'
   },
   button: {
@@ -25,24 +25,39 @@ const useStyles = makeStyles((theme) => ({
   },
   list: {
     padding: '5px',
+    paddingLeft: '0px',
     fontSize: '13px'
   },
   listItemError: {
-    color: 'red',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    margin: 0
-  },
-  listItemSelected: {
-    background: theme.palette.action.selected,
     paddingTop: '5px',
     paddingBottom: '5px',
     margin: 0
   },
   listItem: {
+    background: theme.palette.action.selected,
     paddingTop: '5px',
     paddingBottom: '5px',
-    margin: 0
+    marginTop: '5px',
+    marginBottom: '5px',
+    paddingLeft: '5px',
+    // paddingRight is driven by ListItem (16px)
+    margin: 0,
+    '&:hover': {
+      background: 'rgba(38, 50, 56, 0.4)'
+    },
+
+    // Ellipse for long resource ids
+    display: 'block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  listItemSelected: {
+    background: '#263238', // editor background color
+    color: theme.palette.common.white
+  },
+  listHeader: {
+    padding: '5px'
   },
   listIcon: {
     color: theme.palette.success.main,
@@ -51,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '3px'
   },
   listIconError: {
-    color: 'red'
+    color: '#FD6668'
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon
@@ -246,7 +261,7 @@ export default function JSONOutput(props) {
       .map((key) => {
         return (
           <List component="nav" key={key} className={classes.list}>
-            {key}
+            <div className={classes.listHeader}>{key}</div>
             {grouped[key]
               .sort((a, b) => {
                 const aId = a.id ? a.id : 'Untitled'; // Treat missing or blank ids as "Untitled"
@@ -260,10 +275,12 @@ export default function JSONOutput(props) {
                   <ListItem
                     button
                     key={i}
+                    title={def.id || 'Untitled'}
                     data-testid={`${key}-defId`}
                     className={clsx(
+                      classes.listItem,
                       isError && classes.listItemError,
-                      currentIndex === currentDef ? classes.listItemSelected : classes.listItem
+                      currentIndex === currentDef && classes.listItemSelected
                     )}
                     onClick={() => {
                       setCurrentDef(currentIndex);
@@ -290,7 +307,7 @@ export default function JSONOutput(props) {
     return (
       <>
         <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-          Add FHIR Definition
+          Create FHIR Definition
         </Button>
         <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
       </>
