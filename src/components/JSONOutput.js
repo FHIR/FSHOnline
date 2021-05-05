@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
   },
   listIcon: {
     color: theme.palette.success.main,
+    verticalAlign: 'middle',
     fontSize: '13px',
     paddingLeft: '3px',
     paddingRight: '3px'
