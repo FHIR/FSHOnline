@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   header: {
     fontFamily: 'Open Sans',
     color: theme.palette.common.white,
-    background: '#424242', // Dark mode background
+    background: theme.palette.darkerGrey.main,
     padding: '0px',
     paddingLeft: '29px', // width of code mirror gutter
     height: '34px', // 24px + 10px of padding is total height
@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     // Color to match header
     color: theme.palette.common.white,
-    background: '#424242', // Dark mode background
+    background: theme.palette.darkerGrey.main,
     height: '34px', // Same height as headers on CodeMirror editors
     minHeight: '34px'
   },

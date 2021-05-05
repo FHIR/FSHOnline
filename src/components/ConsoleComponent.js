@@ -8,7 +8,7 @@ import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
-    background: '#191919',
+    background: theme.palette.darkestGrey.main,
     height: '34px',
     boxSizing: 'border-box',
     display: 'flex;',
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     paddingLeft: '29px', // Same padding as header of code mirror
     color: theme.palette.common.white,
-    background: '#191919',
+    background: theme.palette.darkestGrey.main,
     height: 'calc(100% - 34px)',
     overflow: 'scroll',
     boxSizing: 'border-box'

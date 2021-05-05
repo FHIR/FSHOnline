@@ -9,14 +9,14 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
   fileTreeContent: {
-    overflow: 'hidden',
+    overflowY: 'scroll',
     height: '100%'
   },
   button: {
     color: theme.palette.common.white,
     background: theme.palette.success.main,
     '&:hover': {
-      background: theme.palette.success.light
+      background: theme.palette.success.dark
     },
     border: '8px solid white',
     fontSize: '13px',
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 0
   },
   listItem: {
-    background: theme.palette.action.selected,
+    background: theme.palette.lightestGrey.main,
     paddingTop: '5px',
     paddingBottom: '5px',
     marginTop: '5px',
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     // paddingRight is driven by ListItem (16px)
     margin: 0,
     '&:hover': {
-      background: 'rgba(38, 50, 56, 0.3)'
+      background: theme.palette.lightGrey.main
     },
 
     // Ellipse for long resource ids
@@ -53,10 +53,10 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: 'ellipsis'
   },
   listItemSelected: {
-    background: '#263238', // editor background color
+    background: theme.palette.editorGrey.main, // editor background color
     color: theme.palette.common.white,
     '&:hover': {
-      background: 'rgba(38, 50, 56, 0.8)'
+      background: theme.palette.darkestGrey.main
     }
   },
   listHeader: {
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '3px'
   },
   listIconError: {
-    color: '#FD6668'
+    color: theme.palette.red.main
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon

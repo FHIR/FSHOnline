@@ -8,7 +8,7 @@ import logo from '../style/FSH-online-logo.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: '#30638e',
+    background: theme.palette.blue.main,
     position: 'static',
     boxShadow: '0'
   },
@@ -29,11 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
   docButton: {
     color: theme.palette.common.white,
-    backgroundColor: '#30638e',
+    backgroundColor: theme.palette.blue.main,
     fontSize: '0.875rem',
     fontWeight: 700,
     '&:hover': {
-      background: theme.palette.success.light
+      background: theme.palette.lightBlue.main
     }
   },
   versionText: {
@@ -51,7 +51,7 @@ export default function TopBar() {
       <Toolbar>
         <Box className={classes.toolbarBox} display="flex" flexGrow={1} flexDirection="row">
           <Box order={1} display="flex" flexGrow={1} flexDirection="row">
-            <Box order={1} alignSelf="center">
+            <Box order={1} alignSelf="center" display="flex">
               <img src={logo} alt="logo" className={classes.logo} />
             </Box>
             <Box order={2} alignSelf="center" m={1}>

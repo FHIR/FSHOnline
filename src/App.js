@@ -38,12 +38,51 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const colors = {
+  lighterBlue: {
+    main: '#D8E2EA'
+  },
+  lightBlue: {
+    main: '#487AA2'
+  },
+  blue: {
+    main: '#30638e'
+  },
+  darkerBlue: {
+    main: '#143E61'
+  },
+  editorGrey: {
+    main: '#263238'
+  },
+  lightestGrey: {
+    main: '#E7ECEE'
+  },
+  lightGrey: {
+    main: '#D0D9DD'
+  },
+  grey: {
+    main: '#575B5C'
+  },
+  darkerGrey: {
+    main: '#3D4345'
+  },
+  darkestGrey: {
+    main: '#121D21'
+  },
+  red: {
+    main: '#FD6668'
+  }
+};
+
 const theme = createMuiTheme({
   palette: {
     success: {
-      main: '#30638e',
-      light: '#575B5C'
-    }
+      main: colors.blue.main,
+      dark: colors.darkerBlue.main,
+      light: colors.lightBlue.main
+    },
+    // Custom colors
+    ...colors
   },
   typography: {
     fontFamily: 'Open Sans'
@@ -51,7 +90,11 @@ const theme = createMuiTheme({
   overrides: {
     MuiTooltip: {
       tooltip: {
-        backgroundColor: 'rgba(97, 97, 97, 1)'
+        backgroundColor: colors.darkestGrey.main,
+        fontSize: '13px'
+      },
+      arrow: {
+        color: colors.darkestGrey.main
       }
     },
     MuiButton: {
@@ -63,7 +106,7 @@ const theme = createMuiTheme({
     MuiIconButton: {
       root: {
         '&:hover': {
-          backgroundColor: 'rgba(255, 255, 255, 0.3)'
+          backgroundColor: colors.grey.main
         }
       }
     }

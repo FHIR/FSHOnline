@@ -26,7 +26,10 @@ const useStyles = makeStyles((theme) => ({
     right: '24px'
   },
   secondaryButton: {
-    color: theme.palette.success.main
+    color: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.lighterBlue.main
+    }
   },
   progressContainer: {
     width: '24px',
@@ -45,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '15px',
     paddingLeft: '15px',
     '&:hover': {
-      background: theme.palette.success.light
+      background: theme.palette.success.dark
     }
   },
   buttonLeft: {
