@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   secondaryButton: {
     color: theme.palette.success.main,
     '&:hover': {
-      background: theme.palette.lighterBlue.main
+      background: theme.palette.common.lighterBlue
     }
   },
   progressContainer: {

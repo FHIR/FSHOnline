@@ -8,7 +8,7 @@ import logo from '../style/FSH-online-logo.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: theme.palette.blue.main,
+    background: theme.palette.common.blue,
     position: 'static',
     boxShadow: '0'
   },
@@ -29,11 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
   docButton: {
     color: theme.palette.common.white,
-    backgroundColor: theme.palette.blue.main,
+    backgroundColor: theme.palette.common.blue,
     fontSize: '0.875rem',
     fontWeight: 700,
     '&:hover': {
-      background: theme.palette.lightBlue.main
+      background: theme.palette.common.lightBlue
     }
   },
   versionText: {

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 0
   },
   listItem: {
-    background: theme.palette.lightestGrey.main,
+    background: theme.palette.common.lightestGrey,
     paddingTop: '5px',
     paddingBottom: '5px',
     marginTop: '5px',
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     // paddingRight is driven by ListItem (16px)
     margin: 0,
     '&:hover': {
-      background: theme.palette.lightGrey.main
+      background: theme.palette.common.lightGrey
     },
 
     // Ellipse for long resource ids
@@ -53,10 +53,10 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: 'ellipsis'
   },
   listItemSelected: {
-    background: theme.palette.editorGrey.main, // editor background color
+    background: theme.palette.common.editorGrey, // editor background color
     color: theme.palette.common.white,
     '&:hover': {
-      background: theme.palette.darkestGrey.main
+      background: theme.palette.common.darkestGrey
     }
   },
   listHeader: {
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '3px'
   },
   listIconError: {
-    color: theme.palette.red.main
+    color: theme.palette.common.red
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon
