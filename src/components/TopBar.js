@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Button, Typography, Box } from '@material-ui/core';
 import { StylesProvider } from '@material-ui/core/styles';
 import { ExitToApp } from '@material-ui/icons';
-import '../style/TopBarStyling.css';
 import logo from '../style/FSH-online-logo.png';
 
 const useStyles = makeStyles((theme) => ({
