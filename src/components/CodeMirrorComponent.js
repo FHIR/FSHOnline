@@ -12,6 +12,7 @@ import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/scroll/simplescrollbars.css';
 require('codemirror/addon/mode/simple');
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/addon/display/placeholder');
@@ -20,6 +21,7 @@ require('codemirror/addon/fold/foldgutter');
 require('codemirror/addon/fold/brace-fold');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/scroll/simplescrollbars');
 
 // Define FSH syntax highlighting
 // Regular expressions from https://github.com/standardhealth/vscode-language-fsh/blob/master/syntaxes/fsh.tmLanguage.json
@@ -268,6 +270,7 @@ export default function CodeMirrorComponent(props) {
           mode: props.mode,
           theme: 'material',
           placeholder: props.placeholder,
+          scrollbarStyle: 'overlay',
           autoCloseBrackets: true,
           lineNumbers: true,
           foldGutter: true,

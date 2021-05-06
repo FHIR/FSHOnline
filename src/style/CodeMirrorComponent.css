@@ -11,3 +11,20 @@
 .react-codemirror2 > .CodeMirror span.CodeMirror-foldmarker {
   color: white;
 }
+
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal div {
+  height: 8px;
+}
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical div {
+  width: 8px;
+}
+
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal div,
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical div {
+  background: #121d21b3; /* Transparent color to match editor - mirrors what Mac does by default */
+  border-radius: 5px;
+}
+
+.react-codemirror2 > .CodeMirror .CodeMirror-scrollbar-filler {
+  background: #263238; /* Match the editor color */
+}
