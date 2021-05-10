@@ -172,7 +172,7 @@ export default function FSHControls(props) {
       <Grid container>
         <Grid item xs={5}>
           <Button className={clsx(classes.button, classes.buttonLeft)} onClick={handleSUSHIClick} testid="Button">
-            Run SUSHI
+            Convert to JSON
             {isSUSHIRunning ? (
               <div className={classes.progressContainer}>
                 <CircularProgress className={classes.progress} />
@@ -191,7 +191,7 @@ export default function FSHControls(props) {
             ) : (
               <PlayArrow className={classes.runIcon} style={{ transform: 'scaleX(-1)' }} />
             )}
-            Run GoFSH
+            Convert to FSH
           </Button>
         </Grid>
       </Grid>
@@ -205,7 +205,9 @@ export default function FSHControls(props) {
       <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Configuration Settings</DialogTitle>
         <DialogContent>
-          <DialogContentText>Change the configuration options to use with SUSHI and GoFSH</DialogContentText>
+          <DialogContentText>
+            Change the Implementation Guide configuration to use when processing FSH and FHIR JSON
+          </DialogContentText>
           <TextField
             id="canonical"
             margin="dense"

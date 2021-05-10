@@ -245,7 +245,7 @@ export default function JSONOutput(props) {
     const id = defToDelete.id || 'Untitled';
     return (
       <DeleteConfirmationModal
-        title={'FHIR definition'}
+        title={'FHIR JSON'}
         item={`${type}/${id}`}
         isOpen={openDeleteConfirmation}
         handleCloseModal={handleCloseDeleteConfirmation}
@@ -255,10 +255,11 @@ export default function JSONOutput(props) {
   };
 
   const renderFileTreeView = () => {
-    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances'];
+    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances', 'Unknown Type'];
     const grouped = groupBy(fhirDefinitions, (val) => {
       if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val.resourceType)) return `${val.resourceType}s`;
-      return 'Instances';
+      if (val.resourceType != null) return 'Instances';
+      return 'Unknown Type';
     });
 
     return Object.keys(grouped)
@@ -312,7 +313,7 @@ export default function JSONOutput(props) {
     return (
       <>
         <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-          Create FHIR Definition
+          New JSON Editor
         </Button>
         <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
       </>
@@ -324,12 +325,16 @@ export default function JSONOutput(props) {
   return (
     <>
       <CodeMirrorComponent
-        name={`FHIR Definition: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        name={`FHIR JSON: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
         value={displayValue}
         initialText={initialText}
         updateTextValue={updateTextValue}
         mode={'application/json'}
-        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definition JSON here...'}
+        placeholder={
+          props.isWaiting
+            ? 'Loading...'
+            : 'Paste or edit single FHIR JSON here... \nCreate additional FHIR JSON to the right.'
+        }
         renderDrawer={renderDrawer}
         delete={handleOpenDeleteConfirmation}
       />
