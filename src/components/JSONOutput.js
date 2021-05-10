@@ -333,7 +333,7 @@ export default function JSONOutput(props) {
         placeholder={
           props.isWaiting
             ? 'Loading...'
-            : 'Paste or edit single FHIR JSON here... \nCreate additional FHIR JSON to the right.'
+            : 'Paste or edit single FHIR JSON artifact here... \nCreate additional FHIR JSON artifacts to the right.'
         }
         renderDrawer={renderDrawer}
         delete={handleOpenDeleteConfirmation}

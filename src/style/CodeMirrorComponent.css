@@ -13,15 +13,15 @@
 }
 
 .react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal div {
-  height: 8px;
+  height: 10px;
 }
 .react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical div {
-  width: 8px;
+  width: 10px;
 }
 
 .react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal div,
 .react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical div {
-  background: #121d21b3; /* Transparent color to match editor - mirrors what Mac does by default */
+  background: #0d1417bf; /* Transparent color to match editor - mirrors what Mac does by default */
   border-radius: 5px;
 }
 
