@@ -257,8 +257,8 @@ export default function JSONOutput(props) {
   const renderFileTreeView = () => {
     const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances', 'Unknown Type'];
     const grouped = groupBy(fhirDefinitions, (val) => {
-      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val.resourceType)) return `${val.resourceType}s`;
-      if (val.resourceType != null) return 'Instances';
+      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val?.resourceType)) return `${val.resourceType}s`;
+      if (val?.resourceType != null) return 'Instances';
       return 'Unknown Type';
     });
 
@@ -281,7 +281,7 @@ export default function JSONOutput(props) {
                   <ListItem
                     button
                     key={i}
-                    title={def.id || 'Untitled'}
+                    title={def?.id || 'Untitled'}
                     data-testid={`${key}-defId`}
                     className={clsx(
                       classes.listItem,
@@ -300,7 +300,7 @@ export default function JSONOutput(props) {
                     ) : (
                       <span className={classes.blankIcon} />
                     )}
-                    {def.id || 'Untitled'}
+                    {def?.id || 'Untitled'}
                   </ListItem>
                 );
               })}
