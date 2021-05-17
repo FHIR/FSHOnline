@@ -22,7 +22,7 @@ export default function FSHOutput(props) {
         initialText={props.initialText}
         updateTextValue={props.updateTextValue}
         mode={'fsh'}
-        placeholder={props.isWaiting ? 'Loading...' : 'Write FSH here...'}
+        placeholder={props.isWaiting ? 'Loading...' : 'Paste or edit FSH here...'}
         delete={handleOpenDeleteModal}
       />
       {openDeleteModal && (

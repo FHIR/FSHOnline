@@ -9,49 +9,69 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const useStyles = makeStyles((theme) => ({
   fileTreeContent: {
-    overflow: 'scroll',
+    overflowY: 'scroll',
     height: '100%'
   },
   button: {
     color: theme.palette.common.white,
     background: theme.palette.success.main,
     '&:hover': {
-      background: theme.palette.success.light
+      background: theme.palette.success.dark
     },
-    border: '3px solid white',
-    textTransform: 'none',
+    border: '8px solid white',
     fontSize: '13px',
     width: '100%'
   },
   list: {
-    padding: '5px',
+    padding: '8px',
+    paddingLeft: '0px',
+    paddingBottom: '0px',
     fontSize: '13px'
   },
   listItemError: {
-    color: 'red',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    margin: 0
-  },
-  listItemSelected: {
-    background: theme.palette.action.selected,
     paddingTop: '5px',
     paddingBottom: '5px',
     margin: 0
   },
   listItem: {
+    background: theme.palette.common.lightestGrey,
     paddingTop: '5px',
     paddingBottom: '5px',
-    margin: 0
+    marginTop: '5px',
+    marginBottom: '5px',
+    paddingLeft: '5px',
+    // paddingRight is driven by ListItem (16px)
+    margin: 0,
+    '&:hover': {
+      background: theme.palette.common.lightGrey
+    },
+
+    // Ellipse for long resource ids
+    display: 'block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  listItemSelected: {
+    background: theme.palette.common.editorGrey, // editor background color
+    color: theme.palette.common.white,
+    '&:hover': {
+      background: theme.palette.common.darkestGrey
+    }
+  },
+  listHeader: {
+    padding: '5px',
+    paddingLeft: '15px'
   },
   listIcon: {
     color: theme.palette.success.main,
+    verticalAlign: 'middle',
     fontSize: '13px',
     paddingLeft: '3px',
     paddingRight: '3px'
   },
   listIconError: {
-    color: 'red'
+    color: theme.palette.common.red
   },
   blankIcon: {
     paddingLeft: '19px' // width of icon
@@ -225,7 +245,7 @@ export default function JSONOutput(props) {
     const id = defToDelete.id || 'Untitled';
     return (
       <DeleteConfirmationModal
-        title={'FHIR definition'}
+        title={'FHIR JSON'}
         item={`${type}/${id}`}
         isOpen={openDeleteConfirmation}
         handleCloseModal={handleCloseDeleteConfirmation}
@@ -235,10 +255,11 @@ export default function JSONOutput(props) {
   };
 
   const renderFileTreeView = () => {
-    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances'];
+    const order = ['StructureDefinitions', 'ValueSets', 'CodeSystems', 'Instances', 'Unknown Type'];
     const grouped = groupBy(fhirDefinitions, (val) => {
-      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val.resourceType)) return `${val.resourceType}s`;
-      return 'Instances';
+      if (['StructureDefinition', 'ValueSet', 'CodeSystem'].includes(val?.resourceType)) return `${val.resourceType}s`;
+      if (val?.resourceType != null) return 'Instances';
+      return 'Unknown Type';
     });
 
     return Object.keys(grouped)
@@ -246,7 +267,7 @@ export default function JSONOutput(props) {
       .map((key) => {
         return (
           <List component="nav" key={key} className={classes.list}>
-            {key}
+            <div className={classes.listHeader}>{key}</div>
             {grouped[key]
               .sort((a, b) => {
                 const aId = a.id ? a.id : 'Untitled'; // Treat missing or blank ids as "Untitled"
@@ -260,10 +281,12 @@ export default function JSONOutput(props) {
                   <ListItem
                     button
                     key={i}
+                    title={def?.id || 'Untitled'}
                     data-testid={`${key}-defId`}
                     className={clsx(
+                      classes.listItem,
                       isError && classes.listItemError,
-                      currentIndex === currentDef ? classes.listItemSelected : classes.listItem
+                      currentIndex === currentDef && classes.listItemSelected
                     )}
                     onClick={() => {
                       setCurrentDef(currentIndex);
@@ -277,7 +300,7 @@ export default function JSONOutput(props) {
                     ) : (
                       <span className={classes.blankIcon} />
                     )}
-                    {def.id || 'Untitled'}
+                    {def?.id || 'Untitled'}
                   </ListItem>
                 );
               })}
@@ -290,7 +313,7 @@ export default function JSONOutput(props) {
     return (
       <>
         <Button className={classes.button} startIcon={<Add />} onClick={addDefinition}>
-          Add FHIR Definition
+          New JSON Editor
         </Button>
         <div className={classes.fileTreeContent}>{renderFileTreeView()}</div>
       </>
@@ -302,12 +325,16 @@ export default function JSONOutput(props) {
   return (
     <>
       <CodeMirrorComponent
-        name={`FHIR Definition: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        name={`FHIR JSON: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
         value={displayValue}
         initialText={initialText}
         updateTextValue={updateTextValue}
         mode={'application/json'}
-        placeholder={props.isWaiting ? 'Loading...' : 'Write FHIR definitions here...'}
+        placeholder={
+          props.isWaiting
+            ? 'Loading...'
+            : 'Paste or edit single FHIR JSON artifact here... \nCreate additional FHIR JSON artifacts to the right.'
+        }
         renderDrawer={renderDrawer}
         delete={handleOpenDeleteConfirmation}
       />
