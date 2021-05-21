@@ -3,13 +3,12 @@ import { inflateSync } from 'browserify-zlib';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
-import { setExampleText } from './utils/ParseExamples';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import FSHOutput from './components/FSHOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import FSHControls from './components/FSHControls';
-import exampleConfig from './examples/examples-config.json';
+// import exampleConfig from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -58,8 +57,10 @@ const theme = createMuiTheme({
   }
 });
 
+const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main';
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
+let examplePaths = {};
 let errorString = '';
 let warningString = '';
 let errorCount = 0;
@@ -79,6 +80,23 @@ console.log = function getMessages(message) {
     if (warningCount !== 1) warningString += 's';
   }
 };
+
+function convertManifest(categoryObj) {
+  categoryObj.forEach((element) => {
+    if (element.type === 'category') convertManifest(element.children);
+    element.id = element.path.replaceAll('%20', '-');
+    if (element.type === 'file') examplePaths[element.id] = `${githubURL}/${element.path}`;
+    delete element.type;
+    examplePaths[element.name] = element.path;
+    delete element.path;
+  });
+}
+
+async function getManifestFromgit() {
+  let responseJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
+  convertManifest(responseJSON);
+  return { id: 'root', name: 'Categories', children: [...responseJSON] };
+}
 
 export async function decodeFSH(encodedFSH) {
   if (encodedFSH.text === undefined) {
@@ -109,17 +127,17 @@ export default function App(props) {
   const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
   const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
   const [expandConsole, setExpandConsole] = useState(false);
+  const [exampleConfig, setExampleConfig] = useState({});
+  const [exampleFilePaths, setExampleFilePaths] = useState({});
 
   useEffect(() => {
     async function waitForFSH() {
-      if (urlParam.path.includes('examples')) {
-        setInitialText(await setExampleText(urlParam.params.text));
-      } else {
-        setInitialText(await decodeFSH(urlParam.params));
-      }
+      setInitialText(await decodeFSH(urlParam.params));
+      setExampleConfig(await getManifestFromgit());
+      setExampleFilePaths(examplePaths);
     }
     waitForFSH();
-  }, [urlParam]);
+  }, [exampleConfig, urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
@@ -164,6 +182,8 @@ export default function App(props) {
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
             exampleConfig={exampleConfig}
+            exampleFilePaths={exampleFilePaths}
+            updateTextValue={updateInputFSHTextValue}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>

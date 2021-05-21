@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, IconButton, Link, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, IconButton, Tooltip } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,6 +14,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
+import { TreeView, TreeItem } from '@material-ui/lab';
+import CodeMirrorComponent from './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -86,6 +90,8 @@ export default function FSHControls(props) {
   const [dependencies, setDependencies] = useState('');
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
+  const [isFetchingExample, setIsFetchingExample] = useState(false);
+  const [currentExample, setCurrentExample] = useState('');
 
   const handleOpenExamples = () => {
     setOpenExamples(true);
@@ -176,36 +182,27 @@ export default function FSHControls(props) {
     if (version === '' && config.version) setVersion(config.version);
   }
 
-  function ExampleGrid() {
-    let obj = Object.entries(props.exampleConfig);
-    let columns = obj.map((group) => {
-      let groupName = group[0];
-      let files = group[1].files;
-      return (
-        <Grid item container direction="column" alignItems="flex-start" key={groupName} xs={3} spacing={3}>
-          <Grid item xs>
-            <Typography variant="subtitle1">{groupName}</Typography>
-          </Grid>
-          {files.map((file) => {
-            return (
-              <Grid item xs key={file.name}>
-                <Link
-                  className={classes.link}
-                  underline="none"
-                  component={RouterLink}
-                  to={file.link}
-                  onClick={handleCloseExamples}
-                >
-                  {file.name}
-                </Link>
-              </Grid>
-            );
-          })}
-        </Grid>
-      );
-    });
-    return columns;
+  async function fetchFSH(event, value) {
+    if (!value.endsWith('.fsh')) return;
+    setIsFetchingExample(true);
+    const utf8Decoder = new TextDecoder('utf-8');
+    let responseReader = await fetch(props.exampleFilePaths[value]).then((response) => response.body.getReader());
+    let fshString = '';
+    const { value: chunk } = await responseReader.read();
+    fshString += utf8Decoder.decode(chunk);
+    setIsFetchingExample(false);
+    setCurrentExample(fshString);
   }
+
+  function updateExampleValue(text) {
+    setCurrentExample(text);
+  }
+
+  const renderTree = (nodes) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+    </TreeItem>
+  );
 
   return (
     <Box className={classes.box}>
@@ -291,13 +288,34 @@ export default function FSHControls(props) {
         aria-labelledby="form-dialog-title"
         maxWidth="lg"
         fullWidth
+        scroll="paper"
         classes={{ paper: classes.dialogPaper }}
       >
         <DialogTitle id="form-dialog-title">Examples</DialogTitle>
         <DialogContent>
           <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
-          <Grid container direction="row" justify="space-between" alignItems="flex-start" spacing={0}>
-            <ExampleGrid />
+          <Grid container>
+            <Grid item xs={4}>
+              <TreeView
+                className={classes.root}
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpanded={['root']}
+                defaultExpandIcon={<ChevronRightIcon />}
+                onNodeSelect={fetchFSH}
+              >
+                {renderTree(props.exampleConfig)}
+              </TreeView>
+            </Grid>
+            <Grid item xs={8}>
+              <CodeMirrorComponent
+                name={'Example'}
+                value={currentExample}
+                initialText={currentExample}
+                updateTextValue={updateExampleValue}
+                mode={'fsh'}
+                placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
+              />
+            </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>

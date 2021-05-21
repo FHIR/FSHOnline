@@ -287,64 +287,64 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   });
 });
 
-it('opens an example page and renders from config when example button is clicked', async () => {
-  const config = {
-    'Group 1': {
-      files: [
-        {
-          name: 'Hello World',
-          path: './HelloWorld.txt',
-          link: '/examples/HelloWorld',
-          description: 'A test file for our examples page.'
-        },
-        {
-          name: 'Start Swimming',
-          path: './GetSwimming.txt',
-          link: '/examples/GetSwimming',
-          description: 'blah'
-        }
-      ]
-    },
-    'Group 2': {
-      files: [
-        {
-          name: 'Veterinarian',
-          path: './Veterinarian.txt',
-          link: '/examples/Veterinarian',
-          description: 'A test file for our examples page.'
-        }
-      ]
-    }
-  };
-  const onClick = jest.fn();
-  const resetLogMessages = jest.fn();
+// it('opens an example page and renders from config when example button is clicked', async () => {
+//   const config = {
+//     'Group 1': {
+//       files: [
+//         {
+//           name: 'Hello World',
+//           path: './HelloWorld.txt',
+//           link: '/examples/HelloWorld',
+//           description: 'A test file for our examples page.'
+//         },
+//         {
+//           name: 'Start Swimming',
+//           path: './GetSwimming.txt',
+//           link: '/examples/GetSwimming',
+//           description: 'blah'
+//         }
+//       ]
+//     },
+//     'Group 2': {
+//       files: [
+//         {
+//           name: 'Veterinarian',
+//           path: './Veterinarian.txt',
+//           link: '/examples/Veterinarian',
+//           description: 'A test file for our examples page.'
+//         }
+//       ]
+//     }
+//   };
+//   const onClick = jest.fn();
+//   const resetLogMessages = jest.fn();
 
-  const { getByText } = render(
-    <HashRouter>
-      <FSHControls
-        onClick={onClick}
-        text={'Edit FSH Here'}
-        resetLogMessages={resetLogMessages}
-        exampleConfig={config}
-      />
-      , container
-    </HashRouter>
-  );
-  act(() => {
-    const exampleBtn = getByText('Examples');
-    fireEvent.click(exampleBtn);
-  });
-  const textElement = getByText(/Use our pre-created examples to learn FSH and get swimming!/i);
-  const textElement1 = getByText(/Group 1/i);
-  const textElement2 = getByText(/Group 2/i);
-  const textElement3 = getByText(/Hello World/i);
-  const textElement4 = getByText(/Start Swimming/i);
-  const textElement5 = getByText(/Veterinarian/i);
+//   const { getByText } = render(
+//     <HashRouter>
+//       <FSHControls
+//         onClick={onClick}
+//         text={'Edit FSH Here'}
+//         resetLogMessages={resetLogMessages}
+//         exampleConfig={config}
+//       />
+//       , container
+//     </HashRouter>
+//   );
+//   act(() => {
+//     const exampleBtn = getByText('Examples');
+//     fireEvent.click(exampleBtn);
+//   });
+//   const textElement = getByText(/Use our pre-created examples to learn FSH and get swimming!/i);
+//   const textElement1 = getByText(/Group 1/i);
+//   const textElement2 = getByText(/Group 2/i);
+//   const textElement3 = getByText(/Hello World/i);
+//   const textElement4 = getByText(/Start Swimming/i);
+//   const textElement5 = getByText(/Veterinarian/i);
 
-  expect(textElement).toBeInTheDocument();
-  expect(textElement1).toBeInTheDocument();
-  expect(textElement2).toBeInTheDocument();
-  expect(textElement3).toBeInTheDocument();
-  expect(textElement4).toBeInTheDocument();
-  expect(textElement5).toBeInTheDocument();
-});
+//   expect(textElement).toBeInTheDocument();
+//   expect(textElement1).toBeInTheDocument();
+//   expect(textElement2).toBeInTheDocument();
+//   expect(textElement3).toBeInTheDocument();
+//   expect(textElement4).toBeInTheDocument();
+//   expect(textElement5).toBeInTheDocument();
+// });
