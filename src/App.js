@@ -231,8 +231,6 @@ export default function App(props) {
             exampleConfig={exampleConfig}
             exampleFilePaths={exampleFilePaths}
             updateTextValue={handleExamples}
-            setInitialText={setInitialText}
-            initialText={initialText}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />
         </div>

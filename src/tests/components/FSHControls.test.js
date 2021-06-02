@@ -290,9 +290,26 @@ it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
+  const manifestArr = [
+    { id: 'manifestObj-1', name: 'manifestObj-1' },
+    { id: 'manifestObj-2', name: 'manifestObj-2' }
+  ];
+  const metaDataObj = {
+    'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
+    'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
+  };
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+    render(
+      <FSHControls
+        onSUSHIClick={onClick}
+        resetLogMessages={resetLogMessages}
+        isWaiting={true}
+        exampleConfig={manifestArr}
+        exampleFilePaths={metaDataObj}
+      />,
+      container
+    );
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -309,10 +326,28 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
   const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: '', config: {} });
+  const manifestArr = [
+    { id: 'manifestObj-1', name: 'manifestObj-1' },
+    { id: 'manifestObj-2', name: 'manifestObj-2' }
+  ];
+  const metaDataObj = {
+    'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
+    'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
+  };
 
   act(() => {
-    render(<FSHControls onGoFSHClick={onGoFSHClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+    render(
+      <FSHControls
+        onGoFSHClick={onGoFSHClick}
+        resetLogMessages={resetLogMessages}
+        isWaiting={true}
+        exampleConfig={manifestArr}
+        exampleFilePaths={metaDataObj}
+      />,
+      container
+    );
   });
+
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
