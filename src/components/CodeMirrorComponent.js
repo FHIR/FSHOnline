@@ -258,6 +258,7 @@ export default function CodeMirrorComponent(props) {
           autoCloseBrackets: true,
           lineNumbers: true,
           foldGutter: true,
+          // readOnly: true,
           gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
           extraKeys: {
             'Ctrl-/': 'toggleComment',

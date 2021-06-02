@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
@@ -15,7 +14,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
-import CodeMirrorComponent from './CodeMirrorComponent';
+import ExampleDisplayComponent from './ExampleDisplayComponent';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
+import ScreenShareOutlinedIcon from '@material-ui/icons/ScreenShareOutlined';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -70,7 +71,19 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogPaper: {
     maxHeight: '100vh',
-    minHeight: '47vh'
+    minHeight: '27vh'
+  },
+  treeItem: {
+    fontWeight: 'normal'
+  },
+  treeView: {
+    // height: '100',
+    overflow: 'scroll'
+  },
+  container: {
+    height: '100%',
+    overflow: 'hidden'
+    // flexGrow: 1
   }
 }));
 
@@ -92,6 +105,7 @@ export default function FSHControls(props) {
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
   const [isFetchingExample, setIsFetchingExample] = useState(false);
   const [currentExample, setCurrentExample] = useState('');
+  const [currentExampleName, setCurrentExampleName] = useState('');
 
   const handleOpenExamples = () => {
     setOpenExamples(true);
@@ -99,6 +113,7 @@ export default function FSHControls(props) {
 
   const handleCloseExamples = () => {
     setOpenExamples(false);
+    setCurrentExample('');
   };
 
   const handleOpenConfig = () => {
@@ -182,11 +197,13 @@ export default function FSHControls(props) {
     if (version === '' && config.version) setVersion(config.version);
   }
 
-  async function fetchFSH(event, value) {
+  async function fetchExampleFSH(event, value) {
     if (!value.endsWith('.fsh')) return;
+    const exampleMetadata = props.exampleFilePaths[value];
     setIsFetchingExample(true);
+    setCurrentExampleName(exampleMetadata.name);
     const utf8Decoder = new TextDecoder('utf-8');
-    let responseReader = await fetch(props.exampleFilePaths[value]).then((response) => response.body.getReader());
+    let responseReader = await fetch(exampleMetadata.path).then((response) => response.body.getReader());
     let fshString = '';
     const { value: chunk } = await responseReader.read();
     fshString += utf8Decoder.decode(chunk);
@@ -198,9 +215,28 @@ export default function FSHControls(props) {
     setCurrentExample(text);
   }
 
+  function handleCopyToClipboard() {
+    navigator.clipboard.writeText(currentExample);
+  }
+
+  const renderItem = (node) => (
+    <Tooltip
+      key={node.id}
+      title={
+        props.exampleFilePaths[node.id] && props.exampleFilePaths[node.id].description
+          ? props.exampleFilePaths[node.id].description
+          : node.name
+      }
+      placement="left"
+      arrow
+    >
+      <TreeItem key={node.id} nodeId={node.id} label={node.name} className={classes.treeItem}></TreeItem>
+    </Tooltip>
+  );
+
   const renderTree = (nodes) => (
     <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+      {nodes.children ? nodes.children.map((node) => (node.children ? renderTree(node) : renderItem(node))) : null}
     </TreeItem>
   );
 
@@ -291,24 +327,24 @@ export default function FSHControls(props) {
         scroll="paper"
         classes={{ paper: classes.dialogPaper }}
       >
-        <DialogTitle id="form-dialog-title">Examples</DialogTitle>
+        <DialogTitle id="form-dialog-title">FSH Examples</DialogTitle>
         <DialogContent>
-          <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText>
-          <Grid container>
+          {/* <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText> */}
+          <Grid className={classes.container} container>
             <Grid item xs={4}>
               <TreeView
-                className={classes.root}
+                className={classes.treeView}
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpanded={['root']}
                 defaultExpandIcon={<ChevronRightIcon />}
-                onNodeSelect={fetchFSH}
+                onNodeSelect={fetchExampleFSH}
               >
                 {renderTree(props.exampleConfig)}
               </TreeView>
             </Grid>
             <Grid item xs={8}>
-              <CodeMirrorComponent
-                name={'Example'}
+              <ExampleDisplayComponent
+                name={currentExample ? currentExampleName : ''}
                 value={currentExample}
                 initialText={currentExample}
                 updateTextValue={updateExampleValue}
@@ -319,7 +355,13 @@ export default function FSHControls(props) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseExamples} color="primary">
+          <Button onClick={handleCopyToClipboard} color="primary">
+            <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
+          </Button>
+          <Button color="primary">
+            <ScreenShareOutlinedIcon></ScreenShareOutlinedIcon> Send to FSH editor
+          </Button>
+          <Button onClick={handleCloseExamples} color="secondary">
             Close
           </Button>
         </DialogActions>

@@ -57,7 +57,7 @@ const theme = createMuiTheme({
   }
 });
 
-const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main';
+const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
 let examplePaths = {};
@@ -83,19 +83,26 @@ console.log = function getMessages(message) {
 
 function convertManifest(categoryObj) {
   categoryObj.forEach((element) => {
-    if (element.type === 'category') convertManifest(element.children);
+    if (element.type === 'category') {
+      convertManifest(element.children);
+    }
     element.id = element.path.replaceAll('%20', '-');
-    if (element.type === 'file') examplePaths[element.id] = `${githubURL}/${element.path}`;
+    if (element.type === 'file') {
+      examplePaths[element.id] = {
+        path: `${githubURL}/Examples/${element.path}`,
+        description: element.description,
+        name: element.name
+      };
+    }
     delete element.type;
-    examplePaths[element.name] = element.path;
     delete element.path;
   });
 }
 
 async function getManifestFromgit() {
   let responseJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
-  convertManifest(responseJSON);
-  return { id: 'root', name: 'Categories', children: [...responseJSON] };
+  convertManifest(responseJSON.children);
+  return { id: 'root', name: 'Categories', children: [...responseJSON.children] };
 }
 
 export async function decodeFSH(encodedFSH) {
@@ -133,11 +140,14 @@ export default function App(props) {
   useEffect(() => {
     async function waitForFSH() {
       setInitialText(await decodeFSH(urlParam.params));
+    }
+    async function fetchExamples() {
       setExampleConfig(await getManifestFromgit());
       setExampleFilePaths(examplePaths);
     }
     waitForFSH();
-  }, [exampleConfig, urlParam]);
+    fetchExamples();
+  }, [urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
