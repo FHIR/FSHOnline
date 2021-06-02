@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, IconButton, Tooltip } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import CodeIcon from '@material-ui/icons/Code';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -29,10 +30,17 @@ const useStyles = makeStyles((theme) => ({
   },
   rightControls: {
     position: 'absolute',
-    right: '0'
+    right: '24px'
   },
-  iconButton: {
-    color: theme.palette.success.main
+  leftControls: {
+    position: 'absolute',
+    left: '20px'
+  },
+  secondaryButton: {
+    color: theme.palette.success.main,
+    '&:hover': {
+      background: theme.palette.common.lighterBlue
+    }
   },
   progressContainer: {
     width: '24px',
@@ -48,10 +56,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
     background: theme.palette.success.main,
     borderRadius: '0',
-    textTransform: 'none',
-    fontWeight: 'bold',
+    paddingRight: '15px',
+    paddingLeft: '15px',
     '&:hover': {
-      background: theme.palette.success.light
+      background: theme.palette.success.dark
     }
   },
   buttonLeft: {
@@ -140,6 +148,11 @@ export default function FSHControls(props) {
   };
 
   async function handleSUSHIClick() {
+    if (props.isWaiting) {
+      // If SUSHI or GoFSH is in the middle of processes, don't do anything
+      return;
+    }
+
     props.resetLogMessages();
     props.onSUSHIClick(true, [''], true);
     setIsSUSHIRunning(true);
@@ -171,6 +184,11 @@ export default function FSHControls(props) {
   }
 
   async function handleGoFSHClick() {
+    if (props.isWaiting) {
+      // If SUSHI or GoFSH is in the middle of processes, don't do anything
+      return;
+    }
+
     props.resetLogMessages();
     props.onGoFSHClick('', true);
     setIsGoFSHRunning(true);
@@ -215,6 +233,11 @@ export default function FSHControls(props) {
     setCurrentExample(text);
   }
 
+  function handleSendToMainEditor() {
+    props.updateTextValue('');
+    props.updateTextValue(currentExample);
+  }
+
   function handleCopyToClipboard() {
     navigator.clipboard.writeText(currentExample);
   }
@@ -245,7 +268,7 @@ export default function FSHControls(props) {
       <Grid container>
         <Grid item xs={5}>
           <Button className={clsx(classes.button, classes.buttonLeft)} onClick={handleSUSHIClick} testid="Button">
-            Run SUSHI
+            Convert to JSON
             {isSUSHIRunning ? (
               <div className={classes.progressContainer}>
                 <CircularProgress className={classes.progress} />
@@ -264,26 +287,29 @@ export default function FSHControls(props) {
             ) : (
               <PlayArrow className={classes.runIcon} style={{ transform: 'scaleX(-1)' }} />
             )}
-            Run GoFSH
+            Convert to FSH
           </Button>
         </Grid>
       </Grid>
 
-      <div className={classes.rightControls}>
-        <Button className={classes.button} onClick={handleOpenExamples}>
-          Examples
+      <div className={classes.leftControls}>
+        <Button name="Examples" className={classes.secondaryButton} onClick={handleOpenExamples}>
+          <CodeIcon /> Examples
         </Button>
-        <Tooltip title="Configuration" placement="top" arrow>
-          <IconButton name="Configuration" className={classes.iconButton} onClick={handleOpenConfig}>
-            <Settings />
-          </IconButton>
-        </Tooltip>
+      </div>
+
+      <div className={classes.rightControls}>
+        <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
+          <Settings /> Configuration
+        </Button>
       </div>
 
       <Dialog open={openConfig} onClose={handleCloseConfig} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Configuration Settings</DialogTitle>
         <DialogContent>
-          <DialogContentText>Change the configuration options to use with SUSHI and GoFSH</DialogContentText>
+          <DialogContentText>
+            Change the Implementation Guide configuration to use when processing FSH and FHIR JSON
+          </DialogContentText>
           <TextField
             id="canonical"
             margin="dense"
@@ -358,7 +384,7 @@ export default function FSHControls(props) {
           <Button onClick={handleCopyToClipboard} color="primary">
             <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
           </Button>
-          <Button color="primary">
+          <Button onClick={handleSendToMainEditor} color="primary">
             <ScreenShareOutlinedIcon></ScreenShareOutlinedIcon> Send to FSH editor
           </Button>
           <Button onClick={handleCloseExamples} color="secondary">

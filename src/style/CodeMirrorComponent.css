@@ -11,3 +11,23 @@
 .react-codemirror2 > .CodeMirror span.CodeMirror-foldmarker {
   color: white;
 }
+
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal {
+  height: 10px;
+  margin: 4px;
+}
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical {
+  width: 10px;
+  margin: 6px;
+}
+
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-horizontal div,
+.react-codemirror2 > .CodeMirror .CodeMirror-overlayscroll-vertical div {
+  background: #0d1417bf; /* Transparent color to match editor - mirrors what Mac does by default */
+  border-radius: 5px;
+}
+
+.react-codemirror2 > .CodeMirror .CodeMirror-scrollbar-filler {
+  background: #263238; /* Match the editor color */
+  display: none !important; /* With the wider scroll bars with a margin, the math for this box is off. Not displaying it for now. */
+}

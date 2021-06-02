@@ -12,6 +12,7 @@ import '../style/CodeMirrorComponent.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/scroll/simplescrollbars.css';
 require('codemirror/addon/mode/simple');
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/addon/display/placeholder');
@@ -20,6 +21,7 @@ require('codemirror/addon/fold/foldgutter');
 require('codemirror/addon/fold/brace-fold');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
+require('codemirror/addon/scroll/simplescrollbars');
 
 // Define FSH syntax highlighting
 // Regular expressions from https://github.com/standardhealth/vscode-language-fsh/blob/master/syntaxes/fsh.tmLanguage.json
@@ -80,10 +82,12 @@ const useStyles = makeStyles((theme) => ({
   header: {
     fontFamily: 'Open Sans',
     color: theme.palette.common.white,
-    background: '#424242', // Dark mode background
+    background: theme.palette.common.darkerGrey,
     padding: '0px',
     paddingLeft: '29px', // width of code mirror gutter
     height: '34px', // 24px + 10px of padding is total height
+    display: 'flex',
+    justifyContent: 'space-between',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -99,15 +103,22 @@ const useStyles = makeStyles((theme) => ({
   },
   headerLabel: {
     lineHeight: '34px',
-    float: 'left'
+    float: 'left',
+
+    // Ellipse for long resource ids
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  headerActionGroup: {
+    paddingRight: '10px'
   },
   headerActions: {
-    height: '100%',
-    float: 'right'
+    alignItems: 'center',
+    display: 'flex'
   },
   iconButton: {
     color: theme.palette.common.white,
-    minHeight: '34px',
     padding: '3px'
   },
   drawer: {
@@ -130,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     // Color to match header
     color: theme.palette.common.white,
-    background: '#424242', // Dark mode background
+    background: theme.palette.common.darkerGrey,
     height: '34px', // Same height as headers on CodeMirror editors
     minHeight: '34px'
   },
@@ -196,10 +207,12 @@ export default function CodeMirrorComponent(props) {
     // Render only specified actions
     return (
       <div className={classes.headerActions}>
-        {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
-        {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
-        {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
-        {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
+        <div className={classes.headerActionGroup}>
+          {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
+          {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
+          {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
+          {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
+        </div>
         {props.renderDrawer && !drawerOpen && (
           <IconButton name="expand" className={classes.drawerHeaderIcon} aria-label="expand" onClick={handleDrawerOpen}>
             <ChevronLeft />
@@ -243,7 +256,9 @@ export default function CodeMirrorComponent(props) {
           [classes.headerShift]: props.renderDrawer && drawerOpen
         })}
       >
-        <div className={classes.headerLabel}>{props.name}</div>
+        <div title={props.name} className={classes.headerLabel}>
+          {props.name}
+        </div>
         {renderActionIcons()}
       </div>
       <ReactCodeMirror
@@ -255,6 +270,7 @@ export default function CodeMirrorComponent(props) {
           mode: props.mode,
           theme: 'material',
           placeholder: props.placeholder,
+          scrollbarStyle: 'overlay',
           autoCloseBrackets: true,
           lineNumbers: true,
           foldGutter: true,

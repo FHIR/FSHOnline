@@ -8,7 +8,6 @@ import JSONOutput from './components/JSONOutput';
 import FSHOutput from './components/FSHOutput';
 import ConsoleComponent from './components/ConsoleComponent';
 import FSHControls from './components/FSHControls';
-// import exampleConfig from './examples/examples-config.json';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,11 +38,28 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const colors = {
+  lighterBlue: '#D8E2EA',
+  lightBlue: '#487AA2',
+  blue: '#30638e',
+  darkerBlue: '#143E61',
+  editorGrey: '#263238',
+  lightestGrey: '#E7ECEE',
+  lightGrey: '#D0D9DD',
+  grey: '#575B5C',
+  darkerGrey: '#3D4345',
+  darkestGrey: '#121D21',
+  red: '#FD6668'
+};
+
 const theme = createMuiTheme({
   palette: {
     success: {
-      main: '#30638e'
-    }
+      main: colors.blue,
+      dark: colors.darkerBlue,
+      light: colors.lightBlue
+    },
+    common: colors
   },
   typography: {
     fontFamily: 'Open Sans'
@@ -51,7 +67,24 @@ const theme = createMuiTheme({
   overrides: {
     MuiTooltip: {
       tooltip: {
-        backgroundColor: 'rgba(97, 97, 97, 1)'
+        backgroundColor: colors.darkestGrey,
+        fontSize: '13px'
+      },
+      arrow: {
+        color: colors.darkestGrey
+      }
+    },
+    MuiButton: {
+      text: {
+        textTransform: 'none',
+        fontWeight: 600
+      }
+    },
+    MuiIconButton: {
+      root: {
+        '&:hover': {
+          backgroundColor: colors.grey
+        }
       }
     }
   }
@@ -99,7 +132,7 @@ function convertManifest(categoryObj) {
   });
 }
 
-async function getManifestFromgit() {
+async function getManifestFromGit() {
   let responseJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
   convertManifest(responseJSON.children);
   return { id: 'root', name: 'Categories', children: [...responseJSON.children] };
@@ -142,7 +175,7 @@ export default function App(props) {
       setInitialText(await decodeFSH(urlParam.params));
     }
     async function fetchExamples() {
-      setExampleConfig(await getManifestFromgit());
+      setExampleConfig(await getManifestFromGit());
       setExampleFilePaths(examplePaths);
     }
     waitForFSH();
@@ -166,6 +199,10 @@ export default function App(props) {
   function handleGoFSHControls(fshOutput, isWaiting) {
     setIsWaitingForFSHOutput(isWaiting);
     setInitialText(fshOutput === '' ? null : fshOutput); // Reset initial text to null if empty in order to display placeholder text
+  }
+
+  function handleExamples(example) {
+    setInitialText(example === '' ? null : example);
   }
 
   function updateInputFSHTextValue(text) {
@@ -193,7 +230,10 @@ export default function App(props) {
             resetLogMessages={resetLogMessages}
             exampleConfig={exampleConfig}
             exampleFilePaths={exampleFilePaths}
-            updateTextValue={updateInputFSHTextValue}
+            updateTextValue={handleExamples}
+            setInitialText={setInitialText}
+            initialText={initialText}
+            isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
