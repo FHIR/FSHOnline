@@ -24,13 +24,3 @@ test('Renders FSH Online App when visiting /FSHOnline/share/:id', () => {
   const linkElement = getByText(/Mock FSH Online/i);
   expect(linkElement).toBeInTheDocument();
 });
-
-test('Renders FSH Online App when visiting /FSHOnline/examples/:id', () => {
-  const { getByText } = render(
-    <MemoryRouter initialEntries={['/FSHOnline/examples/abcd']}>
-      <AppRouter />
-    </MemoryRouter>
-  );
-  const linkElement = getByText(/Mock FSH Online/i);
-  expect(linkElement).toBeInTheDocument();
-});

@@ -14,7 +14,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
-import ExampleDisplayComponent from './ExampleDisplayComponent';
+import CodeMirrorComponent from './CodeMirrorComponent';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,29 +67,13 @@ const useStyles = makeStyles((theme) => ({
   runIcon: {
     padding: '0px'
   },
-  link: {
-    color: '#2c4f85',
-    fontWeight: 'bold',
-    '&:hover': {
-      color: '#526580'
-    },
-    fontSize: 14
-  },
   dialogPaper: {
-    maxHeight: '100vh',
-    minHeight: '27vh'
-  },
-  treeItem: {
-    fontWeight: 'normal'
-  },
-  treeView: {
-    // height: '100',
-    overflow: 'scroll'
+    maxHeight: '80vh',
+    minHeight: '80vh'
   },
   container: {
     height: '100%',
     overflow: 'hidden'
-    // flexGrow: 1
   }
 }));
 
@@ -243,7 +227,7 @@ export default function FSHControls(props) {
           ? props.exampleMetadata[node.id].description
           : node.name
       }
-      placement="left"
+      placement="bottom-end"
       arrow
     >
       <TreeItem key={node.id} nodeId={node.id} label={node.name} className={classes.treeItem}></TreeItem>
@@ -348,7 +332,7 @@ export default function FSHControls(props) {
       >
         <DialogTitle id="form-dialog-title">FSH Examples</DialogTitle>
         <DialogContent>
-          <Grid className={classes.container} container>
+          <Grid container>
             <Grid item xs={4}>
               <TreeView
                 className={classes.treeView}
@@ -360,8 +344,9 @@ export default function FSHControls(props) {
               </TreeView>
             </Grid>
             <Grid item xs={8}>
-              <ExampleDisplayComponent
+              <CodeMirrorComponent
                 name={currentExample ? currentExampleName : ''}
+                usage={'examples'}
                 value={currentExample}
                 initialText={currentExample}
                 updateTextValue={updateExampleValue}
