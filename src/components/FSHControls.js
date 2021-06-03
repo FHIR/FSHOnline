@@ -217,7 +217,7 @@ export default function FSHControls(props) {
 
   async function fetchExampleFSH(event, value) {
     if (!value.endsWith('.fsh')) return;
-    const exampleMetadata = props.exampleFilePaths[value];
+    const exampleMetadata = props.exampleMetadata[value];
     setIsFetchingExample(true);
     setCurrentExampleName(exampleMetadata.name);
     const utf8Decoder = new TextDecoder('utf-8');
@@ -246,8 +246,8 @@ export default function FSHControls(props) {
     <Tooltip
       key={node.id}
       title={
-        props.exampleFilePaths[node.id] && props.exampleFilePaths[node.id].description
-          ? props.exampleFilePaths[node.id].description
+        props.exampleMetadata[node.id] && props.exampleMetadata[node.id].description
+          ? props.exampleMetadata[node.id].description
           : node.name
       }
       placement="left"

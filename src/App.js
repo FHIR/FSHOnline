@@ -93,7 +93,7 @@ const theme = createMuiTheme({
 const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
-let examplePaths = {};
+let exampleMetadata = {};
 let errorString = '';
 let warningString = '';
 let errorCount = 0;
@@ -114,14 +114,18 @@ console.log = function getMessages(message) {
   }
 };
 
-function convertManifest(categoryObj) {
-  categoryObj.forEach((element) => {
+/* 
+Parses metadata into a seperate object and converts the manifest into a form that can
+be consumed by the TreeView component
+*/
+function convertManifest(childrenArr) {
+  childrenArr.forEach((element) => {
     if (element.type === 'category') {
       convertManifest(element.children);
     }
-    element.id = element.path.replaceAll('%20', '-');
+    element.id = element.path.replaceAll('%20', '-'); // Spaces in file names are replaced with '%20' in Github urls
     if (element.type === 'file') {
-      examplePaths[element.id] = {
+      exampleMetadata[element.id] = {
         path: `${githubURL}/Examples/${element.path}`,
         description: element.description,
         name: element.name
@@ -133,9 +137,9 @@ function convertManifest(categoryObj) {
 }
 
 async function getManifestFromGit() {
-  let responseJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
-  convertManifest(responseJSON.children);
-  return { id: 'root', name: 'Categories', children: [...responseJSON.children] };
+  let manifestJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
+  convertManifest(manifestJSON.children);
+  return { id: 'root', name: 'Categories', children: [...manifestJSON.children] };
 }
 
 export async function decodeFSH(encodedFSH) {
@@ -176,7 +180,7 @@ export default function App(props) {
     }
     async function fetchExamples() {
       setExampleConfig(await getManifestFromGit());
-      setExampleFilePaths(examplePaths);
+      setExampleFilePaths(exampleMetadata);
     }
     waitForFSH();
     fetchExamples();
@@ -229,7 +233,7 @@ export default function App(props) {
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
             exampleConfig={exampleConfig}
-            exampleFilePaths={exampleFilePaths}
+            exampleMetadata={exampleFilePaths}
             updateTextValue={handleExamples}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />

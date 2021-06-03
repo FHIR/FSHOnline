@@ -294,7 +294,7 @@ it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
     { id: 'manifestObj-1', name: 'manifestObj-1' },
     { id: 'manifestObj-2', name: 'manifestObj-2' }
   ];
-  const metaDataObj = {
+  const metadataObj = {
     'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
     'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
   };
@@ -306,7 +306,7 @@ it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
         resetLogMessages={resetLogMessages}
         isWaiting={true}
         exampleConfig={manifestArr}
-        exampleFilePaths={metaDataObj}
+        exampleMetadata={metadataObj}
       />,
       container
     );
@@ -330,7 +330,7 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
     { id: 'manifestObj-1', name: 'manifestObj-1' },
     { id: 'manifestObj-2', name: 'manifestObj-2' }
   ];
-  const metaDataObj = {
+  const metadataObj = {
     'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
     'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
   };
@@ -342,7 +342,7 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
         resetLogMessages={resetLogMessages}
         isWaiting={true}
         exampleConfig={manifestArr}
-        exampleFilePaths={metaDataObj}
+        exampleMetadata={metadataObj}
       />,
       container
     );
