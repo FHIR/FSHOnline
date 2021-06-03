@@ -22,33 +22,9 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits. Lint errors will appear in the console.
 
-## Adding new FSH examples
+## FSH Examples
 
-FSH Online supports easily adding FHIR Shorthand examples that can be viewed in the editor. All examples are specified with an entry in the configuration file and an accompanying `.fsh` file with the example FHIR Shorthand.
-In order to add new examples, follow these steps:
-
-- Add a `.fsh` file to `src/examples/`
-- If you would like your example to be part of a new group, add a top level entry to the `examples-config.json` object. The key should be the name of your new group that will be displayed in the application.
-- For each example that you would like under a particular group, add an entry to the `files` array of the group
-- A file entry contains the following properties:
-  - `name`: (Required) This is the name that will be displayed in the Examples menu in the application
-  - `link`: (Required) This is the relative path that will appear in the URL when this example is selected.
-    - **Note:** The end of this path _must_ match the name of your example file, without the `.fsh` file extension
-
-Below is an example of what the configuration in `src/examples/examples-config.json` should look like for an example called `SimpleProfile` that has a corresponding file `src/examples/SimpleProfile.fsh`
-
-```json
-{
-  "Introduction": {
-    "files": [
-      {
-        "name": "A Simple Profile",
-        "link": "/examples/SimpleProfile"
-      }
-    ]
-  }
-}
-```
+FSH Online supports easily adding FHIR Shorthand examples that can be viewed in the editor. All examples are kept in the [FSHOnline-Examples repo](https://github.com/FSHSchool/FSHOnline-Examples), and FSH authors are encouraged to submit example FSH files to the FSHOnline-Examples repo.
 
 ## NPM Tasks
 
