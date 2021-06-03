@@ -5,7 +5,6 @@ import { PlayArrow, Settings } from '@material-ui/icons';
 import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import CodeIcon from '@material-ui/icons/Code';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -17,7 +16,6 @@ import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import ExampleDisplayComponent from './ExampleDisplayComponent';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
-import ScreenShareOutlinedIcon from '@material-ui/icons/ScreenShareOutlined';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -34,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   leftControls: {
     position: 'absolute',
-    left: '20px'
+    left: '28px'
   },
   secondaryButton: {
     color: theme.palette.success.main,
@@ -233,11 +231,6 @@ export default function FSHControls(props) {
     setCurrentExample(text);
   }
 
-  function handleSendToMainEditor() {
-    props.updateTextValue('');
-    props.updateTextValue(currentExample);
-  }
-
   function handleCopyToClipboard() {
     navigator.clipboard.writeText(currentExample);
   }
@@ -293,8 +286,8 @@ export default function FSHControls(props) {
       </Grid>
 
       <div className={classes.leftControls}>
-        <Button name="Examples" className={classes.secondaryButton} onClick={handleOpenExamples}>
-          <CodeIcon /> Examples
+        <Button name="Examples" className={classes.button} onClick={handleOpenExamples}>
+          FSH Examples
         </Button>
       </div>
 
@@ -355,7 +348,6 @@ export default function FSHControls(props) {
       >
         <DialogTitle id="form-dialog-title">FSH Examples</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>Use our pre-created examples to learn FSH and get swimming!</DialogContentText> */}
           <Grid className={classes.container} container>
             <Grid item xs={4}>
               <TreeView
@@ -383,9 +375,6 @@ export default function FSHControls(props) {
         <DialogActions>
           <Button onClick={handleCopyToClipboard} color="primary">
             <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
-          </Button>
-          <Button onClick={handleSendToMainEditor} color="primary">
-            <ScreenShareOutlinedIcon></ScreenShareOutlinedIcon> Send to FSH editor
           </Button>
           <Button onClick={handleCloseExamples} color="secondary">
             Close

@@ -205,10 +205,6 @@ export default function App(props) {
     setInitialText(fshOutput === '' ? null : fshOutput); // Reset initial text to null if empty in order to display placeholder text
   }
 
-  function handleExamples(example) {
-    setInitialText(example === '' ? null : example);
-  }
-
   function updateInputFSHTextValue(text) {
     // This is a bit of a hack to make sure the editor can be reset by a setInitialText(null)
     if (initialText === '' || initialText === null) {
@@ -234,7 +230,6 @@ export default function App(props) {
             resetLogMessages={resetLogMessages}
             exampleConfig={exampleConfig}
             exampleMetadata={exampleFilePaths}
-            updateTextValue={handleExamples}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />
         </div>
