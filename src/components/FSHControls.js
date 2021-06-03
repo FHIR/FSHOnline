@@ -70,10 +70,6 @@ const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     maxHeight: '80vh',
     minHeight: '80vh'
-  },
-  container: {
-    height: '100%',
-    overflow: 'hidden'
   }
 }));
 
@@ -332,7 +328,7 @@ export default function FSHControls(props) {
       >
         <DialogTitle id="form-dialog-title">FSH Examples</DialogTitle>
         <DialogContent>
-          <Grid container>
+          <Grid container style={{ overflow: 'scroll', minHeight: '64vh' }}>
             <Grid item xs={4}>
               <TreeView
                 className={classes.treeView}
