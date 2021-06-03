@@ -35,7 +35,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -57,7 +57,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -79,7 +79,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -112,7 +112,7 @@ it('calls GoFSH function and returns FSH', async () => {
         onGoFSHClick={onGoFSHClick}
         gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
         resetLogMessages={resetLogMessages}
-        exampleConfig={{}}
+        exampleConfig={[]}
       />,
       container
     );
@@ -146,7 +146,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
       onGoFSHClick={onGoFSHClick}
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
       resetLogMessages={resetLogMessages}
-      exampleConfig={{}}
+      exampleConfig={[]}
     />,
     container
   );
@@ -191,7 +191,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 
@@ -224,7 +224,7 @@ it('uses user provided version when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 
@@ -258,7 +258,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={{}} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 

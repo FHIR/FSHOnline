@@ -139,7 +139,7 @@ function convertManifest(childrenArr) {
 async function getManifestFromGit() {
   let manifestJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
   convertManifest(manifestJSON.children);
-  return { id: 'root', name: 'Categories', children: [...manifestJSON.children] };
+  return [...manifestJSON.children];
 }
 
 export async function decodeFSH(encodedFSH) {
@@ -171,7 +171,7 @@ export default function App(props) {
   const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
   const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
   const [expandConsole, setExpandConsole] = useState(false);
-  const [exampleConfig, setExampleConfig] = useState({});
+  const [exampleConfig, setExampleConfig] = useState([]);
   const [exampleFilePaths, setExampleFilePaths] = useState({});
 
   useEffect(() => {

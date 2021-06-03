@@ -353,11 +353,10 @@ export default function FSHControls(props) {
               <TreeView
                 className={classes.treeView}
                 defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpanded={['root']}
                 defaultExpandIcon={<ChevronRightIcon />}
                 onNodeSelect={fetchExampleFSH}
               >
-                {renderTree(props.exampleConfig)}
+                {props.exampleConfig.map((category) => renderTree(category))}
               </TreeView>
             </Grid>
             <Grid item xs={8}>
