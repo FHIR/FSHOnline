@@ -5,6 +5,8 @@ import { PlayArrow, Settings } from '@material-ui/icons';
 import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -15,8 +17,6 @@ import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import CodeMirrorComponent from './CodeMirrorComponent';
-import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 const useStyles = makeStyles((theme) => ({
   box: {
