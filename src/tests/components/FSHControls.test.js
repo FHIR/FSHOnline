@@ -8,10 +8,21 @@ import FSHControls from '../../components/FSHControls';
 import * as fshHelpers from '../../utils/FSHHelpers';
 
 const badSUSHIPackage = { a: '1', b: '2' };
-const emptySUSHIPackage = { config: {}, profiles: [], extensions: [], instances: [], valueSets: [], codeSystems: [] };
+const emptySUSHIPackage = {
+  config: {},
+  profiles: [],
+  extensions: [],
+  logicals: [],
+  resources: [],
+  instances: [],
+  valueSets: [],
+  codeSystems: []
+};
 const goodSUSHIPackage = {
   profiles: [{ resourceType: 'StructureDefinition', id: 'fish-patient' }],
   extensions: [],
+  logicals: [],
+  resources: [],
   instances: [],
   valueSets: [],
   codeSystems: []
