@@ -16,6 +16,7 @@ import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import CodeMirrorComponent from './CodeMirrorComponent';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -223,7 +224,7 @@ export default function FSHControls(props) {
           ? props.exampleMetadata[node.id].description
           : node.name
       }
-      placement="bottom-end"
+      placement="bottom"
       arrow
     >
       <TreeItem key={node.id} nodeId={node.id} label={node.name} className={classes.treeItem}></TreeItem>
@@ -267,7 +268,7 @@ export default function FSHControls(props) {
 
       <div className={classes.leftControls}>
         <Button name="Examples" className={classes.button} onClick={handleOpenExamples}>
-          FSH Examples
+          <LibraryBooksIcon /> &nbsp; FSH Examples
         </Button>
       </div>
 
@@ -342,7 +343,7 @@ export default function FSHControls(props) {
             <Grid item xs={8}>
               <CodeMirrorComponent
                 name={currentExample ? currentExampleName : ''}
-                usage={'examples'}
+                isExamples={true}
                 value={currentExample}
                 initialText={currentExample}
                 updateTextValue={updateExampleValue}
