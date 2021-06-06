@@ -336,6 +336,7 @@ export default function JSONOutput(props) {
             : 'Paste or edit single FHIR JSON artifact here... \nCreate additional FHIR JSON artifacts to the right.'
         }
         renderDrawer={renderDrawer}
+        isExamples={false}
         delete={handleOpenDeleteConfirmation}
       />
       {openDeleteConfirmation && renderDeleteModal()}
