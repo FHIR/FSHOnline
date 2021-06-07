@@ -118,8 +118,6 @@ export async function runSUSHI(input, config, dependencyArr) {
   // Remove snapshots
   outPackage.profiles = outPackage.profiles.map((p) => p.toJSON(false));
   outPackage.extensions = outPackage.extensions.map((e) => e.toJSON(false));
-  outPackage.logicals = outPackage.logicals.map((l) => l.toJSON(false));
-  outPackage.resources = outPackage.resources.map((r) => r.toJSON(false));
 
   return outPackage;
 }
@@ -130,30 +128,28 @@ function printSUSHIResults(pkg) {
   // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
   const prNum = pad(pkg.profiles.length.toString(), 8);
   const extnNum = pad(pkg.extensions.length.toString(), 10);
-  const lgNum = pad(pkg.logicals.length.toString(), 8);
-  const resNum = pad(pkg.resources.length.toString(), 9);
   const vstNum = pad(pkg.valueSets.length.toString(), 9);
   const cdsysNum = pad(pkg.codeSystems.length.toString(), 11);
   const insNum = pad(pkg.instances.length.toString(), 9);
   const errorNumMsg = pad(`${numError} Error${numError !== 1 ? 's' : ''}`, 13);
   const wrNumMsg = padStart(`${numWarn} Warning${numWarn !== 1 ? 's' : ''}`, 12);
 
-  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(numError, numWarn), 59);
+  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(numError, numWarn), 36);
   const color = numError > 0 ? 'red' : numWarn > 0 ? '#b36200' : 'green'; // eslint-disable-line no-unused-vars
 
   /* eslint-disable no-useless-concat */
   // NOTE: Doing some funky things w/ strings on some lines to keep overall alignment in the code
   const results = [
-    '╔' + '═══════════════════════════════════ SUSHI RESULTS ══════════════════════════════════════' + '╗',
-    '║' + ' ╭──────────┬────────────┬──────────┬───────────┬───────────┬─────────────┬───────────╮ ' + '║',
-    '║' + ' │ Profiles │ Extensions │ Logicals │ Resources │ ValueSets │ CodeSystems │ Instances │ ' + '║',
-    '║' + ' ├──────────┼────────────┼──────────┼───────────┼───────────┼─────────────┼───────────┤ ' + '║',
-    '║' + ` │ ${prNum} │ ${extnNum} │ ${lgNum} │ ${resNum} │ ${vstNum} │ ${cdsysNum} │ ${insNum} │ ` + '║',
-    '║' + ' ╰──────────┴────────────┴──────────┴───────────┴───────────┴─────────────┴───────────╯ ' + '║',
-    '║' + '                                                                                        ' + '║',
-    '╠' + '════════════════════════════════════════════════════════════════════════════════════════' + '╣',
+    '╔' + '════════════════════════ SUSHI RESULTS ══════════════════════════' + '╗',
+    '║' + ' ╭──────────┬────────────┬───────────┬─────────────┬───────────╮ ' + '║',
+    '║' + ' │ Profiles │ Extensions │ ValueSets │ CodeSystems │ Instances │ ' + '║',
+    '║' + ' ├──────────┼────────────┼───────────┼─────────────┼───────────┤ ' + '║',
+    '║' + ` │ ${prNum} │ ${extnNum} │ ${vstNum} │ ${cdsysNum} │ ${insNum} │ ` + '║',
+    '║' + ' ╰──────────┴────────────┴───────────┴─────────────┴───────────╯ ' + '║',
+    '║' + '                                                                 ' + '║',
+    '╠' + '═════════════════════════════════════════════════════════════════' + '╣',
     '║' + ` ${aWittyMessageInvolvingABadFishPun} ${errorNumMsg} ${wrNumMsg} ` + '║',
-    '╚' + '════════════════════════════════════════════════════════════════════════════════════════' + '╝'
+    '╚' + '═════════════════════════════════════════════════════════════════' + '╝'
   ];
   results.forEach((r) => console.log(r));
   // results.forEach((r) => console.log(`%c${r}`, `color:${clr}`)); // Color formatting for browser console

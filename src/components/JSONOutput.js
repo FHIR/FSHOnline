@@ -84,8 +84,6 @@ const getIterablePackage = (defsPackage) => {
   const defArray = [
     ...defsPackage.profiles,
     ...defsPackage.extensions,
-    ...defsPackage.logicals,
-    ...defsPackage.resources,
     ...defsPackage.instances,
     ...defsPackage.valueSets,
     ...defsPackage.codeSystems
@@ -113,8 +111,6 @@ export default function JSONOutput(props) {
         packageJSON = {
           profiles: [],
           extensions: [],
-          logicals: [],
-          resources: [],
           instances: [],
           valueSets: [],
           codeSystems: []
