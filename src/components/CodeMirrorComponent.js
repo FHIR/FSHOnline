@@ -36,11 +36,12 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'atom'
     },
     {
-      regex: /\b(Alias|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Mapping|Mixins|Parent|Profile|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
+      regex: /\b(Alias|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Logical|Mapping|Mixins|Parent|Profile|Resource|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
       token: 'keyword'
     },
     {
-      // NOTE: Original regex has (?<=\s) at start and (?=\s) at the end. However, there are known shortcomings with look ahead/look behind with the simple mode approach
+      // NOTE: Original regex has (?<=\s|^) at start and (?=\s) at the end, and (?<=\\bfrom\\s*) before 'system'.
+      // However, there are known shortcomings with look ahead/look behind with the simple mode approach
       regex: /\b(and|codes|contains|descendent-of|exclude|exists|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|system|units|valueset|where|D|MS|N|SU|TU|\\?!)\b/,
       token: 'def'
     },
@@ -49,7 +50,12 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'def'
     },
     {
-      regex: /\*|->|=|:/,
+      // NOTE: VS Code highlighting properly highlights the open and close parentheses, but this does not
+      regex: /\b(Reference|Canonical)\s*/,
+      token: 'atom'
+    },
+    {
+      regex: /\*|->|=|\+|:/,
       token: 'def'
     },
     {
@@ -57,11 +63,25 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'atom'
     },
     {
+      // NOTE: Original regex has (?<=\s|^) at start and (?=\s) at end
       regex: /\b(true|false)\b/,
       token: 'string'
     },
     {
-      regex: /#[^\s]*/,
+      // NOTE: Original regex has (?<=\s|^) and (?=\s) at end
+      regex: /\b(-?\d+(\.\d+)?)\b/, // numbers
+      token: 'string'
+    },
+    {
+      regex: /#"(?:\\.|[^\\"])*"/, // #"quoted code"
+      token: 'string'
+    },
+    {
+      regex: /#[^\s]*/, // #code
+      token: 'string'
+    },
+    {
+      regex: /'.*'/, // 'ucum'
       token: 'string'
     },
     { regex: /\/\/.*/, token: 'comment' },
