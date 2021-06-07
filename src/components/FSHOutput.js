@@ -18,6 +18,7 @@ export default function FSHOutput(props) {
     <>
       <CodeMirrorComponent
         name={'FSH'}
+        isExamples={false}
         value={props.text}
         initialText={props.initialText}
         updateTextValue={props.updateTextValue}

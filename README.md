@@ -22,6 +22,10 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits. Lint errors will appear in the console.
 
+## FSH Examples
+
+FSH Online supports easily adding FHIR Shorthand examples that can be viewed in the editor. All examples are kept in the [FSHOnline-Examples repo](https://github.com/FSHSchool/FSHOnline-Examples), and FSH authors are encouraged to submit example FSH files to the FSHOnline-Examples repo.
+
 ## NPM Tasks
 
 The following NPM tasks are useful in development.

@@ -21,6 +21,14 @@ let container = null;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
+  // document.body.createTextRange = () => ({
+  //   setStart: () => {},
+  //   setEnd: () => {},
+  //   commonAncestorContainer: {
+  //     nodeName: 'BODY',
+  //     ownerDocument: document
+  //   }
+  // });
 });
 
 afterEach(() => {
@@ -35,7 +43,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -57,7 +65,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(emptySUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -79,7 +87,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />, container);
+    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />, container);
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -112,6 +120,7 @@ it('calls GoFSH function and returns FSH', async () => {
         onGoFSHClick={onGoFSHClick}
         gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
         resetLogMessages={resetLogMessages}
+        exampleConfig={[]}
       />,
       container
     );
@@ -145,6 +154,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
       onGoFSHClick={onGoFSHClick}
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
       resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
     />,
     container
   );
@@ -189,7 +199,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 
@@ -222,7 +232,7 @@ it('uses user provided version when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 
@@ -256,7 +266,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
 
   const { getByRole, getByLabelText } = render(
-    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} />,
+    <FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} exampleConfig={[]} />,
     container
   );
 
@@ -288,9 +298,26 @@ it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
   const runSUSHISpy = jest.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(badSUSHIPackage);
+  const manifestArr = [
+    { id: 'manifestObj-1', name: 'manifestObj-1' },
+    { id: 'manifestObj-2', name: 'manifestObj-2' }
+  ];
+  const metadataObj = {
+    'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
+    'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
+  };
 
   act(() => {
-    render(<FSHControls onSUSHIClick={onClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+    render(
+      <FSHControls
+        onSUSHIClick={onClick}
+        resetLogMessages={resetLogMessages}
+        isWaiting={true}
+        exampleConfig={manifestArr}
+        exampleMetadata={metadataObj}
+      />,
+      container
+    );
   });
   const button = document.querySelector('[testid=Button]');
   act(() => {
@@ -307,10 +334,28 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
   const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: '', config: {} });
+  const manifestArr = [
+    { id: 'manifestObj-1', name: 'manifestObj-1' },
+    { id: 'manifestObj-2', name: 'manifestObj-2' }
+  ];
+  const metadataObj = {
+    'manifestObj-1': { name: 'manifestObj-1', description: 'First manifest object' },
+    'manifestObj-2': { name: 'manifestObj-2', description: 'Second manifest object' }
+  };
 
   act(() => {
-    render(<FSHControls onGoFSHClick={onGoFSHClick} resetLogMessages={resetLogMessages} isWaiting={true} />, container);
+    render(
+      <FSHControls
+        onGoFSHClick={onGoFSHClick}
+        resetLogMessages={resetLogMessages}
+        isWaiting={true}
+        exampleConfig={manifestArr}
+        exampleMetadata={metadataObj}
+      />,
+      container
+    );
   });
+
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -321,3 +366,40 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
     expect(runGoFSHSpy).toHaveBeenCalledTimes(0);
   });
 });
+
+// it('should properly render the examples file tree', async () => {
+//   document.body.createTextRange = () => {
+//     return {
+//       getBoundingClientRect: () => ({ right: 0 }),
+//       getClientRects: () => ({ left: 0 })
+//     };
+//   };
+
+//   const manifestArr = [
+//     {
+//       id: 'manifestParent',
+//       name: 'manifestParent',
+//       children: [
+//         { id: 'manifestchild1', name: 'manifestchild-1' },
+//         { id: 'manifestchild-2', name: 'manifestchild-2' }
+//       ]
+//     }
+//   ];
+//   const metadataObj = {
+//     'manifestObj-1': { name: 'manifestchild-1', description: 'First manifest object' },
+//     'manifestObj-2': { name: 'manifestchild-2', description: 'Second manifest object' }
+//   };
+
+//   const { getByRole } = render(<FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} />, container);
+
+//   const examplesButton = getByRole('button', { name: /Examples/i });
+//   expect(examplesButton).toBeInTheDocument();
+//   fireEvent.click(examplesButton);
+//   const manifestParent = getByRole('treeitem', { name: /manifestParent/i });
+//   expect(manifestParent).toBeInTheDocument();
+//   fireEvent.click(manifestParent);
+//   const manifestChild1 = getByRole('treeitem', { name: /manifestchild-1/i });
+//   const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
+//   expect(manifestChild1).toBeInTheDocument();
+//   expect(manifestChild2).toBeInTheDocument();
+// });

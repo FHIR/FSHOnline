@@ -228,7 +228,7 @@ export default function CodeMirrorComponent(props) {
     return (
       <div className={classes.headerActions}>
         <div className={classes.headerActionGroup}>
-          {props.mode === 'fsh' && <ShareLink shareText={props.value} />}
+          {props.mode === 'fsh' && !props.isExamples && <ShareLink shareText={props.value} />}
           {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
           {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
           {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
@@ -294,6 +294,7 @@ export default function CodeMirrorComponent(props) {
           autoCloseBrackets: true,
           lineNumbers: true,
           foldGutter: true,
+          readOnly: props.isExamples,
           gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
           extraKeys: {
             'Ctrl-/': 'toggleComment',
