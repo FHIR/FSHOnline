@@ -150,8 +150,6 @@ export default function FSHControls(props) {
         !outPackage.extensions.length &&
         !outPackage.instances.length &&
         !outPackage.profiles.length &&
-        !outPackage.logicals.length &&
-        !outPackage.resources.length &&
         !outPackage.valueSets.length
       ) {
         jsonOutput = [''];

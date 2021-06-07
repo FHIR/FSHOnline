@@ -55,8 +55,6 @@ it.skip('Renders with the first profile when text is an object (SUSHI Package)',
             }
           ],
           extensions: [],
-          logicals: [],
-          resources: [],
           instances: [],
           valueSets: [],
           codeSystems: []
@@ -93,8 +91,6 @@ it('renders a delete button in editor header that opens a confirmation and then 
       }
     ],
     extensions: [],
-    logicals: [],
-    resources: [],
     instances: [],
     valueSets: [],
     codeSystems: []
@@ -148,8 +144,6 @@ it('Renders an Add Definition button that adds a blank definition', () => {
       }
     ],
     extensions: [],
-    logicals: [],
-    resources: [],
     instances: [],
     valueSets: [],
     codeSystems: []
@@ -197,18 +191,6 @@ describe('file tree display', () => {
           id: 'ExtensionA'
         }
       ],
-      logicals: [
-        {
-          resourceType: 'StructureDefinition',
-          id: 'LogicalA'
-        }
-      ],
-      resources: [
-        {
-          resourceType: 'StructureDefinition',
-          id: 'ResourceA'
-        }
-      ],
       instances: [
         {
           resourceType: 'Patient',
@@ -251,12 +233,10 @@ describe('file tree display', () => {
     const csList = getAllByTestId('CodeSystems-defId');
     const instanceList = getAllByTestId('Instances-defId');
 
-    expect(sdList).toHaveLength(5); // Profiles, Extensions, Logicals, and Resources grouped together
+    expect(sdList).toHaveLength(3); // Profiles and Extensions grouped together
     expect(sdList[0].textContent).toEqual('ExtensionA'); // Sorted alphabetically
-    expect(sdList[1].textContent).toEqual('LogicalA');
-    expect(sdList[2].textContent).toEqual('ProfileA');
-    expect(sdList[3].textContent).toEqual('ProfileB');
-    expect(sdList[4].textContent).toEqual('ResourceA');
+    expect(sdList[1].textContent).toEqual('ProfileA');
+    expect(sdList[2].textContent).toEqual('ProfileB');
 
     expect(vsList).toHaveLength(1); // VS get their own category
     expect(vsList[0].textContent).toEqual('MyValueSet');
@@ -298,8 +278,6 @@ describe('file tree display', () => {
         }
       ],
       extensions: [],
-      logicals: [],
-      resources: [],
       instances: [],
       valueSets: [],
       codeSystems: []
