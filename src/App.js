@@ -90,8 +90,10 @@ const theme = createMuiTheme({
   }
 });
 
+const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
 let consoleMessages = [];
+let exampleMetadata = {};
 let errorString = '';
 let warningString = '';
 let errorCount = 0;
@@ -111,6 +113,34 @@ console.log = function getMessages(message) {
     if (warningCount !== 1) warningString += 's';
   }
 };
+
+/* 
+Parses metadata into a seperate object and converts the manifest into a form that can
+be consumed by the TreeView component
+*/
+function convertManifest(childrenArr) {
+  childrenArr.forEach((element) => {
+    if (element.type === 'category') {
+      convertManifest(element.children);
+    }
+    element.id = element.path.replaceAll('%20', '-'); // Spaces in file names are replaced with '%20' in Github urls
+    if (element.type === 'file') {
+      exampleMetadata[element.id] = {
+        path: `${githubURL}/Examples/${element.path}`,
+        description: element.description,
+        name: element.name
+      };
+    }
+    delete element.type;
+    delete element.path;
+  });
+}
+
+async function getManifestFromGit() {
+  let manifestJSON = await fetch(`${githubURL}/index.json`).then((response) => response.json());
+  convertManifest(manifestJSON.children);
+  return [...manifestJSON.children];
+}
 
 export async function decodeFSH(encodedFSH) {
   if (encodedFSH.text === undefined) {
@@ -133,7 +163,7 @@ export const ExpandedConsoleContext = createContext(false);
 
 export default function App(props) {
   const classes = useStyles();
-  const text64 = props.match.params;
+  const urlParam = props.match;
   const [showNewFHIRText, setShowNewFHIRText] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
   const [inputFHIRText, setInputFHIRText] = useState(['']);
@@ -141,13 +171,20 @@ export default function App(props) {
   const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
   const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
   const [expandConsole, setExpandConsole] = useState(false);
+  const [exampleConfig, setExampleConfig] = useState([]);
+  const [exampleFilePaths, setExampleFilePaths] = useState({});
 
   useEffect(() => {
     async function waitForFSH() {
-      setInitialText(await decodeFSH(text64));
+      setInitialText(await decodeFSH(urlParam.params));
+    }
+    async function fetchExamples() {
+      setExampleConfig(await getManifestFromGit());
+      setExampleFilePaths(exampleMetadata);
     }
     waitForFSH();
-  }, [text64]);
+    fetchExamples();
+  }, [urlParam]);
 
   function resetLogMessages() {
     consoleMessages = [];
@@ -191,6 +228,8 @@ export default function App(props) {
             fshText={inputFSHText}
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
+            exampleConfig={exampleConfig}
+            exampleMetadata={exampleFilePaths}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
           />
         </div>

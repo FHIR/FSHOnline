@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,6 +15,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
+import { TreeView, TreeItem } from '@material-ui/lab';
+import CodeMirrorComponent from './CodeMirrorComponent';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -24,6 +30,10 @@ const useStyles = makeStyles((theme) => ({
   rightControls: {
     position: 'absolute',
     right: '24px'
+  },
+  leftControls: {
+    position: 'absolute',
+    left: '28px'
   },
   secondaryButton: {
     color: theme.palette.success.main,
@@ -57,6 +67,10 @@ const useStyles = makeStyles((theme) => ({
   },
   runIcon: {
     padding: '0px'
+  },
+  dialogPaper: {
+    maxHeight: '80vh',
+    minHeight: '80vh'
   }
 }));
 
@@ -69,12 +83,25 @@ function replacer(key, value) {
 
 export default function FSHControls(props) {
   const classes = useStyles();
+  const [openExamples, setOpenExamples] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [canonical, setCanonical] = useState('');
   const [version, setVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
+  const [isFetchingExample, setIsFetchingExample] = useState(false);
+  const [currentExample, setCurrentExample] = useState('');
+  const [currentExampleName, setCurrentExampleName] = useState('');
+
+  const handleOpenExamples = () => {
+    setOpenExamples(true);
+  };
+
+  const handleCloseExamples = () => {
+    setOpenExamples(false);
+    setCurrentExample('');
+  };
 
   const handleOpenConfig = () => {
     setOpenConfig(true);
@@ -169,6 +196,49 @@ export default function FSHControls(props) {
     if (version === '' && config.version) setVersion(config.version);
   }
 
+  async function fetchExampleFSH(event, value) {
+    if (!value.endsWith('.fsh')) return;
+    const exampleMetadata = props.exampleMetadata[value];
+    setIsFetchingExample(true);
+    setCurrentExampleName(exampleMetadata.name);
+    const utf8Decoder = new TextDecoder('utf-8');
+    let responseReader = await fetch(exampleMetadata.path).then((response) => response.body.getReader());
+    let fshString = '';
+    const { value: chunk } = await responseReader.read();
+    fshString += utf8Decoder.decode(chunk);
+    setIsFetchingExample(false);
+    setCurrentExample(fshString);
+  }
+
+  function updateExampleValue(text) {
+    setCurrentExample(text);
+  }
+
+  function handleCopyToClipboard() {
+    navigator.clipboard.writeText(currentExample);
+  }
+
+  const renderItem = (node) => (
+    <Tooltip
+      key={node.id}
+      title={
+        props.exampleMetadata[node.id] && props.exampleMetadata[node.id].description
+          ? props.exampleMetadata[node.id].description
+          : node.name
+      }
+      placement="bottom"
+      arrow
+    >
+      <TreeItem key={node.id} nodeId={node.id} label={node.name} className={classes.treeItem}></TreeItem>
+    </Tooltip>
+  );
+
+  const renderTree = (nodes) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {nodes.children ? nodes.children.map((node) => (node.children ? renderTree(node) : renderItem(node))) : null}
+    </TreeItem>
+  );
+
   return (
     <Box className={classes.box}>
       <Grid container>
@@ -197,6 +267,12 @@ export default function FSHControls(props) {
           </Button>
         </Grid>
       </Grid>
+
+      <div className={classes.leftControls}>
+        <Button name="Examples" className={classes.button} onClick={handleOpenExamples}>
+          <LibraryBooksIcon /> &nbsp; FSH Examples
+        </Button>
+      </div>
 
       <div className={classes.rightControls}>
         <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
@@ -241,6 +317,50 @@ export default function FSHControls(props) {
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
             Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openExamples}
+        onClose={handleCloseExamples}
+        aria-labelledby="form-dialog-title"
+        maxWidth="lg"
+        fullWidth
+        scroll="paper"
+        classes={{ paper: classes.dialogPaper }}
+      >
+        <DialogTitle id="form-dialog-title">FSH Examples</DialogTitle>
+        <DialogContent>
+          <Grid container style={{ overflow: 'scroll', minHeight: '64vh' }}>
+            <Grid item xs={4}>
+              <TreeView
+                className={classes.treeView}
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+                onNodeSelect={fetchExampleFSH}
+              >
+                {props.exampleConfig.map((category) => renderTree(category))}
+              </TreeView>
+            </Grid>
+            <Grid item xs={8}>
+              <CodeMirrorComponent
+                name={currentExample ? currentExampleName : ''}
+                isExamples={true}
+                value={currentExample}
+                initialText={currentExample}
+                updateTextValue={updateExampleValue}
+                mode={'fsh'}
+                placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCopyToClipboard} color="primary">
+            <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
+          </Button>
+          <Button onClick={handleCloseExamples} color="secondary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>
