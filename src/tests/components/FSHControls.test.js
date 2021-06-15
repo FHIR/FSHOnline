@@ -32,14 +32,7 @@ let container = null;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  // document.body.createTextRange = () => ({
-  //   setStart: () => {},
-  //   setEnd: () => {},
-  //   commonAncestorContainer: {
-  //     nodeName: 'BODY',
-  //     ownerDocument: document
-  //   }
-  // });
+  jest.spyOn(window, 'fetch');
 });
 
 afterEach(() => {
@@ -378,7 +371,43 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
   });
 });
 
-// it('should properly render the examples file tree', async () => {
+it('should properly render the examples in the file tree', async () => {
+  document.body.createTextRange = () => {
+    return {
+      getBoundingClientRect: () => ({ right: 0 }),
+      getClientRects: () => ({ left: 0 })
+    };
+  };
+
+  const manifestArr = [
+    {
+      id: 'manifestParent',
+      name: 'manifestParent',
+      children: [{ id: 'manifestchild-1', name: 'manifestchild-1' }]
+    },
+    {
+      id: 'manifestchild2',
+      name: 'manifestchild-2'
+    }
+  ];
+  const metadataObj = {
+    'manifestchild-1': { name: 'manifestchild-1', description: 'First manifest object' },
+    'manifestchild-2': { name: 'manifestchild-2', description: 'Second manifest object' }
+  };
+
+  const { getByRole } = render(<FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} />, container);
+
+  const examplesButton = getByRole('button', { name: /Examples/i });
+  expect(examplesButton).toBeInTheDocument();
+  fireEvent.click(examplesButton);
+  const manifestParent = getByRole('treeitem', { name: /manifestParent/i });
+  expect(manifestParent).toBeInTheDocument();
+  const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
+  expect(manifestChild2).toBeInTheDocument();
+});
+
+// it('should populate editor when examples are collected', async () => {
+//   const updateTextValueSpy = jest.fn();
 //   document.body.createTextRange = () => {
 //     return {
 //       getBoundingClientRect: () => ({ right: 0 }),
@@ -388,29 +417,40 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
 
 //   const manifestArr = [
 //     {
-//       id: 'manifestParent',
-//       name: 'manifestParent',
-//       children: [
-//         { id: 'manifestchild1', name: 'manifestchild-1' },
-//         { id: 'manifestchild-2', name: 'manifestchild-2' }
-//       ]
+//       id: 'manifestchild-1',
+//       name: 'manifestchild-1'
+//     },
+//     {
+//       id: 'manifestchild2',
+//       name: 'manifestchild-2'
 //     }
 //   ];
 //   const metadataObj = {
-//     'manifestObj-1': { name: 'manifestchild-1', description: 'First manifest object' },
-//     'manifestObj-2': { name: 'manifestchild-2', description: 'Second manifest object' }
+//     'manifestchild-1': {
+//       name: 'manifestchild-1',
+//       description: 'First manifest object',
+//       path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/FHIR-aliases.fsh'
+//     },
+//     'manifestchild-2': {
+//       name: 'manifestchild-2',
+//       description: 'Second manifest object',
+//       path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/External-aliases.fsh'
+//     }
 //   };
 
-//   const { getByRole } = render(<FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} />, container);
+//   const { getByRole } = render(
+//     <FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} updateTextValue={updateTextValueSpy} />,
+//     container
+//   );
 
 //   const examplesButton = getByRole('button', { name: /Examples/i });
 //   expect(examplesButton).toBeInTheDocument();
 //   fireEvent.click(examplesButton);
-//   const manifestParent = getByRole('treeitem', { name: /manifestParent/i });
-//   expect(manifestParent).toBeInTheDocument();
-//   fireEvent.click(manifestParent);
 //   const manifestChild1 = getByRole('treeitem', { name: /manifestchild-1/i });
-//   const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
 //   expect(manifestChild1).toBeInTheDocument();
+//   manifestChild1.click();
+//   const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
 //   expect(manifestChild2).toBeInTheDocument();
+//   manifestChild2.click();
+//   expect(window.fetch).toHaveBeenCalledTimes(1);
 // });
