@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { inflateSync } from 'browserify-zlib';
+import { debounce } from 'lodash';
+import clsx from 'clsx';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
@@ -16,6 +18,25 @@ const useStyles = makeStyles((theme) => ({
   },
   fullHeightGrid: {
     height: '100%'
+  },
+  editorPane: {
+    // From MaterialUI Grid:
+    flexGrow: '0'
+    // maxWidth and flexBasis set inline based on state
+  },
+  resize: {
+    height: '100%',
+    width: '4px',
+    cursor: 'col-resize',
+    '&:hover': {
+      background: colors.lightBlue
+    }
+  },
+  resizeBlue: {
+    background: '#487AA2'
+  },
+  resizeCursor: {
+    cursor: 'col-resize'
   },
   collapsedMain: {
     width: '100%',
@@ -173,6 +194,8 @@ export default function App(props) {
   const [expandConsole, setExpandConsole] = useState(false);
   const [exampleConfig, setExampleConfig] = useState([]);
   const [exampleFilePaths, setExampleFilePaths] = useState({});
+  const [leftWidth, setLeftWidth] = useState(41.666667); // Initial width based off grid item xs={5} size to align with FSHControls
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -217,6 +240,51 @@ export default function App(props) {
     setInputFHIRText(text);
   }
 
+  function handleResetWidth() {
+    setLeftWidth(41.666667);
+  }
+
+  function onMouseDown(e) {
+    e.preventDefault();
+    setIsDragging(true);
+  }
+
+  function onMouseUp(e) {
+    e.preventDefault();
+    setIsDragging(false);
+  }
+
+  function onTouchStart() {
+    setIsDragging(true);
+  }
+
+  function onTouchEnd() {
+    setIsDragging(false);
+  }
+
+  function debouncedMove(clientX) {
+    if (isDragging) {
+      const newPercentage = (clientX / window.innerWidth) * 100;
+      if (newPercentage > 10 && newPercentage < 76) {
+        setLeftWidth(newPercentage);
+      }
+    }
+  }
+
+  function onMouseMove(e) {
+    const clientX = e.clientX;
+    if (isDragging) {
+      debounce(() => debouncedMove(clientX), 10)();
+    }
+  }
+
+  function onTouchMove(e) {
+    const clientX = e.touches[0].clientX;
+    if (isDragging) {
+      debounce(() => debouncedMove(clientX), 10)();
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div className="root" style={{ height: '100vh' }}>
@@ -235,8 +303,19 @@ export default function App(props) {
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
           <ExpandedConsoleContext.Provider value={expandConsole}>
-            <Grid className={classes.container} container>
-              <Grid item xs={5} className={classes.fullHeightGrid} style={{ paddingRight: '1px' }}>
+            <Grid
+              className={clsx(classes.container, isDragging && classes.resizeCursor)}
+              container
+              onTouchMove={onTouchMove}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+            >
+              <Grid
+                item
+                className={clsx(classes.fullHeightGrid, classes.editorPane)}
+                style={{ maxWidth: `calc(${leftWidth}% - 2px)`, flexBasis: `calc(${leftWidth}% - 2px)` }}
+              >
                 <FSHOutput
                   text={inputFSHText}
                   initialText={initialText}
@@ -245,7 +324,22 @@ export default function App(props) {
                   setInitialText={setInitialText}
                 />
               </Grid>
-              <Grid item xs={7} className={classes.fullHeightGrid} style={{ paddingLeft: '1px' }}>
+              <Grid
+                item
+                className={clsx(classes.resize, isDragging && classes.resizeBlue)}
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+                onMouseDown={onMouseDown}
+                onDoubleClick={handleResetWidth}
+              />
+              <Grid
+                item
+                className={clsx(classes.fullHeightGrid, classes.editorPane)}
+                style={{
+                  maxWidth: `calc(${100 - leftWidth}% - 2px)`,
+                  flexBasis: `calc(${100 - leftWidth}% - 2px)`
+                }}
+              >
                 <JSONOutput
                   text={inputFHIRText}
                   showNewText={showNewFHIRText}
