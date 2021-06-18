@@ -406,51 +406,51 @@ it('should properly render the examples in the file tree', async () => {
   expect(manifestChild2).toBeInTheDocument();
 });
 
-// it('should populate editor when examples are collected', async () => {
-//   const updateTextValueSpy = jest.fn();
-//   document.body.createTextRange = () => {
-//     return {
-//       getBoundingClientRect: () => ({ right: 0 }),
-//       getClientRects: () => ({ left: 0 })
-//     };
-//   };
+it.skip('should populate editor when examples are collected', async () => {
+  const updateTextValueSpy = jest.fn();
+  document.body.createTextRange = () => {
+    return {
+      getBoundingClientRect: () => ({ right: 0 }),
+      getClientRects: () => ({ left: 0 })
+    };
+  };
 
-//   const manifestArr = [
-//     {
-//       id: 'manifestchild-1',
-//       name: 'manifestchild-1'
-//     },
-//     {
-//       id: 'manifestchild2',
-//       name: 'manifestchild-2'
-//     }
-//   ];
-//   const metadataObj = {
-//     'manifestchild-1': {
-//       name: 'manifestchild-1',
-//       description: 'First manifest object',
-//       path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/FHIR-aliases.fsh'
-//     },
-//     'manifestchild-2': {
-//       name: 'manifestchild-2',
-//       description: 'Second manifest object',
-//       path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/External-aliases.fsh'
-//     }
-//   };
+  const manifestArr = [
+    {
+      id: 'manifestchild-1',
+      name: 'manifestchild-1'
+    },
+    {
+      id: 'manifestchild2',
+      name: 'manifestchild-2'
+    }
+  ];
+  const metadataObj = {
+    'manifestchild-1': {
+      name: 'manifestchild-1',
+      description: 'First manifest object',
+      path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/FHIR-aliases.fsh'
+    },
+    'manifestchild-2': {
+      name: 'manifestchild-2',
+      description: 'Second manifest object',
+      path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/External-aliases.fsh'
+    }
+  };
 
-//   const { getByRole } = render(
-//     <FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} updateTextValue={updateTextValueSpy} />,
-//     container
-//   );
+  const { getByRole } = render(
+    <FSHControls exampleConfig={manifestArr} exampleMetadata={metadataObj} updateTextValue={updateTextValueSpy} />,
+    container
+  );
 
-//   const examplesButton = getByRole('button', { name: /Examples/i });
-//   expect(examplesButton).toBeInTheDocument();
-//   fireEvent.click(examplesButton);
-//   const manifestChild1 = getByRole('treeitem', { name: /manifestchild-1/i });
-//   expect(manifestChild1).toBeInTheDocument();
-//   manifestChild1.click();
-//   const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
-//   expect(manifestChild2).toBeInTheDocument();
-//   manifestChild2.click();
-//   expect(window.fetch).toHaveBeenCalledTimes(1);
-// });
+  const examplesButton = getByRole('button', { name: /Examples/i });
+  expect(examplesButton).toBeInTheDocument();
+  fireEvent.click(examplesButton);
+  const manifestChild1 = getByRole('treeitem', { name: /manifestchild-1/i });
+  expect(manifestChild1).toBeInTheDocument();
+  manifestChild1.click();
+  const manifestChild2 = getByRole('treeitem', { name: /manifestchild-2/i });
+  expect(manifestChild2).toBeInTheDocument();
+  manifestChild2.click();
+  expect(window.fetch).toHaveBeenCalledTimes(1);
+});
