@@ -63,7 +63,11 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonLeft: {
     float: 'right',
-    left: '-4px'
+    left: '-3.33px'
+  },
+  buttonRight: {
+    float: 'left',
+    right: '-0.67px'
   },
   runIcon: {
     padding: '0px'
@@ -255,7 +259,11 @@ export default function FSHControls(props) {
           </Button>
         </Grid>
         <Grid item xs={7}>
-          <Button className={classes.button} onClick={handleGoFSHClick} testid="GoFSH-button">
+          <Button
+            className={clsx(classes.button, classes.buttonRight)}
+            onClick={handleGoFSHClick}
+            testid="GoFSH-button"
+          >
             {isGoFSHRunning ? (
               <div className={classes.progressContainer}>
                 <CircularProgress className={classes.progress} />
