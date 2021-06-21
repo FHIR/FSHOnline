@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonLeft: {
     float: 'right',
-    marginRight: '2px'
+    left: '-4px'
   },
   runIcon: {
     padding: '0px'
