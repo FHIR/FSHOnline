@@ -99,13 +99,13 @@ export default function FSHControls(props) {
   const [currentExampleName, setCurrentExampleName] = useState('');
 
   if (!canonical && props.config?.canonical) {
-    setCanonical(props.config?.canonical);
+    setCanonical(props.config.canonical);
   }
   if (!version && props.config?.version) {
-    setVersion(props.config?.version);
+    setVersion(props.config.version);
   }
   if (!dependencies && props.config?.dependencies) {
-    setDependencies(props.config?.dependencies);
+    setDependencies(props.config.dependencies);
   }
 
   const handleOpenExamples = () => {

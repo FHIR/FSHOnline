@@ -196,7 +196,8 @@ export default function App(props) {
   const [exampleFilePaths, setExampleFilePaths] = useState({});
   const [leftWidth, setLeftWidth] = useState(41.666667); // Initial width based off grid item xs={5} size to align with FSHControls
   const [isDragging, setIsDragging] = useState(false);
-  const [config, setConfig] = useState();
+  const [configToShare, setConfigToShare] = useState({});
+  const [sharedConfig, setSharedConfig] = useState({});
 
   useEffect(() => {
     async function waitForFSH() {
@@ -204,7 +205,7 @@ export default function App(props) {
       const splitIndex = text.indexOf('\n');
       const config = text.slice(0, splitIndex);
       const fshContent = text.slice(splitIndex + 1);
-      setConfig(JSON.parse(config));
+      setSharedConfig(config ? JSON.parse(config) : {});
       setInitialText(fshContent);
     }
     async function fetchExamples() {
@@ -247,7 +248,7 @@ export default function App(props) {
   }
 
   function handleConfigChange(config) {
-    setConfig(config);
+    setConfigToShare(config);
   }
 
   function handleResetWidth() {
@@ -304,7 +305,7 @@ export default function App(props) {
             onSUSHIClick={handleSUSHIControls}
             onGoFSHClick={handleGoFSHControls}
             onConfigChange={handleConfigChange}
-            config={config}
+            config={sharedConfig}
             fshText={inputFSHText}
             gofshText={inputFHIRText}
             resetLogMessages={resetLogMessages}
@@ -334,7 +335,7 @@ export default function App(props) {
                   updateTextValue={updateInputFSHTextValue}
                   isWaiting={isWaitingForFSHOutput}
                   setInitialText={setInitialText}
-                  config={config}
+                  config={configToShare}
                 />
               </Grid>
               <Grid
