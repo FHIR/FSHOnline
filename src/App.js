@@ -213,7 +213,10 @@ export default function App(props) {
           // we can assume the true FSH content begins on the next line
           fshContent = text.slice(splitIndex + 1);
         }
-      } catch (e) {}
+      } catch (e) {
+        // If parse fails, it is likely decoding a legacy link in which all content is FSH, so just don't
+        // set the parsedConfig, and set fshContent to all of the text
+      }
       setSharedConfig(parsedConfig || {});
       setInitialText(fshContent);
     }
