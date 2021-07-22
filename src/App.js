@@ -196,7 +196,7 @@ export default function App(props) {
   const [exampleFilePaths, setExampleFilePaths] = useState({});
   const [leftWidth, setLeftWidth] = useState(41.666667); // Initial width based off grid item xs={5} size to align with FSHControls
   const [isDragging, setIsDragging] = useState(false);
-  const [configToShare, setConfigToShare] = useState({});
+  const [configToShare, setConfigToShare] = useState({ canonical: '', version: '', dependencies: '' });
   const [sharedConfig, setSharedConfig] = useState({});
 
   useEffect(() => {
@@ -204,8 +204,17 @@ export default function App(props) {
       const text = await decodeFSH(urlParam.params);
       const splitIndex = text.indexOf('\n');
       const config = text.slice(0, splitIndex);
-      const fshContent = text.slice(splitIndex + 1);
-      setSharedConfig(config ? JSON.parse(config) : {});
+      let parsedConfig;
+      let fshContent = text;
+      try {
+        parsedConfig = JSON.parse(config);
+        if (parsedConfig.canonical != null && parsedConfig.version != null && parsedConfig.dependencies != null) {
+          // If the config is successfully parsed and has the expected properties,
+          // we can assume the true FSH content begins on the next line
+          fshContent = text.slice(splitIndex + 1);
+        }
+      } catch (e) {}
+      setSharedConfig(parsedConfig || {});
       setInitialText(fshContent);
     }
     async function fetchExamples() {
