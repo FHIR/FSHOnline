@@ -78,7 +78,7 @@ it('generates link with configuration when share button is clicked', async () =>
     fireEvent.click(shareButton);
   });
   await wait(() => {
-    expect(deflateSpy).toHaveBeenCalledWith('{"canonical":"http://example.org"}\nProfile: A');
+    expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
     expect(generateLinkSpy).toHaveBeenCalledWith('https://fshschool.org/FSHOnline/#/share/foo');
   });
 });

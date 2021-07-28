@@ -41,7 +41,8 @@ export default function ShareLink(props) {
   };
 
   const handleOpenShare = async () => {
-    const encoded = deflateSync(JSON.stringify(props.config) + '\n' + props.shareText).toString('base64');
+    const itsyBitsyConfig = { c: props.config?.canonical, v: props.config?.version, d: props.config?.dependencies };
+    const encoded = deflateSync(JSON.stringify(itsyBitsyConfig) + '\n' + props.shareText).toString('base64');
     const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {

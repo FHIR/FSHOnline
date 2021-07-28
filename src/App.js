@@ -207,8 +207,9 @@ export default function App(props) {
       let parsedConfig;
       let fshContent = text;
       try {
-        parsedConfig = JSON.parse(config);
-        if (parsedConfig.canonical != null && parsedConfig.version != null && parsedConfig.dependencies != null) {
+        const rawConfig = JSON.parse(config);
+        if (rawConfig.c != null && rawConfig.v != null && rawConfig.d != null) {
+          parsedConfig = { canonical: rawConfig.c, version: rawConfig.v, dependencies: rawConfig.d };
           // If the config is successfully parsed and has the expected properties,
           // we can assume the true FSH content begins on the next line
           fshContent = text.slice(splitIndex + 1);
