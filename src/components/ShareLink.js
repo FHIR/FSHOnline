@@ -41,8 +41,16 @@ export default function ShareLink(props) {
   };
 
   const handleOpenShare = async () => {
-    const itsyBitsyConfig = { c: props.config?.canonical, v: props.config?.version, d: props.config?.dependencies };
-    const encoded = deflateSync(JSON.stringify(itsyBitsyConfig) + '\n' + props.shareText).toString('base64');
+    let encoded;
+    if (props.config?.canonical || props.config?.version || props.config?.dependencies) {
+      encoded = deflateSync(
+        JSON.stringify({ c: props.config?.canonical, v: props.config?.version, d: props.config?.dependencies }) +
+          '\n' +
+          props.shareText
+      ).toString('base64');
+    } else {
+      encoded = deflateSync(props.shareText).toString('base64');
+    }
     const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {
