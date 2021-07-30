@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, Settings } from '@material-ui/icons';
@@ -98,6 +98,12 @@ export default function FSHControls(props) {
   const [currentExample, setCurrentExample] = useState('');
   const [currentExampleName, setCurrentExampleName] = useState('');
 
+  useEffect(() => {
+    setCanonical(props.config?.canonical || '');
+    setVersion(props.config?.version || '');
+    setDependencies(props.config?.dependencies || '');
+  }, [props.config]);
+
   const handleOpenExamples = () => {
     setOpenExamples(true);
   };
@@ -113,6 +119,7 @@ export default function FSHControls(props) {
 
   const handleCloseConfig = () => {
     setOpenConfig(false);
+    props.onConfigChange({ canonical, version, dependencies });
   };
 
   const updateCanonical = (event) => {
