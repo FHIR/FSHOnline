@@ -57,7 +57,9 @@ export function loadDependenciesInStorage(database, resources, dependency, id) {
     };
     const objectStore = transaction.objectStore(`${dependency}${id}`, { keyPath: ['id', 'resourceType'] });
     resources.forEach((res) => {
-      objectStore.put(res);
+      if (res.id != null && res.resourceType != null) {
+        objectStore.put(res);
+      }
     });
   });
 }
