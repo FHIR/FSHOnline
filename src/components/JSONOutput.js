@@ -97,7 +97,7 @@ const checkFshType = (def) => {
     } else if (def.derivation === 'constraint') {
       if (def.kind === 'complex-type' && def.type === 'Extension') {
         return 'Extension';
-      } else if (['resource', 'complex-type', 'primitive-type'].includes(def.kind)) {
+      } else if (['resource', 'complex-type', 'primitive-type', 'logical'].includes(def.kind)) {
         return 'Profile';
       }
     }
