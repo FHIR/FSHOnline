@@ -297,6 +297,11 @@ export default function CodeMirrorComponent(props) {
           readOnly: props.isExamples,
           gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
           extraKeys: {
+            Tab: (cm) => {
+              // Replace tab character with two spaces
+              // Example described here: https://codemirror.net/doc/manual.html#keymaps
+              cm.replaceSelection('  ');
+            },
             'Ctrl-/': 'toggleComment',
             'Cmd-/': 'toggleComment',
             'Ctrl-Q': (cm) => {
