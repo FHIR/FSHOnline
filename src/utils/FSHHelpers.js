@@ -12,7 +12,6 @@ const stats = utils.stats;
 const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
-const { getRandomSeaCreatures, getRandomSeaCreaturesStat } = gofshUtils;
 
 /**
  * Run GoFSH
@@ -40,7 +39,7 @@ export async function runGoFSH(input, options) {
       return;
     }
     if (gofshUtils.isProcessableContent(resource, location)) {
-      docs.push(new processor.WildFHIR(resource, location));
+      docs.push(new processor.WildFHIR({ content: resource }, location));
     }
   });
 
@@ -165,36 +164,41 @@ function printSUSHIResults(pkg) {
 }
 
 function printGoFSHresults(pkg) {
-  const proNum = pad(pkg.profiles.length.toString(), 12);
-  const extNum = pad(pkg.extensions.length.toString(), 13);
-  const vsNum = pad(pkg.valueSets.length.toString(), 12);
-  const csNum = pad(pkg.codeSystems.length.toString(), 13);
-  const instNum = pad(pkg.instances.length.toString(), 12);
-  const invNum = pad(pkg.invariants.length.toString(), 13);
-  const mapNum = pad(pkg.mappings.length.toString(), 12);
+  const proNum = pad(pkg.profiles.length.toString(), 18);
+  const extNum = pad(pkg.extensions.length.toString(), 17);
+  const logNum = pad(pkg.logicals.length.toString(), 18);
+  const resNum = pad(pkg.resources.length.toString(), 18);
+  const vsNum = pad(pkg.valueSets.length.toString(), 17);
+  const csNum = pad(pkg.codeSystems.length.toString(), 18);
+  const instNum = pad(pkg.instances.length.toString(), 18);
+  const invNum = pad(pkg.invariants.length.toString(), 17);
+  const mapNum = pad(pkg.mappings.length.toString(), 18);
   const errNumMsg = pad(`${stats.numError} Error${stats.numError !== 1 ? 's' : ''}`, 12);
   const wrnNumMsg = padStart(`${stats.numWarn} Warning${stats.numWarn !== 1 ? 's' : ''}`, 12);
-  const creatures = pad(getRandomSeaCreatures(), 13);
-  const creatrStat = pad(getRandomSeaCreaturesStat(stats.numError, stats.numWarn), 13);
   const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(stats.numError, stats.numWarn), 37);
 
   // prettier-ignore
   const results = [
-    '╔'  + '═════════════════════════ GoFSH RESULTS ═════════════════════════' +'╗',
-    '║' + ' ╭──────────────┬───────────────┬──────────────┬───────────────╮ ' + '║',
-    '║' + ' │   Profiles   │  Extensions   │  ValueSets   │  CodeSystems  │ ' + '║',
-    '║' + ' ├──────────────┼───────────────┼──────────────┼───────────────┤ ' + '║',
-    '║' + ` │ ${ proNum  } │ ${  extNum  } │ ${  vsNum  } │ ${  csNum   } │ ` + '║',
-    '║' + ' ╰──────────────┴───────────────┴──────────────┴───────────────╯ ' + '║',
-    '║' + ' ╭──────────────┬───────────────┬──────────────┬───────────────╮ ' + '║',
-    '║' + ` │  Instances   │  Invariants   │   Mappings   │ ${creatures } │ ` + '║',
-    '║' + ' ├──────────────┼───────────────┼──────────────┼───────────────┤ ' + '║',
-    '║' + ` │ ${ instNum } │ ${  invNum  } │ ${ mapNum  } │ ${creatrStat} │ ` + '║',
-    '║' + ' ╰──────────────┴───────────────┴──────────────┴───────────────╯ ' + '║',
+    '╔' + '═════════════════════════ GoFSH RESULTS ═════════════════════════' + '╗',
+    '║' + ' ╭────────────────────┬───────────────────┬────────────────────╮ ' + '║',
+    '║' + ' │      Profiles      │    Extensions     │      Logicals      │ ' + '║',
+    '║' + ' ├────────────────────┼───────────────────┼────────────────────┤ ' + '║',
+    '║' + ` │ ${    proNum     } │ ${    extNum    } │ ${    logNum     } │ ` + '║',
+    '║' + ' ╰────────────────────┴───────────────────┴────────────────────╯ ' + '║',
+    '║' + ' ╭────────────────────┬───────────────────┬────────────────────╮ ' + '║',
+    '║' + ' │     Resources      │     ValueSets     │     CodeSystems    │ ' + '║',
+    '║' + ' ├────────────────────┼───────────────────┼────────────────────┤ ' + '║',
+    '║' + ` │ ${    resNum     } │ ${    vsNum     } │ ${     csNum     } │ ` + '║',
+    '║' + ' ╰────────────────────┴───────────────────┴────────────────────╯ ' + '║',
+    '║' + ' ╭────────────────────┬───────────────────┬────────────────────╮ ' + '║',
+    '║' + ' │     Instances      │    Invariants     │      Mappings      │ ' + '║',
+    '║' + ' ├────────────────────┼───────────────────┼────────────────────┤ ' + '║',
+    '║' + ` │ ${    instNum    } │ ${    invNum    } │ ${    mapNum     } │ ` + '║',
+    '║' + ' ╰────────────────────┴───────────────────┴────────────────────╯ ' + '║',
     '║' + '                                                                 ' + '║',
-    '╠'  + '═════════════════════════════════════════════════════════════════' +'╣',
+    '╠' + '═════════════════════════════════════════════════════════════════' + '╣',
     '║' + ` ${aWittyMessageInvolvingABadFishPun } ${errNumMsg} ${wrnNumMsg} ` + '║',
-    '╚'  + '═════════════════════════════════════════════════════════════════' +'╝'
+    '╚' + '═════════════════════════════════════════════════════════════════' + '╝'
   ];
 
   console.log(' ');
