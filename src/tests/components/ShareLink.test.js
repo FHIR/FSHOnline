@@ -24,17 +24,11 @@ afterEach(() => {
 });
 
 it('copies link to clipboard on button click', async () => {
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
-
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
   await wait(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
-    expect(generateLinkSpy).toHaveBeenCalled();
   });
 
   const copyBtn = getByText('Copy to Clipboard');
@@ -43,24 +37,28 @@ it('copies link to clipboard on button click', async () => {
   expect(linkCopiedBtn).toBeDefined();
 });
 
-it('generates link when share button is clicked', async () => {
+it('generates direct link when generate direct link button is clicked', async () => {
   const generateLinkSpy = jest
     .spyOn(bitlyWorker, 'generateLink')
     .mockReset()
     .mockResolvedValue({ link: 'success', errorNeeded: false });
 
-  const { getByRole } = render(<ShareLink shareText={'Profile: A'} />, container);
+  const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
+  });
+  act(() => {
+    const generateButton = getByText(/Generate Direct Link/);
+    fireEvent.click(generateButton);
   });
   await wait(() => {
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
 
-it('generates link with configuration when share button is clicked', async () => {
+it('generates direct link with configuration when direct link button is clicked', async () => {
   const generateLinkSpy = jest
     .spyOn(bitlyWorker, 'generateLink')
     .mockReset()
@@ -68,7 +66,7 @@ it('generates link with configuration when share button is clicked', async () =>
 
   const deflateSpy = jest.spyOn(Zlib, 'deflateSync').mockReset().mockReturnValue('foo');
 
-  const { getByRole } = render(
+  const { getByRole, getByText } = render(
     <ShareLink shareText={'Profile: A'} config={{ canonical: 'http://example.org' }} />,
     container
   );
@@ -77,9 +75,40 @@ it('generates link with configuration when share button is clicked', async () =>
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
+  act(() => {
+    const generateButton = getByText(/Generate Direct Link/);
+    fireEvent.click(generateButton);
+  });
   await wait(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
     expect(generateLinkSpy).toHaveBeenCalledWith('https://fshschool.org/FSHOnline/#/share/foo');
+  });
+});
+
+it('generates gist link when generate gist link button is clicked', async () => {
+  const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
+
+  act(() => {
+    const shareButton = getByRole('button', { name: /Share FSH/i });
+    fireEvent.click(shareButton);
+  });
+  act(() => {
+    const generateButton = getByText(/Generate Link from Gist/);
+    fireEvent.click(generateButton);
+  });
+  act(() => {
+    const gistInput = document.getElementById('gistURLText');
+    fireEvent.change(gistInput, {
+      target: { value: 'https://gist.github.com/user/59c573230cd60729df8b44ab8a67b6da' }
+    });
+  });
+  act(() => {
+    const generateButton = getByText(/Generate Link from Gist/);
+    fireEvent.click(generateButton);
+  });
+  act(() => {
+    const link = document.getElementById('link');
+    expect(link.innerHTML).toBe('https://fshschool.org/FSHOnline/#/gist/59c573230cd60729df8b44ab8a67b6da');
   });
 });
 
@@ -93,6 +122,10 @@ it('shows an error when the FSH file is too long to share', async () => {
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
+  });
+  act(() => {
+    const generateButton = getByText(/Generate Direct Link/);
+    fireEvent.click(generateButton);
   });
   await wait(() => {
     const swimBtn = getByText(/Keep Swimming!/i);
