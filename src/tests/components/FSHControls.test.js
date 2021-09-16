@@ -372,13 +372,6 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
 });
 
 it('should properly render the examples in the file tree', async () => {
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
-
   const manifestArr = [
     {
       id: 'manifestParent',
@@ -408,12 +401,6 @@ it('should properly render the examples in the file tree', async () => {
 
 it.skip('should populate editor when examples are collected', async () => {
   const updateTextValueSpy = jest.fn();
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
 
   const manifestArr = [
     {

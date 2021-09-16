@@ -89,6 +89,8 @@ it('shows an error when the FSH file is too long to share', async () => {
     .mockReset()
     .mockResolvedValue({ link: undefined, errorNeeded: true });
 
+  jest.spyOn(Zlib, 'deflateSync').mockReset().mockReturnValueOnce('foo');
+
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: AVeryLongProfile'} />, container);
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
