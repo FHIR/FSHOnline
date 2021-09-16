@@ -189,9 +189,9 @@ async function getGistContent(gistId) {
     } else {
       fshContent += f.content;
     }
-    fshContent += '\n';
+    fshContent += '\n\n';
   }
-  return fshContent;
+  return fshContent.trim();
 }
 
 export const ExpandedConsoleContext = createContext(false);
