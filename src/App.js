@@ -73,7 +73,7 @@ const colors = {
   red: '#FD6668'
 };
 
-const theme = createMuiTheme({
+export const theme = createMuiTheme({
   palette: {
     success: {
       main: colors.blue,

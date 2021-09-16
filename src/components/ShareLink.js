@@ -15,10 +15,10 @@ import {
   Tooltip,
   Link,
   TextField,
-  Grid,
-  Divider
+  Box
 } from '@material-ui/core';
 import { generateLink } from '../utils/BitlyWorker';
+import { theme } from '../App';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -35,37 +35,50 @@ const useStyles = makeStyles((theme) => ({
 export default function ShareLink(props) {
   const classes = useStyles();
   const [openShare, setOpenShare] = useState(false);
-  const [openShareError, setOpenShareError] = useState(false);
-  const [gistURL, setGistURL] = useState('');
+  const [shareError, setShareError] = useState(false);
+  const [openGist, setOpenGist] = useState(false);
+  const [openGistError, setOpenGistError] = useState(false);
   const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
   const [link, setLink] = useState();
+  const [gistLink, setGistLink] = useState();
 
-  const updateLink = (event) => {
-    const newLink = event.target.value;
-    setLink(newLink);
+  const updateGistLink = (event) => {
+    const gistId = event.target.value.match(/gist\.github\.com\/[^/]+\/(.+)/)?.[1];
+    if (gistId) {
+      setGistLink(`https://fshschool.org/FSHOnline/#/gist/${gistId}`);
+    }
   };
 
-  const updateGistURL = (event) => {
-    setGistURL(event.target.value);
+  const handleShareError = () => {
+    setShareError(true);
+    handleOpenGist();
   };
 
-  const handleOpenShare = () => {
-    setOpenShare(true);
-  };
-
-  const handleCloseShare = () => {
+  const handleOpenGist = () => {
     setOpenShare(false);
+    setOpenGist(true);
+    setGistLink('');
+    setCopied({ copied: false, copyButton: 'Generate Link from Gist' });
   };
 
-  const handleOpenShareError = () => {
-    setOpenShareError(true);
+  const handleCloseGist = () => {
+    setOpenGist(false);
+    setShareError(false);
   };
 
-  const handleCloseShareError = () => {
-    setOpenShareError(false);
+  const handleGistCopy = () => {
+    if (gistLink) {
+      setCopied({ copied: true, copyButton: 'Link Copied to Clipboard' });
+    } else {
+      setOpenGistError(true);
+    }
   };
 
-  const handleGenerateLink = async () => {
+  const handleCloseGistError = () => {
+    setOpenGistError(false);
+  };
+
+  const handleOpenShare = async () => {
     let encoded;
     if (props.config?.canonical || props.config?.version || props.config?.dependencies) {
       encoded = deflateSync(
@@ -79,21 +92,20 @@ export default function ShareLink(props) {
     const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {
-      handleOpenShareError();
+      handleShareError();
     } else {
       // Removes the encoded data from the end of the url, starting at index 15
       const bitlySlice = bitlyLink.link.slice(15);
       const displayLink = `https://fshschool.org/FSHOnline/#/share/${bitlySlice}`;
       setLink(displayLink);
+      setOpenShare(true);
       setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
     }
   };
 
-  const handleGenerateLinkFromGist = () => {
-    const gistId = gistURL.slice(gistURL.lastIndexOf('/') + 1);
-    const link = `https://fshschool.org/FSHOnline/#/gist/${gistId}`;
-    setLink(link);
-    setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
+  const handleCloseShare = () => {
+    setOpenShare(false);
+    setShareError(false);
   };
 
   return (
@@ -105,72 +117,61 @@ export default function ShareLink(props) {
       </Tooltip>
       <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
         <DialogTitle id="form-dialog-title">Share</DialogTitle>
-        <Divider orientation="horizontal" style={{ width: '100%' }} />
-        <Grid container alignItems="flex-end">
-          <Grid item xs={6} style={{ borderRight: '1px solid rgba(0,0,0,.12)' }}>
-            <DialogContent>
-              Generate a link directly from FSH Online to share your FSH with others. This option is best for small
-              snippets of FSH.
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleGenerateLink} color="primary">
-                Generate Direct Link
-              </Button>
-            </DialogActions>
-          </Grid>
-          <Grid item xs={6}>
-            <DialogContent>
-              Generate a link via a{' '}
-              <Link id="gistURL" href="https://gist.github.com/" target="_blank">
-                Gist.
-              </Link>
-              <TextField id="gistURLText" label="Gist URL" fullWidth onChange={updateGistURL} />
-            </DialogContent>
-            <DialogActions style={{ bottom: 0, right: 0 }}>
-              <Button
-                disabled={gistURL === ''}
-                onClick={handleGenerateLinkFromGist}
-                color="primary"
-                style={{ whiteSpace: 'nowrap' }}
-              >
-                Generate Link from Gist
-              </Button>
-            </DialogActions>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider orientation="horizontal" style={{ width: '100%' }} />
-          </Grid>
-          <Grid item xs={12}>
-            <DialogContent>
-              <TextareaAutosize
-                id="link"
-                disabled
-                label="Your Link"
-                onChange={updateLink}
-                className={classes.textArea}
-                value={link}
-              ></TextareaAutosize>
-            </DialogContent>
-            <DialogActions>
-              <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>
-                <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
-              </CopyToClipboard>
-              <Button onClick={handleCloseShare} color="primary">
-                Done
-              </Button>
-            </DialogActions>
-          </Grid>
-        </Grid>
-      </Dialog>
-      <Dialog open={openShareError} onClose={handleCloseShareError} aria-labelledby="alert-dialog-title" maxWidth="lg">
-        <DialogTitle id="alert-dialog-title">Share Error</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            There was a problem sharing your FSH. Your FSH file may be too long. Consider sharing your FSH with a Gist.
-          </DialogContentText>
+          <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
+          <TextareaAutosize
+            id="link"
+            disabled
+            label="Your Link"
+            defaultValue={link}
+            className={classes.textArea}
+            style={{ resize: 'none' }}
+          ></TextareaAutosize>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseShareError} color="primary" autoFocus>
+          <Button onClick={handleOpenGist} color="primary" style={{ align: 'left' }}>
+            Create Link with Gist
+          </Button>
+          <Box style={{ flex: '1 0 0', hidden: true }} />
+          <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>
+            <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
+          </CopyToClipboard>
+          <Button onClick={handleCloseShare} color="primary">
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openGist} onClose={handleCloseGist} aria-labelledby="alert-dialog-title" maxWidth="sm" fullWidth>
+        <DialogTitle id="alert-dialog-title">Share with Gist</DialogTitle>
+        {shareError && (
+          <DialogContent style={{ color: theme.palette.common.red }}>
+            Your FSH content is too long to share directly. Please use a Gist to share.
+          </DialogContent>
+        )}
+        <DialogContent>
+          Create a{' '}
+          <Link id="gistURL" href="https://gist.github.com/" target="_blank">
+            Gist
+          </Link>{' '}
+          and paste the URL below to generate a shareable FSH Online link.
+          <TextField id="gistURLText" label="Gist URL" fullWidth onChange={updateGistLink} />
+        </DialogContent>
+        <DialogActions style={{ bottom: 0, right: 0 }}>
+          <CopyToClipboard text={gistLink} onCopy={handleGistCopy}>
+            <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
+          </CopyToClipboard>
+          <Button onClick={handleCloseGist} color="primary">
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openGistError} onClose={handleCloseGistError} aria-labelledby="alert-dialog-title" maxWidth="lg">
+        <DialogTitle id="alert-dialog-title">Error Creating Gist Link</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Could not generate a link from your Gist URL. Ensure the URL is valid.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseGistError} color="primary" autoFocus>
             Keep Swimming!
           </Button>
         </DialogActions>
