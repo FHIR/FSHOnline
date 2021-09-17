@@ -12,9 +12,15 @@ jest.mock('copy-to-clipboard', () => {
 });
 
 let container = null;
+let generateLinkSpy;
+
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
+  generateLinkSpy = jest
+    .spyOn(bitlyWorker, 'generateLink')
+    .mockReset()
+    .mockResolvedValue({ link: 'success', errorNeeded: false });
 });
 
 afterEach(() => {
@@ -26,32 +32,29 @@ afterEach(() => {
 it('copies link to clipboard on button click', async () => {
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
-  await wait(() => {
+  act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-
-  const copyBtn = getByText('Copy to Clipboard');
-  fireEvent.click(copyBtn);
-  const linkCopiedBtn = getByText('Link Copied');
-  expect(linkCopiedBtn).toBeDefined();
+  await wait(() => {
+    expect(generateLinkSpy).toHaveBeenCalled();
+  });
+  act(() => {
+    const copyBtn = getByText('Copy to Clipboard');
+    fireEvent.click(copyBtn);
+  });
+  await wait(() => {
+    const linkCopiedBtn = getByText('Link Copied');
+    expect(linkCopiedBtn).toBeDefined();
+  });
 });
 
-it('generates direct link when generate direct link button is clicked', async () => {
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
-
-  const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
+it('generates direct link when sharing', async () => {
+  const { getByRole } = render(<ShareLink shareText={'Profile: A'} />, container);
 
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
-  });
-  act(() => {
-    const generateButton = getByText(/Generate Direct Link/);
-    fireEvent.click(generateButton);
   });
   await wait(() => {
     expect(generateLinkSpy).toHaveBeenCalled();
@@ -59,14 +62,9 @@ it('generates direct link when generate direct link button is clicked', async ()
 });
 
 it('generates direct link with configuration when direct link button is clicked', async () => {
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
-
   const deflateSpy = jest.spyOn(Zlib, 'deflateSync').mockReset().mockReturnValue('foo');
 
-  const { getByRole, getByText } = render(
+  const { getByRole } = render(
     <ShareLink shareText={'Profile: A'} config={{ canonical: 'http://example.org' }} />,
     container
   );
@@ -74,10 +72,6 @@ it('generates direct link with configuration when direct link button is clicked'
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
-  });
-  act(() => {
-    const generateButton = getByText(/Generate Direct Link/);
-    fireEvent.click(generateButton);
   });
   await wait(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
@@ -92,9 +86,12 @@ it('generates gist link when generate gist link button is clicked', async () => 
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
+  await wait(() => {
+    expect(generateLinkSpy).toHaveBeenCalled();
+  });
   act(() => {
-    const generateButton = getByText(/Generate Link from Gist/);
-    fireEvent.click(generateButton);
+    const gistBtn = getByText(/Create Link with Gist/i);
+    fireEvent.click(gistBtn);
   });
   act(() => {
     const gistInput = document.getElementById('gistURLText');
@@ -103,33 +100,28 @@ it('generates gist link when generate gist link button is clicked', async () => 
     });
   });
   act(() => {
-    const generateButton = getByText(/Generate Link from Gist/);
-    fireEvent.click(generateButton);
+    const gistBtn = getByRole('button', { name: /Generate Link from Gist/i });
+    fireEvent.click(gistBtn);
   });
-  act(() => {
-    const link = document.getElementById('link');
-    expect(link.innerHTML).toBe('https://fshschool.org/FSHOnline/#/gist/59c573230cd60729df8b44ab8a67b6da');
+  await wait(() => {
+    const linkCopiedBtn = getByText('Link Copied to Clipboard');
+    expect(linkCopiedBtn).toBeDefined();
   });
 });
 
-it('shows an error when the FSH file is too long to share', async () => {
-  const generateLinkSpy = jest
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: undefined, errorNeeded: true });
+it('routes to Gist dialog with error when the FSH file is too long to share', async () => {
+  generateLinkSpy.mockResolvedValue({ link: undefined, errorNeeded: true });
 
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: AVeryLongProfile'} />, container);
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  act(() => {
-    const generateButton = getByText(/Generate Direct Link/);
-    fireEvent.click(generateButton);
-  });
   await wait(() => {
-    const swimBtn = getByText(/Keep Swimming!/i);
-    expect(swimBtn).toBeInTheDocument();
+    const gistButton = getByText(/Generate Link from Gist/i);
+    expect(gistButton).toBeInTheDocument();
+    const errorMessage = getByText(/Your FSH content is too long to share directly/);
+    expect(errorMessage).toBeInTheDocument();
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
