@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import ShareLink from '../../components/ShareLink';
@@ -31,7 +31,7 @@ it('copies link to clipboard on button click', async () => {
 
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
-  await wait(() => {
+  await waitFor(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
     expect(generateLinkSpy).toHaveBeenCalled();
@@ -55,7 +55,7 @@ it('generates link when share button is clicked', async () => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
@@ -77,7 +77,7 @@ it('generates link with configuration when share button is clicked', async () =>
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
     expect(generateLinkSpy).toHaveBeenCalledWith('https://fshschool.org/FSHOnline/#/share/foo');
   });
@@ -96,7 +96,7 @@ it('shows an error when the FSH file is too long to share', async () => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     const swimBtn = getByText(/Keep Swimming!/i);
     expect(swimBtn).toBeInTheDocument();
     expect(generateLinkSpy).toHaveBeenCalled();

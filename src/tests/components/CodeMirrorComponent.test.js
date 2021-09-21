@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import CodeMirrorComponent from '../../components/CodeMirrorComponent';
 
@@ -49,7 +49,7 @@ it('Drawer can be collapsed and expanded', async () => {
   const collapseButton = getByRole('button', { name: /collapse/i });
   fireEvent.click(collapseButton);
   expandButton = getByRole('button', { name: /expand/i });
-  await wait(() => {
+  await waitFor(() => {
     expect(drawer.firstChild).not.toBeVisible(); // Drawer is not visible, but still in DOM so can't check that it's not in document
     expect(expandButton).toBeInTheDocument(); // Expand button is rendered when drawer hidden
   });
@@ -57,7 +57,7 @@ it('Drawer can be collapsed and expanded', async () => {
   // Click expand and drawer is opened again
   fireEvent.click(expandButton);
   expandButton = queryByRole('button', { name: /expand/i });
-  await wait(() => {
+  await waitFor(() => {
     expect(drawer.firstChild).toBeVisible(); // Drawer is visible again
     expect(expandButton).not.toBeInTheDocument(); // Expand button removed
   });

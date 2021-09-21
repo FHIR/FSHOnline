@@ -11,7 +11,3 @@ document.createRange = () => {
   range.getClientRects = () => ({ left: 0 });
   return range;
 };
-
-// Based on https://github.com/nickcolley/jest-axe/issues/147
-const { getComputedStyle } = window;
-window.getComputedStyle = (elt) => getComputedStyle(elt);

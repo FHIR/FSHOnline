@@ -1,4 +1,4 @@
-import { wait } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { decodeFSH } from '../App';
 import * as bitlyWorker from '../utils/BitlyWorker';
 
@@ -11,7 +11,7 @@ test('decodeFSH will return a properly decoded string from base64', async () => 
   };
   const decoded = await decodeFSH(base64);
   const expectedDecoded = 'Hi, this is a test for decoding.';
-  await wait(() => {
+  await waitFor(() => {
     expect(decoded).toEqual(expectedDecoded);
     expect(expandLinkSpy).toHaveBeenCalled();
   });
