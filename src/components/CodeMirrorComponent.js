@@ -42,7 +42,8 @@ CodeMirror.defineSimpleMode('fsh', {
     {
       // NOTE: Original regex has (?<=\s|^) at start and (?=\s) at the end, and (?<=\\bfrom\\s*) before 'system'.
       // However, there are known shortcomings with look ahead/look behind with the simple mode approach
-      regex: /\b(and|codes|contains|descendent-of|exclude|exists|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|system|units|valueset|where|D|MS|N|SU|TU|\\?!)\b/,
+      // NOTE: "from system" must come before "from" in order to properly match the full phrase.
+      regex: /(\s|^)(and|codes|contains|descendent-of|exclude|exists|from system|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|units|valueset|where|D|MS|N|SU|TU|\\?!)(\s|$)/,
       token: 'def'
     },
     {
@@ -50,8 +51,8 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'def'
     },
     {
-      // NOTE: VS Code highlighting properly highlights the open and close parentheses, but this does not
-      regex: /\b(Reference|Canonical)\s*/,
+      regex: /\b(Reference|Canonical)\s*\(/,
+      push: 'closingParen', // Matches the closing parenthesis while not highlighting the content between ( )
       token: 'atom'
     },
     {
@@ -64,12 +65,12 @@ CodeMirror.defineSimpleMode('fsh', {
     },
     {
       // NOTE: Original regex has (?<=\s|^) at start and (?=\s) at end
-      regex: /\b(true|false)\b/,
+      regex: /(\s|^)(true|false)(\s|$)/,
       token: 'string'
     },
     {
       // NOTE: Original regex has (?<=\s|^) and (?=\s) at end
-      regex: /\b(-?\d+(\.\d+)?)\b/, // numbers
+      regex: /(\s|^)(-?\d+(\.\d+)?)(\s|^)/, // numbers
       token: 'string'
     },
     {
@@ -86,6 +87,13 @@ CodeMirror.defineSimpleMode('fsh', {
     },
     { regex: /\/\/.*/, token: 'comment' },
     { regex: /\/\*/, token: 'comment', next: 'comment' }
+  ],
+  closingParen: [
+    {
+      regex: /\)/,
+      pop: true,
+      token: 'atom'
+    }
   ],
   comment: [
     { regex: /.*?\*\//, token: 'comment', next: 'start' },
