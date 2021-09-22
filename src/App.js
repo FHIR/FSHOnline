@@ -113,12 +113,14 @@ const theme = createMuiTheme({
 
 const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
-let infoMessages = [];
-let problemMessages = [];
+let infoMessages = ['There are no messages to display in the console.'];
+let problemMessages = ['There are no problems to display in the console.'];
+let problemCount = 0;
 let exampleMetadata = {};
 console.log = function getMessages(message) {
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     problemMessages.push(message);
+    problemCount++;
   } else {
     infoMessages.push(message);
   }
@@ -219,8 +221,8 @@ export default function App(props) {
   }, [urlParam]);
 
   function resetLogMessages() {
-    infoMessages = [];
-    problemMessages = [];
+    infoMessages = ['There are no messages to display in the console.'];
+    problemMessages = ['There are no problems to display in the console.'];
   }
 
   function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
@@ -368,6 +370,7 @@ export default function App(props) {
           <ConsoleComponent
             consoleMessages={infoMessages}
             problemMessages={problemMessages}
+            problemCount={problemCount}
             expandConsole={expandConsole}
             setExpandConsole={setExpandConsole}
           />

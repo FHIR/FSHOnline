@@ -33,12 +33,10 @@ it('Renders with proper messages in the console', () => {
   const textElement2 = getByText(/Goodbye/i);
   const textElement3 = getByText(/How are you\?/i);
   const textElement4 = queryByText(/This shouldn't appear/i);
-  const successLabel = queryByText(/Success!/i);
 
   expect(textElement1).toBeInTheDocument();
   expect(textElement2).toBeInTheDocument();
   expect(textElement3).toBeInTheDocument();
-  expect(successLabel).toBeInTheDocument();
   expect(textElement4).not.toBeInTheDocument();
 });
 

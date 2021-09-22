@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button } from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
@@ -33,21 +32,6 @@ const useStyles = makeStyles((theme) => ({
   },
   expandIcon: {
     width: '29px' // Lines up with padding
-  },
-  warning: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'khaki'
-  },
-  error: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'red'
-  },
-  success: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'green'
   },
   pre: {
     margin: '0px'
@@ -91,37 +75,31 @@ export default function Console(props) {
   return (
     <>
       <Box className={classes.consoleControls}>
-        <Button onClick={toggleExpandConsole} className={classes.button}>
+        <Button
+          onClick={toggleExpandConsole}
+          className={classes.button}
+          style={{
+            'text-decoration': props.expandConsole && !problemsView ? 'underline' : 'none'
+          }}
+        >
           {props.expandConsole ? (
             <ExpandMore className={classes.expandIcon} />
           ) : (
             <ExpandLess className={classes.expandIcon} />
           )}
-          <p
-            style={{
-              'text-decoration': props.expandConsole && !problemsView ? 'underline' : 'none'
-            }}
-          >
-            Console
-          </p>
-          <CheckIcon
-            className={classes.success}
-            style={{
-              display: props.consoleMessages.length > 0 && props.problemMessages.length === 0 ? 'block' : 'none'
-            }}
-          />
-          {props.consoleMessages.length > 0 && props.problemMessages.length === 0 ? `Success!` : ''}
+          Console
         </Button>
         {props.problemMessages.length > 0 && (
           <Button onClick={toggleProblemsConsole} className={classes.problemsButton}>
             <p
               style={{
-                'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none'
+                'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none',
+                margin: '0'
               }}
             >
               Problems
             </p>
-            <div className={classes.circle}>{props.problemMessages.length}</div>
+            <div className={classes.circle}>{props.problemCount}</div>
           </Button>
         )}
       </Box>
