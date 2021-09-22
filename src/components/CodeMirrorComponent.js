@@ -238,7 +238,7 @@ export default function CodeMirrorComponent(props) {
         <div className={classes.headerActionGroup}>
           {props.mode === 'fsh' && !props.isExamples && <ShareLink shareText={props.value} config={props.config} />}
           {props.copy && renderActionIcon(FileCopy, 'copy', () => {})}
-          {props.save && renderActionIcon(SaveAlt, 'save', () => {})}
+          {props.save && renderActionIcon(SaveAlt, 'save', props.save)}
           {props.delete && renderActionIcon(Delete, 'delete', props.delete)}
         </div>
         {props.renderDrawer && !drawerOpen && (

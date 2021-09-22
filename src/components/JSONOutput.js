@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FileSaver from 'file-saver';
 import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -368,11 +369,12 @@ export default function JSONOutput(props) {
   };
 
   const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
+  const name = `${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`;
 
   return (
     <>
       <CodeMirrorComponent
-        name={`FHIR JSON: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        name={`FHIR JSON: ${name}`}
         value={displayValue}
         initialText={initialText}
         updateTextValue={updateTextValue}
@@ -385,6 +387,9 @@ export default function JSONOutput(props) {
         renderDrawer={renderDrawer}
         isExamples={false}
         delete={handleOpenDeleteConfirmation}
+        save={() => {
+          FileSaver.saveAs(new Blob([displayValue]), `${name}.json`);
+        }}
       />
       {openDeleteConfirmation && renderDeleteModal()}
     </>
