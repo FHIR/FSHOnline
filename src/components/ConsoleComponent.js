@@ -89,19 +89,17 @@ export default function Console(props) {
           )}
           Console
         </Button>
-        {props.problemMessages.length > 0 && (
-          <Button onClick={toggleProblemsConsole} className={classes.problemsButton}>
-            <p
-              style={{
-                'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none',
-                margin: '0'
-              }}
-            >
-              Problems
-            </p>
-            <div className={classes.circle}>{props.problemCount}</div>
-          </Button>
-        )}
+        <Button onClick={toggleProblemsConsole} className={classes.problemsButton}>
+          <p
+            style={{
+              'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none',
+              margin: '0'
+            }}
+          >
+            Problems
+          </p>
+          <div className={classes.circle}>{props.problemCount}</div>
+        </Button>
       </Box>
       <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
         {problemsView

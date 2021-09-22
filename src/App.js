@@ -113,15 +113,23 @@ const theme = createMuiTheme({
 
 const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
-let infoMessages = ['There are no messages to display in the console.'];
-let problemMessages = ['There are no problems to display in the console.'];
+const defaultInfoMessage = 'There are no messages to display in the console.';
+const defaultProblemMessage = 'There are no problems to display in the console.';
+let infoMessages = [defaultInfoMessage];
+let problemMessages = [defaultProblemMessage];
 let problemCount = 0;
 let exampleMetadata = {};
 console.log = function getMessages(message) {
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
+    if (problemMessages[0] === defaultProblemMessage) {
+      problemMessages = [];
+    }
     problemMessages.push(message);
     problemCount++;
   } else {
+    if (infoMessages[0] === defaultInfoMessage) {
+      infoMessages = [];
+    }
     infoMessages.push(message);
   }
 };
@@ -221,8 +229,8 @@ export default function App(props) {
   }, [urlParam]);
 
   function resetLogMessages() {
-    infoMessages = ['There are no messages to display in the console.'];
-    problemMessages = ['There are no problems to display in the console.'];
+    infoMessages = [defaultInfoMessage];
+    problemMessages = [defaultProblemMessage];
   }
 
   function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
