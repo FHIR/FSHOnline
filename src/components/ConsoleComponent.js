@@ -62,8 +62,7 @@ const useStyles = makeStyles((theme) => ({
     'align-items': 'center',
     display: 'flex',
     marginLeft: 4,
-    'justify-content': 'center',
-    'text-decoration': 'none'
+    'justify-content': 'center'
   }
 }));
 
@@ -92,19 +91,19 @@ export default function Console(props) {
   return (
     <>
       <Box className={classes.consoleControls}>
-        <Button
-          onClick={toggleExpandConsole}
-          className={classes.button}
-          style={{
-            'text-decoration': props.expandConsole && !problemsView ? 'underline' : 'none'
-          }}
-        >
+        <Button onClick={toggleExpandConsole} className={classes.button}>
           {props.expandConsole ? (
             <ExpandMore className={classes.expandIcon} />
           ) : (
             <ExpandLess className={classes.expandIcon} />
           )}
-          Console
+          <p
+            style={{
+              'text-decoration': props.expandConsole && !problemsView ? 'underline' : 'none'
+            }}
+          >
+            Console
+          </p>
           <CheckIcon
             className={classes.success}
             style={{
@@ -114,14 +113,14 @@ export default function Console(props) {
           {props.consoleMessages.length > 0 && props.problemMessages.length === 0 ? `Success!` : ''}
         </Button>
         {props.problemMessages.length > 0 && (
-          <Button
-            onClick={toggleProblemsConsole}
-            className={classes.problemsButton}
-            style={{
-              'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none'
-            }}
-          >
-            Problems
+          <Button onClick={toggleProblemsConsole} className={classes.problemsButton}>
+            <p
+              style={{
+                'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none'
+              }}
+            >
+              Problems
+            </p>
             <div className={classes.circle}>{props.problemMessages.length}</div>
           </Button>
         )}
