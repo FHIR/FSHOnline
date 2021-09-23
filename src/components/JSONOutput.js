@@ -276,6 +276,10 @@ export default function JSONOutput(props) {
     setOpenDeleteConfirmation(false);
   };
 
+  const handleSave = (def, name) => {
+    FileSaver.saveAs(new Blob([def]), name);
+  };
+
   const renderDeleteModal = () => {
     const defToDelete = fhirDefinitions[currentDef];
     if (!defToDelete) {
@@ -387,9 +391,7 @@ export default function JSONOutput(props) {
         renderDrawer={renderDrawer}
         isExamples={false}
         delete={handleOpenDeleteConfirmation}
-        save={() => {
-          FileSaver.saveAs(new Blob([displayValue]), `${name}.json`);
-        }}
+        save={() => handleSave(displayValue, `${name}.json`)}
       />
       {openDeleteConfirmation && renderDeleteModal()}
     </>

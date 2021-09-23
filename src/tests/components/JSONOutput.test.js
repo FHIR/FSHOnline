@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
+import FileSaver from 'file-saver';
 import JSONOutput from '../../components/JSONOutput';
 
 beforeAll(() => {
@@ -141,6 +142,58 @@ it('renders a delete button in editor header that opens a confirmation and then 
   fireEvent.click(deleteButton);
   expect(updateText).toHaveBeenCalledTimes(2); // Called once from handleCloseAndDelete and once from updateTextValue
   expect(updateText).toHaveBeenCalledWith(stringifiedPackageAfterDelete);
+});
+
+it('renders a save button in editor header that saves the definition', () => {
+  const saveAsSpy = jest.spyOn(FileSaver, 'saveAs').mockImplementationOnce(() => {});
+  const updateText = jest.fn();
+  const profileB = {
+    resourceType: 'StructureDefinition',
+    id: 'ProfileB',
+    kind: 'resource',
+    derivation: 'constraint'
+  };
+  const simplePackage = {
+    profiles: [
+      {
+        resourceType: 'StructureDefinition',
+        id: 'ProfileA',
+        kind: 'resource',
+        derivation: 'constraint'
+      },
+      profileB
+    ],
+    extensions: [],
+    logicals: [],
+    resources: [],
+    instances: [],
+    valueSets: [],
+    codeSystems: []
+  };
+  const { getByRole, getByText } = render(
+    <JSONOutput
+      showNewText={true}
+      setShowNewText={() => {}}
+      isWaiting={false}
+      updateTextValue={updateText}
+      text={JSON.stringify(simplePackage, null, 2)}
+    />,
+    container
+  );
+
+  // Switch to ProfileB in order to delete it
+  updateText.mockReset();
+  const profileBDef = getByText('ProfileB');
+  fireEvent.click(profileBDef);
+  expect(updateText).toHaveBeenCalledTimes(1);
+
+  const saveActionButton = getByRole('button', { name: /save/i });
+  expect(saveActionButton).toBeInTheDocument();
+
+  // Clicking the save button in the editor header saves a file for that definition
+  fireEvent.click(saveActionButton);
+  expect(saveAsSpy).toHaveBeenCalledTimes(1);
+  expect(saveAsSpy).toHaveBeenCalledWith(new Blob([profileB]), 'ProfileB.json');
 });
 
 it('Renders an Add Definition button that adds a blank definition', () => {

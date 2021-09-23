@@ -15,6 +15,10 @@ export default function FSHOutput(props) {
     props.setInitialText('');
   };
 
+  const handleSave = () => {
+    FileSaver.saveAs(new Blob([props.text]), 'FSH.fsh');
+  };
+
   return (
     <>
       <CodeMirrorComponent
@@ -26,9 +30,7 @@ export default function FSHOutput(props) {
         mode={'fsh'}
         placeholder={props.isWaiting ? 'Loading...' : 'Paste or edit FSH here...'}
         delete={handleOpenDeleteModal}
-        save={() => {
-          FileSaver.saveAs(new Blob([props.text]), 'FSH.fsh');
-        }}
+        save={handleSave}
         config={props.config}
       />
       {openDeleteModal && (
