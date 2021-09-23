@@ -29,26 +29,6 @@ afterEach(() => {
   container = null;
 });
 
-it('copies link to clipboard on button click', async () => {
-  const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
-
-  act(() => {
-    const shareButton = getByRole('button', { name: /Share FSH/i });
-    fireEvent.click(shareButton);
-  });
-  await wait(() => {
-    expect(generateLinkSpy).toHaveBeenCalled();
-  });
-  act(() => {
-    const copyBtn = getByText('Copy to Clipboard');
-    fireEvent.click(copyBtn);
-  });
-  await wait(() => {
-    const linkCopiedBtn = getByText('Link Copied');
-    expect(linkCopiedBtn).toBeDefined();
-  });
-});
-
 it('generates direct link when sharing', async () => {
   const { getByRole } = render(<ShareLink shareText={'Profile: A'} />, container);
 
@@ -104,8 +84,8 @@ it('generates gist link when generate gist link button is clicked', async () => 
     fireEvent.click(gistBtn);
   });
   await wait(() => {
-    const linkCopiedBtn = getByText('Link Copied to Clipboard');
-    expect(linkCopiedBtn).toBeDefined();
+    const shareModal = getByText('Share');
+    expect(shareModal).toBeDefined();
   });
 });
 

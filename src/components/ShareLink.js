@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { deflateSync } from 'browserify-zlib';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link as LinkIcon } from '@material-ui/icons';
+import { Link as LinkIcon, FileCopy } from '@material-ui/icons';
 import {
   Button,
   Dialog,
@@ -11,7 +11,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  TextareaAutosize,
   Tooltip,
   Link,
   TextField,
@@ -29,6 +28,15 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     color: theme.palette.text.primary,
     fontWeight: 'bold'
+  },
+  copyBox: {
+    backgroundColor: theme.palette.common.lightGrey,
+    borderRadius: 2,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: '3%',
+    textOverflow: 'ellipsis'
   }
 }));
 
@@ -38,13 +46,14 @@ export default function ShareLink(props) {
   const [shareError, setShareError] = useState(false);
   const [openGist, setOpenGist] = useState(false);
   const [openGistError, setOpenGistError] = useState(false);
-  const [{ copied, copyButton }, setCopied] = useState({ copied: false, copyButton: 'Copy to Clipboard' });
+  const [copyTip, setCopyTip] = useState('Copy to Clipboard');
   const [{ fshCopied, fshCopyButton }, setFshCopied] = useState({
     fshCopied: false,
     fshCopyButton: 'Copy FSH to Clipboard'
   });
   const [link, setLink] = useState();
   const [gistLink, setGistLink] = useState();
+  const [showCreateGistButton, setshowCreateGistButton] = useState(true);
 
   const updateGistLink = (event) => {
     const gistId = event.target.value.match(/gist\.github\.com\/[^/]+\/(.+)/)?.[1];
@@ -62,7 +71,6 @@ export default function ShareLink(props) {
     setOpenShare(false);
     setOpenGist(true);
     setGistLink('');
-    setCopied({ copied: false, copyButton: 'Generate Link from Gist' });
     setFshCopied({ fshCopied: false, fshCopyButton: 'Copy FSH to Clipboard' });
   };
 
@@ -71,9 +79,13 @@ export default function ShareLink(props) {
     setShareError(false);
   };
 
-  const handleGistCopy = () => {
+  const handleGenerateGistLink = () => {
     if (gistLink) {
-      setCopied({ copied: true, copyButton: 'Link Copied to Clipboard' });
+      handleCloseGist();
+      setLink(gistLink);
+      setOpenShare(true);
+      setCopyTip('Copy to Clipboard');
+      setshowCreateGistButton(false);
     } else {
       setOpenGistError(true);
     }
@@ -104,7 +116,8 @@ export default function ShareLink(props) {
       const displayLink = `https://fshschool.org/FSHOnline/#/share/${bitlySlice}`;
       setLink(displayLink);
       setOpenShare(true);
-      setCopied({ copied: false, copyButton: 'Copy to Clipboard' });
+      setCopyTip('Copy to Clipboard');
+      setshowCreateGistButton(true);
     }
   };
 
@@ -128,23 +141,26 @@ export default function ShareLink(props) {
         <DialogTitle id="form-dialog-title">Share</DialogTitle>
         <DialogContent>
           <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
-          <TextareaAutosize
-            id="link"
-            disabled
-            label="Your Link"
-            defaultValue={link}
-            className={classes.textArea}
-            style={{ resize: 'none' }}
-          ></TextareaAutosize>
+          <Box className={classes.copyBox}>
+            <Box maxWidth="90%" textOverflow="ellipsis" overflow="hidden">
+              {link}
+            </Box>
+            <Tooltip title={copyTip} placement="top" arrow>
+              <CopyToClipboard text={link} onCopy={() => setCopyTip('Link Copied')}>
+                <IconButton style={{ borderRadius: '0%' }}>
+                  <FileCopy />
+                </IconButton>
+              </CopyToClipboard>
+            </Tooltip>
+          </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOpenGist} color="primary" style={{ align: 'left' }}>
-            Create Link with Gist
-          </Button>
+          {showCreateGistButton && (
+            <Button onClick={handleOpenGist} color="primary" style={{ align: 'left' }}>
+              Create Link with Gist
+            </Button>
+          )}
           <Box style={{ flex: '1 0 0', hidden: true }} />
-          <CopyToClipboard text={link} onCopy={() => setCopied({ copied: true, copyButton: 'Link Copied' })}>
-            <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
-          </CopyToClipboard>
           <Button onClick={handleCloseShare} color="primary">
             Done
           </Button>
@@ -166,14 +182,15 @@ export default function ShareLink(props) {
           <TextField id="gistURLText" label="Gist URL" fullWidth onChange={updateGistLink} />
         </DialogContent>
         <DialogActions style={{ bottom: 0, right: 0 }}>
-          <CopyToClipboard text={props.shareText} onCopy={handleFSHcopy}>
+          <Button onClick={handleCloseGist} color="primary">
+            Cancel
+          </Button>
+          <Box style={{ flex: '1 0 0', hidden: true }} />
+          <CopyToClipboard text={props.shareText} onCopy={handleFSHcopy} style={{ align: 'left' }}>
             <Button color={fshCopied ? 'secondary' : 'primary'}>{fshCopyButton}</Button>
           </CopyToClipboard>
-          <CopyToClipboard text={gistLink} onCopy={handleGistCopy}>
-            <Button color={copied ? 'secondary' : 'primary'}>{copyButton}</Button>
-          </CopyToClipboard>
-          <Button onClick={handleCloseGist} color="primary">
-            Done
+          <Button color="primary" onClick={handleGenerateGistLink} style={{ align: 'left' }}>
+            Generate Link from Gist
           </Button>
         </DialogActions>
       </Dialog>
