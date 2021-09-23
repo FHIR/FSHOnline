@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { inflateSync } from 'browserify-zlib';
+import FileSaver from 'file-saver';
+import JSZip from 'jszip';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
@@ -309,6 +311,22 @@ export default function App(props) {
     }
   }
 
+  function saveAll() {
+    // Build zip file
+    const zip = new JSZip();
+    zip.file('FSH.fsh', inputFSHText);
+    inputFHIRText.forEach((def) => {
+      const name = `${def.id ?? 'Untitled'}.json`;
+      const value = def.def ?? null;
+      zip.file(name, value);
+    });
+
+    // Generate blob of zip and save
+    zip.generateAsync({ type: 'blob' }).then((blob) => {
+      FileSaver.saveAs(blob, 'fshonline.zip');
+    });
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div className="root" style={{ height: '100vh' }}>
@@ -325,6 +343,7 @@ export default function App(props) {
             exampleConfig={exampleConfig}
             exampleMetadata={exampleFilePaths}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
+            saveAll={saveAll}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
