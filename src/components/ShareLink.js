@@ -166,7 +166,7 @@ export default function ShareLink(props) {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={openGist} onClose={handleCloseGist} aria-labelledby="alert-dialog-title" maxWidth="sm" fullWidth>
+      <Dialog open={openGist} onClose={handleCloseGist} aria-labelledby="alert-dialog-title" maxWidth="md" fullWidth>
         <DialogTitle id="alert-dialog-title">Share with Gist</DialogTitle>
         {shareError && (
           <DialogContent style={{ color: theme.palette.common.red }}>
