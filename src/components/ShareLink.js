@@ -137,7 +137,7 @@ export default function ShareLink(props) {
           <LinkIcon fontSize="small" style={{ transform: 'rotate(-45deg)' }} />
         </IconButton>
       </Tooltip>
-      <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
+      <Dialog open={openShare} onClose={handleCloseShare} aria-labelledby="form-dialog-title" maxWidth="md" fullWidth>
         <DialogTitle id="form-dialog-title">Share</DialogTitle>
         <DialogContent>
           <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
