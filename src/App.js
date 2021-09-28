@@ -73,7 +73,7 @@ const colors = {
   red: '#FD6668'
 };
 
-const theme = createMuiTheme({
+export const theme = createMuiTheme({
   palette: {
     success: {
       main: colors.blue,
@@ -180,6 +180,20 @@ export async function decodeFSH(encodedFSH) {
   }
 }
 
+async function getGistContent(gistId) {
+  const gistContent = await fetch(`https://api.github.com/gists/${gistId}`).then((res) => res.json());
+  let fshContent = '';
+  for (let f of Object.values(gistContent?.files || {})) {
+    if (f.truncated) {
+      fshContent += await fetch(f.raw_url).then((res) => res.text());
+    } else {
+      fshContent += f.content;
+    }
+    fshContent += '\n\n';
+  }
+  return fshContent.trim();
+}
+
 export const ExpandedConsoleContext = createContext(false);
 
 export default function App(props) {
@@ -201,25 +215,30 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      const text = await decodeFSH(urlParam.params);
-      const splitIndex = text.indexOf('\n');
-      const config = text.slice(0, splitIndex);
-      let parsedConfig;
-      let fshContent = text;
-      try {
-        const rawConfig = JSON.parse(config);
-        if (rawConfig.c != null && rawConfig.v != null && rawConfig.d != null) {
-          parsedConfig = { canonical: rawConfig.c, version: rawConfig.v, dependencies: rawConfig.d };
-          // If the config is successfully parsed and has the expected properties,
-          // we can assume the true FSH content begins on the next line
-          fshContent = text.slice(splitIndex + 1);
+      if (/\/share/.test(urlParam.path)) {
+        const text = await decodeFSH(urlParam.params);
+        const splitIndex = text.indexOf('\n');
+        const config = text.slice(0, splitIndex);
+        let parsedConfig;
+        let fshContent = text;
+        try {
+          const rawConfig = JSON.parse(config);
+          if (rawConfig.c != null && rawConfig.v != null && rawConfig.d != null) {
+            parsedConfig = { canonical: rawConfig.c, version: rawConfig.v, dependencies: rawConfig.d };
+            // If the config is successfully parsed and has the expected properties,
+            // we can assume the true FSH content begins on the next line
+            fshContent = text.slice(splitIndex + 1);
+          }
+        } catch (e) {
+          // If parse fails, it is likely decoding a legacy link in which all content is FSH, so just don't
+          // set the parsedConfig, and set fshContent to all of the text
         }
-      } catch (e) {
-        // If parse fails, it is likely decoding a legacy link in which all content is FSH, so just don't
-        // set the parsedConfig, and set fshContent to all of the text
+        setSharedConfig(parsedConfig || {});
+        setInitialText(fshContent);
+      } else if (/\/gist/.test(urlParam.path)) {
+        const fshContent = await getGistContent(urlParam.params.id);
+        setInitialText(fshContent);
       }
-      setSharedConfig(parsedConfig || {});
-      setInitialText(fshContent);
     }
     async function fetchExamples() {
       setExampleConfig(await getManifestFromGit());

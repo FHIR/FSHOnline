@@ -15,9 +15,19 @@ test('Renders FSH Online App when visiting /FSHOnline', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test('Renders FSH Online App when visiting /FSHOnline/share/:id', () => {
+test('Renders FSH Online App when visiting /FSHOnline/share/:text', () => {
   const { getByText } = render(
     <MemoryRouter initialEntries={['/FSHOnline/share/abcd']}>
+      <AppRouter />
+    </MemoryRouter>
+  );
+  const linkElement = getByText(/Mock FSH Online/i);
+  expect(linkElement).toBeInTheDocument();
+});
+
+test('Renders FSH Online App when visiting /FSHOnline/gist/:id', () => {
+  const { getByText } = render(
+    <MemoryRouter initialEntries={['/FSHOnline/gist/123']}>
       <AppRouter />
     </MemoryRouter>
   );
