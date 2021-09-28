@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { inflateSync } from 'browserify-zlib';
 import FileSaver from 'file-saver';
 import JSZip from 'jszip';
-import { debounce } from 'lodash';
+import { debounce, partition } from 'lodash';
 import clsx from 'clsx';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
@@ -311,14 +311,41 @@ export default function App(props) {
     }
   }
 
+  function getFileName(name, nameMap) {
+    if (nameMap.get(name)) {
+      let count = nameMap.get(name);
+      let nameWithCount = `${name}-${count}`;
+      while (nameMap.get(nameWithCount)) {
+        count = count + 1;
+        nameWithCount = `${name}-${count}`;
+      }
+      nameMap.set(name, count + 1); // Keep track of how many times the name has been used in this zip file
+      name = nameWithCount; // Append a number if the file name has been used already
+      nameMap.set(nameWithCount, 1); // Keep track of the new file name we created so we don't use it again
+    } else {
+      nameMap.set(name, 1);
+    }
+    return name;
+  }
+
   function saveAll() {
+    const nameMap = new Map();
+
     // Build zip file
     const zip = new JSZip();
     zip.file('FSH.fsh', inputFSHText);
-    inputFHIRText.forEach((def) => {
-      const name = `${def.id ?? 'Untitled'}.json`;
+
+    // Prioritize FHIR definitions that have a provided id when naming files
+    const [defWithId, defWithUntitledId] = partition(inputFHIRText, (def) => def.id && def.id !== 'Untitled');
+    defWithId.forEach((def) => {
+      const name = getFileName(def.id, nameMap);
       const value = def.def ?? null;
-      zip.file(name, value);
+      zip.file(`${name}.json`, value);
+    });
+    defWithUntitledId.forEach((def) => {
+      const name = getFileName(def.id ?? 'Untitled', nameMap);
+      const value = def.def ?? null;
+      zip.file(`${name}.json`, value);
     });
 
     // Generate blob of zip and save
