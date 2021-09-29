@@ -48,11 +48,7 @@ it('Renders error and warning labels when passed in as messages', () => {
     <ConsoleComponent consoleMessages={infoMessages} problemMessages={problemMessages} />,
     container
   );
-  // const warningLabel = queryByText(/2 Warnings/i);
-  // const errorLabel = queryByText(/2 Errors/i);
   const successLabel = queryByText(/Success!/i);
 
-  // expect(warningLabel).toBeInTheDocument();
-  // expect(errorLabel).toBeInTheDocument();
   expect(successLabel).not.toBeInTheDocument();
 });

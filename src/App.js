@@ -118,20 +118,23 @@ const defaultProblemMessage = 'There are no problems to display in the console.'
 let infoMessages = [defaultInfoMessage];
 let problemMessages = [defaultProblemMessage];
 let problemCount = 0;
+let problemColor = '#FDD835'; // Default yellow color for warnings
 let exampleMetadata = {};
 console.log = function getMessages(message) {
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     if (problemMessages[0] === defaultProblemMessage) {
       problemMessages = [];
     }
-    problemMessages.push(message);
     problemCount++;
-  } else {
-    if (infoMessages[0] === defaultInfoMessage) {
-      infoMessages = [];
+    problemMessages.push(message);
+    if (message.startsWith('error')) {
+      problemColor = '#FD6668';
     }
-    infoMessages.push(message);
   }
+  if (infoMessages[0] === defaultInfoMessage) {
+    infoMessages = [];
+  }
+  infoMessages.push(message);
 };
 
 /* 
@@ -250,6 +253,8 @@ export default function App(props) {
   function resetLogMessages() {
     infoMessages = [defaultInfoMessage];
     problemMessages = [defaultProblemMessage];
+    problemCount = 0;
+    problemColor = '#FDD835';
   }
 
   function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
@@ -398,6 +403,7 @@ export default function App(props) {
             consoleMessages={infoMessages}
             problemMessages={problemMessages}
             problemCount={problemCount}
+            problemColor={problemColor}
             expandConsole={expandConsole}
             setExpandConsole={setExpandConsole}
           />

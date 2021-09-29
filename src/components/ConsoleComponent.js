@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button } from '@material-ui/core';
+import { Box, Button, IconButton } from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,9 +21,10 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: 'border-box'
   },
   button: {
-    marginRight: '20px',
+    marginRight: '10px',
     color: theme.palette.common.white,
-    textTransform: 'none'
+    textTransform: 'none',
+    padding: 0
   },
   problemsButton: {
     padding: 0,
@@ -31,22 +32,27 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none'
   },
   expandIcon: {
-    width: '29px' // Lines up with padding
+    width: '29px', // Lines up with padding,
+    color: theme.palette.common.white,
+    padding: 0
   },
   pre: {
     margin: '0px'
   },
   circle: {
     'border-radius': '50%',
-    'min-width': '22px',
-    height: '22px',
+    'border-style': 'solid',
+    'border-width': '2px',
+    'min-width': '20px',
+    height: '20px',
     paddingLeft: 1,
     paddingRight: 1,
-    background: '#21121d',
+    background: '#263238',
     'align-items': 'center',
     display: 'flex',
     marginLeft: 4,
-    'justify-content': 'center'
+    'justify-content': 'center',
+    padding: 0
   }
 }));
 
@@ -55,50 +61,56 @@ export default function Console(props) {
   const [problemsView, setProblemsView] = useState(false);
 
   const toggleExpandConsole = () => {
-    if (props.expandConsole && problemsView) {
-      setProblemsView(false);
-    } else {
-      props.setExpandConsole(!props.expandConsole);
-      setProblemsView(false);
-    }
+    setProblemsView(false);
+    props.setExpandConsole(!props.expandConsole);
   };
 
-  const toggleProblemsConsole = () => {
-    if (props.expandConsole && !problemsView) {
-      setProblemsView(true);
-    } else {
-      setProblemsView(!problemsView);
-      props.setExpandConsole(!props.expandConsole);
-    }
+  const setMessagesConsole = () => {
+    setProblemsView(false);
+  };
+
+  const setProblemsConsole = () => {
+    setProblemsView(true);
   };
 
   return (
     <>
       <Box className={classes.consoleControls}>
-        <Button
+        <IconButton
           onClick={toggleExpandConsole}
-          className={classes.button}
-          style={{
-            'text-decoration': props.expandConsole && !problemsView ? 'underline' : 'none'
-          }}
+          aria-label={props.expandConsole ? 'collapse console' : 'expand console'}
+          className={classes.expandIcon}
         >
-          {props.expandConsole ? (
-            <ExpandMore className={classes.expandIcon} />
-          ) : (
-            <ExpandLess className={classes.expandIcon} />
-          )}
-          Console
-        </Button>
-        <Button onClick={toggleProblemsConsole} className={classes.problemsButton}>
+          {props.expandConsole ? <ExpandMore /> : <ExpandLess />}
+        </IconButton>
+        <Button onClick={setMessagesConsole} className={classes.button}>
           <p
             style={{
-              'text-decoration': props.expandConsole && problemsView ? 'underline' : 'none',
+              'border-bottom': props.expandConsole && !problemsView ? '1px solid white' : 'none',
+              margin: '0'
+            }}
+          >
+            Console
+          </p>
+        </Button>
+        <Button onClick={setProblemsConsole} className={classes.problemsButton}>
+          <p
+            style={{
+              'border-bottom':
+                props.expandConsole && problemsView
+                  ? `1px solid ${!props.problemCount ? 'white' : props.problemColor}`
+                  : 'none',
               margin: '0'
             }}
           >
             Problems
           </p>
-          <div className={classes.circle}>{props.problemCount}</div>
+          <div
+            className={classes.circle}
+            style={{ 'border-color': `${!props.problemCount ? 'white' : props.problemColor}` }}
+          >
+            {props.problemCount}
+          </div>
         </Button>
       </Box>
       <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
