@@ -3,15 +3,6 @@ import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import JSONOutput from '../../components/JSONOutput';
 
-beforeAll(() => {
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
-});
-
 let container = null;
 beforeEach(() => {
   container = document.createElement('div');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import ShareLink from '../../components/ShareLink';
@@ -36,7 +36,7 @@ it('generates direct link when sharing', async () => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     expect(generateLinkSpy).toHaveBeenCalled();
   });
 });
@@ -53,7 +53,7 @@ it('generates direct link with configuration when direct link button is clicked'
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
     expect(generateLinkSpy).toHaveBeenCalledWith('https://fshschool.org/FSHOnline/#/share/foo');
   });
@@ -62,11 +62,13 @@ it('generates direct link with configuration when direct link button is clicked'
 it('generates gist link when generate gist link button is clicked', async () => {
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
+  jest.spyOn(Zlib, 'deflateSync').mockReset().mockReturnValueOnce('foo');
+
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     expect(generateLinkSpy).toHaveBeenCalled();
   });
   act(() => {
@@ -83,7 +85,7 @@ it('generates gist link when generate gist link button is clicked', async () => 
     const gistBtn = getByRole('button', { name: /Generate Link from Gist/i });
     fireEvent.click(gistBtn);
   });
-  await wait(() => {
+  await waitFor(() => {
     const shareModal = getByText('Share');
     expect(shareModal).toBeDefined();
   });
@@ -92,12 +94,14 @@ it('generates gist link when generate gist link button is clicked', async () => 
 it('routes to Gist dialog with error when the FSH file is too long to share', async () => {
   generateLinkSpy.mockResolvedValue({ link: undefined, errorNeeded: true });
 
+  jest.spyOn(Zlib, 'deflateSync').mockReset().mockReturnValueOnce('foo');
+
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: AVeryLongProfile'} />, container);
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
-  await wait(() => {
+  await waitFor(() => {
     const gistButton = getByText(/Generate Link from Gist/i);
     expect(gistButton).toBeInTheDocument();
     const errorMessage = getByText(/Your FSH content is too long to share directly/);
