@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import 'fake-indexeddb/auto';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import { render, wait, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 import FSHControls from '../../components/FSHControls';
 import * as fshHelpers from '../../utils/FSHHelpers';
 
@@ -54,7 +54,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a bad p
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
@@ -76,7 +76,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits an empt
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
@@ -98,7 +98,7 @@ it('calls runSUSHI and changes the doRunSUSHI variable onClick, exhibits a good 
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runSUSHISpy).toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(2);
@@ -134,7 +134,7 @@ it('calls GoFSH function and returns FSH', async () => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], { dependencies: [] }); // No IG resource added because canonical and version set to defaults
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
@@ -185,7 +185,7 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
     version: '2.0.0'
   };
 
-  await wait(() => {
+  await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalledWith(
       [JSON.stringify(examplePatient, null, 2), JSON.stringify(expectedIgResource, null, 2)], // Adds IG resource with canonical and version
@@ -225,7 +225,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
     FSHOnly: true,
     fhirVersion: ['4.0.1']
   };
-  await wait(() => {
+  await waitFor(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, []); // Includes new config
   });
 });
@@ -259,7 +259,7 @@ it('uses user provided version when calling runSUSHI', async () => {
     fhirVersion: ['4.0.1']
   };
 
-  await wait(() => {
+  await waitFor(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, []); // Includes new version
   });
 });
@@ -293,7 +293,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
     ['hello', '123']
   ];
 
-  await wait(() => {
+  await waitFor(() => {
     expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
   });
 });
@@ -338,7 +338,7 @@ it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(runSUSHISpy).toHaveBeenCalledTimes(0);
   });
 });
@@ -375,19 +375,12 @@ it('should not call runGoFSH while waiting for SUSHI or GoFSH', async () => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
-  await wait(() => {
+  await waitFor(() => {
     expect(runGoFSHSpy).toHaveBeenCalledTimes(0);
   });
 });
 
 it('should properly render the examples in the file tree', async () => {
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
-
   const manifestArr = [
     {
       id: 'manifestParent',
@@ -417,12 +410,6 @@ it('should properly render the examples in the file tree', async () => {
 
 it.skip('should populate editor when examples are collected', async () => {
   const updateTextValueSpy = jest.fn();
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
 
   const manifestArr = [
     {

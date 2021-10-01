@@ -4,15 +4,6 @@ import { unmountComponentAtNode } from 'react-dom';
 import FileSaver from 'file-saver';
 import FSHOutput from '../../components/FSHOutput';
 
-beforeAll(() => {
-  document.body.createTextRange = () => {
-    return {
-      getBoundingClientRect: () => ({ right: 0 }),
-      getClientRects: () => ({ left: 0 })
-    };
-  };
-});
-
 let container = null;
 beforeEach(() => {
   container = document.createElement('div');
