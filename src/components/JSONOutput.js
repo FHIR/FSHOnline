@@ -277,7 +277,8 @@ export default function JSONOutput(props) {
   };
 
   const handleSave = (def, name) => {
-    FileSaver.saveAs(new Blob([def]), name);
+    const resourceObj = JSON.parse(def);
+    FileSaver.saveAs(new Blob([def]), `${resourceObj.resourceType}-${name}`);
   };
 
   const renderDeleteModal = () => {

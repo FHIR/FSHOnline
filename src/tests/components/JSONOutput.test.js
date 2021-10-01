@@ -193,7 +193,7 @@ it('renders a save button in editor header that saves the definition', () => {
   // Clicking the save button in the editor header saves a file for that definition
   fireEvent.click(saveActionButton);
   expect(saveAsSpy).toHaveBeenCalledTimes(1);
-  expect(saveAsSpy).toHaveBeenCalledWith(new Blob([profileB]), 'ProfileB.json');
+  expect(saveAsSpy).toHaveBeenCalledWith(new Blob([profileB]), 'StructureDefinition-ProfileB.json');
 });
 
 it('Renders an Add Definition button that adds a blank definition', () => {
