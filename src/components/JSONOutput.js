@@ -276,9 +276,17 @@ export default function JSONOutput(props) {
     setOpenDeleteConfirmation(false);
   };
 
-  const handleSave = (def, name) => {
-    const resourceObj = JSON.parse(def);
-    FileSaver.saveAs(new Blob([def]), `${resourceObj.resourceType}-${name}`);
+  const handleSave = (def, defaultName) => {
+    let resourceObj;
+    try {
+      resourceObj = JSON.parse(def);
+    } catch {}
+    FileSaver.saveAs(
+      new Blob([def]),
+      resourceObj?.resourceType && resourceObj?.id
+        ? `${resourceObj.resourceType}-${resourceObj.id}.json`
+        : `${name}.json`
+    );
   };
 
   const renderDeleteModal = () => {
@@ -392,7 +400,7 @@ export default function JSONOutput(props) {
         renderDrawer={renderDrawer}
         isExamples={false}
         delete={handleOpenDeleteConfirmation}
-        save={() => handleSave(displayValue, `${name}.json`)}
+        save={() => handleSave(displayValue, name)}
       />
       {openDeleteConfirmation && renderDeleteModal()}
     </>

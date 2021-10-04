@@ -357,12 +357,21 @@ export default function App(props) {
     // Prioritize FHIR definitions that have a provided id when naming files
     const [defWithId, defWithUntitledId] = partition(inputFHIRText, (def) => def.id && def.id !== 'Untitled');
     defWithId.forEach((def) => {
-      const name = getFileName(`${def.resourceType}-${def.id}`, nameMap);
+      let resourceObj;
+      try {
+        resourceObj = JSON.parse(def.def);
+      } catch {}
+      const name = getFileName(resourceObj?.resourceType ? `${resourceObj.resourceType}-${def.id}` : def.id, nameMap);
       const value = def.def ?? null;
       zip.file(`${name}.json`, value);
     });
     defWithUntitledId.forEach((def) => {
-      const name = getFileName(`${def.resourceType}-${def.id}` ?? `${def.resourceType}-Untitled`, nameMap);
+      let resourceObj;
+      try {
+        resourceObj = JSON.parse(def.def);
+      } catch {}
+      const id = def.id ?? 'Untitled';
+      const name = getFileName(resourceObj?.resourceType ? `${resourceObj.resourceType}-${id}` : id, nameMap);
       const value = def.def ?? null;
       zip.file(`${name}.json`, value);
     });
