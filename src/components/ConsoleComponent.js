@@ -67,10 +67,12 @@ export default function Console(props) {
 
   const setMessagesConsole = () => {
     setProblemsView(false);
+    props.setExpandConsole(true);
   };
 
   const setProblemsConsole = () => {
     setProblemsView(true);
+    props.setExpandConsole(true);
   };
 
   return (
@@ -86,7 +88,7 @@ export default function Console(props) {
         <Button onClick={setMessagesConsole} className={classes.button}>
           <p
             style={{
-              'border-bottom': props.expandConsole && !problemsView ? '1px solid white' : 'none',
+              borderBottom: props.expandConsole && !problemsView ? '1px solid white' : 'none',
               margin: '0'
             }}
           >
@@ -96,7 +98,7 @@ export default function Console(props) {
         <Button onClick={setProblemsConsole} className={classes.problemsButton}>
           <p
             style={{
-              'border-bottom':
+              borderBottom:
                 props.expandConsole && problemsView
                   ? `1px solid ${!props.problemCount ? 'white' : props.problemColor}`
                   : 'none',
@@ -107,7 +109,7 @@ export default function Console(props) {
           </p>
           <div
             className={classes.circle}
-            style={{ 'border-color': `${!props.problemCount ? 'white' : props.problemColor}` }}
+            style={{ borderColor: `${!props.problemCount ? 'white' : props.problemColor}` }}
           >
             {props.problemCount}
           </div>
