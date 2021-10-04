@@ -16,41 +16,39 @@ afterEach(() => {
 });
 
 it('Renders with the appropriate label', () => {
-  const { getByText } = render(<ConsoleComponent consoleMessages={[]} />, container);
+  const { getByText } = render(<ConsoleComponent consoleMessages={[]} problemMessages={[]} />, container);
   const textElement = getByText('Console');
 
   expect(textElement).toBeInTheDocument();
 });
 
 it('Renders with proper messages in the console', () => {
-  const consoleMessages = ['Hello', 'Goodbye', 'How are you?'];
+  const infoMessages = ['Hello', 'Goodbye', 'How are you?'];
 
-  const { getByText, queryByText } = render(<ConsoleComponent consoleMessages={consoleMessages} />, container);
+  const { getByText, queryByText } = render(
+    <ConsoleComponent consoleMessages={infoMessages} problemMessages={[]} />,
+    container
+  );
   const textElement1 = getByText(/Hello/i);
   const textElement2 = getByText(/Goodbye/i);
   const textElement3 = getByText(/How are you\?/i);
   const textElement4 = queryByText(/This shouldn't appear/i);
-  const successLabel = queryByText(/Success!/i);
 
   expect(textElement1).toBeInTheDocument();
   expect(textElement2).toBeInTheDocument();
   expect(textElement3).toBeInTheDocument();
-  expect(successLabel).toBeInTheDocument();
   expect(textElement4).not.toBeInTheDocument();
 });
 
 it('Renders error and warning labels when passed in as messages', () => {
-  const consoleMessages = ['error foo', 'error bar', 'warning foo', 'warning bar', 'info'];
+  const infoMessages = ['info'];
+  const problemMessages = ['error foo', 'error bar', 'warning foo', 'warning bar'];
 
   const { queryByText } = render(
-    <ConsoleComponent consoleMessages={consoleMessages} errorCount={'2 Errors'} warningCount={'2 Warnings'} />,
+    <ConsoleComponent consoleMessages={infoMessages} problemMessages={problemMessages} />,
     container
   );
-  const warningLabel = queryByText(/2 Warnings/i);
-  const errorLabel = queryByText(/2 Errors/i);
   const successLabel = queryByText(/Success!/i);
 
-  expect(warningLabel).toBeInTheDocument();
-  expect(errorLabel).toBeInTheDocument();
   expect(successLabel).not.toBeInTheDocument();
 });
