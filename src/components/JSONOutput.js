@@ -280,7 +280,9 @@ export default function JSONOutput(props) {
     let resourceObj;
     try {
       resourceObj = JSON.parse(def);
-    } catch {}
+    } catch {
+      /* Ignore errors and just default to name without resourceType */
+    }
     FileSaver.saveAs(
       new Blob([def]),
       resourceObj?.resourceType && resourceObj?.id

@@ -360,7 +360,9 @@ export default function App(props) {
       let resourceObj;
       try {
         resourceObj = JSON.parse(def.def);
-      } catch {}
+      } catch {
+        /* Ignore errors and just default to name without resourceType */
+      }
       const name = getFileName(resourceObj?.resourceType ? `${resourceObj.resourceType}-${def.id}` : def.id, nameMap);
       const value = def.def ?? null;
       zip.file(`${name}.json`, value);
@@ -369,9 +371,11 @@ export default function App(props) {
       let resourceObj;
       try {
         resourceObj = JSON.parse(def.def);
-      } catch {}
+      } catch {
+        /* Ignore errors and just default to name without resourceType */
+      }
       const id = def.id ?? 'Untitled';
-      const name = getFileName(resourceObj?.resourceType ? `${resourceObj.resourceType}-${id}` : id, nameMap);
+      const name = getFileName(resourceObj.resourceType ? `${resourceObj.resourceType}-${id}` : id, nameMap);
       const value = def.def ?? null;
       zip.file(`${name}.json`, value);
     });
