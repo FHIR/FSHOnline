@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button } from '@material-ui/core';
+import { Box, Button, IconButton } from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import WarningIcon from '@material-ui/icons/Warning';
-import ErrorIcon from '@material-ui/icons/Error';
-import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   consoleControls: {
@@ -24,71 +21,116 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: 'border-box'
   },
   button: {
+    marginRight: '10px',
+    color: theme.palette.common.white,
+    textTransform: 'none',
+    padding: 0
+  },
+  problemsButton: {
     padding: 0,
     color: theme.palette.common.white,
     textTransform: 'none'
   },
   expandIcon: {
-    width: '29px' // Lines up with padding
-  },
-  warning: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'khaki'
-  },
-  error: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'red'
-  },
-  success: {
-    paddingRight: '5px',
-    paddingLeft: '20px',
-    color: 'green'
+    width: '29px', // Lines up with padding,
+    color: theme.palette.common.white,
+    padding: 0
   },
   pre: {
     margin: '0px'
+  },
+  circle: {
+    'border-radius': '50%',
+    'border-style': 'solid',
+    'border-width': '2px',
+    'min-width': '20px',
+    height: '20px',
+    paddingLeft: 1,
+    paddingRight: 1,
+    background: '#263238',
+    'align-items': 'center',
+    display: 'flex',
+    marginLeft: 4,
+    'justify-content': 'center',
+    padding: 0
   }
 }));
 
 export default function Console(props) {
   const classes = useStyles();
+  const [problemsView, setProblemsView] = useState(false);
 
   const toggleExpandConsole = () => {
+    setProblemsView(false);
     props.setExpandConsole(!props.expandConsole);
+  };
+
+  const setMessagesConsole = () => {
+    setProblemsView(false);
+    props.setExpandConsole(true);
+  };
+
+  const setProblemsConsole = () => {
+    setProblemsView(true);
+    props.setExpandConsole(true);
   };
 
   return (
     <>
       <Box className={classes.consoleControls}>
-        <Button onClick={toggleExpandConsole} className={classes.button}>
-          {props.expandConsole ? (
-            <ExpandMore className={classes.expandIcon} />
-          ) : (
-            <ExpandLess className={classes.expandIcon} />
-          )}
-          Console
-          <WarningIcon style={{ display: props.warningCount ? 'block' : 'none' }} className={classes.warning} />
-          {props.warningCount ? `${props.warningCount}` : ''}
-          <ErrorIcon style={{ display: props.errorCount ? 'block' : 'none' }} className={classes.error} />
-          {props.errorCount ? `${props.errorCount}` : ''}
-          <CheckIcon
-            className={classes.success}
+        <IconButton
+          onClick={toggleExpandConsole}
+          aria-label={props.expandConsole ? 'collapse console' : 'expand console'}
+          className={classes.expandIcon}
+        >
+          {props.expandConsole ? <ExpandMore /> : <ExpandLess />}
+        </IconButton>
+        <Button onClick={setMessagesConsole} className={classes.button}>
+          <p
             style={{
-              display: props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? 'block' : 'none'
+              borderBottom: props.expandConsole && !problemsView ? '1px solid white' : 'none',
+              margin: '0'
             }}
-          />
-          {props.consoleMessages.length > 0 && !props.warningCount && !props.errorCount ? `Success!` : ''}
+          >
+            Console
+          </p>
+        </Button>
+        <Button onClick={setProblemsConsole} className={classes.problemsButton}>
+          <p
+            style={{
+              borderBottom:
+                props.expandConsole && problemsView
+                  ? `1px solid ${!props.problemCount ? 'white' : props.problemColor}`
+                  : 'none',
+              margin: '0'
+            }}
+          >
+            Problems
+          </p>
+          <div
+            className={classes.circle}
+            style={{ borderColor: `${!props.problemCount ? 'white' : props.problemColor}` }}
+          >
+            {props.problemCount}
+          </div>
         </Button>
       </Box>
       <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
-        {props.consoleMessages.map((message, i) => {
-          return (
-            <pre key={i} className={classes.pre}>
-              {message}
-            </pre>
-          );
-        })}
+        {problemsView
+          ? props.problemMessages.map((message, i) => {
+              return (
+                <pre key={i} className={classes.pre}>
+                  {message}
+                </pre>
+              );
+            })
+          : props.consoleMessages.map((message, i) => {
+              return (
+                <pre key={i} className={classes.pre}>
+                  {message}
+                </pre>
+              );
+            })}
       </Box>
     </>
   );

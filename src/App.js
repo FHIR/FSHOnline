@@ -115,26 +115,28 @@ export const theme = createMuiTheme({
 
 const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
 const log = console.log; //eslint-disable-line no-unused-vars
-let consoleMessages = [];
+const defaultInfoMessage = 'There are no messages to display in the console.';
+const defaultProblemMessage = 'There are no problems to display in the console.';
+let infoMessages = [defaultInfoMessage];
+let problemMessages = [defaultProblemMessage];
+let problemCount = 0;
+let problemColor = '#FDD835'; // Default yellow color for warnings
 let exampleMetadata = {};
-let errorString = '';
-let warningString = '';
-let errorCount = 0;
-let warningCount = 0;
 console.log = function getMessages(message) {
-  consoleMessages.push(message);
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
-    if (message.startsWith('error')) errorCount++;
-    else warningCount++;
+    if (problemMessages[0] === defaultProblemMessage) {
+      problemMessages = [];
+    }
+    problemCount++;
+    problemMessages.push(message);
+    if (message.startsWith('error')) {
+      problemColor = '#FD6668';
+    }
   }
-  if (errorCount > 0) {
-    errorString = `${errorCount} Error`;
-    if (errorCount !== 1) errorString += 's';
+  if (infoMessages[0] === defaultInfoMessage) {
+    infoMessages = [];
   }
-  if (warningCount > 0) {
-    warningString = `${warningCount} Warning`;
-    if (warningCount !== 1) warningString += 's';
-  }
+  infoMessages.push(message);
 };
 
 /* 
@@ -251,11 +253,10 @@ export default function App(props) {
   }, [urlParam]);
 
   function resetLogMessages() {
-    consoleMessages = [];
-    errorString = '';
-    warningString = '';
-    errorCount = 0;
-    warningCount = 0;
+    infoMessages = [defaultInfoMessage];
+    problemMessages = [defaultProblemMessage];
+    problemCount = 0;
+    problemColor = '#FDD835';
   }
 
   function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
@@ -458,9 +459,10 @@ export default function App(props) {
         </div>
         <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
           <ConsoleComponent
-            consoleMessages={consoleMessages}
-            warningCount={warningString}
-            errorCount={errorString}
+            consoleMessages={infoMessages}
+            problemMessages={problemMessages}
+            problemCount={problemCount}
+            problemColor={problemColor}
             expandConsole={expandConsole}
             setExpandConsole={setExpandConsole}
           />
