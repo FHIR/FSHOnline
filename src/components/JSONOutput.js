@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FileSaver from 'file-saver';
 import { groupBy, isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -275,6 +276,21 @@ export default function JSONOutput(props) {
     setOpenDeleteConfirmation(false);
   };
 
+  const handleSave = (def, defaultName) => {
+    let resourceObj;
+    try {
+      resourceObj = JSON.parse(def);
+    } catch {
+      /* Ignore errors and just default to name without resourceType */
+    }
+    FileSaver.saveAs(
+      new Blob([def]),
+      resourceObj?.resourceType && resourceObj?.id
+        ? `${resourceObj.resourceType}-${resourceObj.id}.json`
+        : `${name}.json`
+    );
+  };
+
   const renderDeleteModal = () => {
     const defToDelete = fhirDefinitions[currentDef];
     if (!defToDelete) {
@@ -368,11 +384,12 @@ export default function JSONOutput(props) {
   };
 
   const displayValue = fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].def : null;
+  const name = `${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`;
 
   return (
     <>
       <CodeMirrorComponent
-        name={`FHIR JSON: ${fhirDefinitions.length > 0 ? fhirDefinitions[currentDef].id : 'Untitled'}`}
+        name={`FHIR JSON: ${name}`}
         value={displayValue}
         initialText={initialText}
         updateTextValue={updateTextValue}
@@ -385,6 +402,7 @@ export default function JSONOutput(props) {
         renderDrawer={renderDrawer}
         isExamples={false}
         delete={handleOpenDeleteConfirmation}
+        save={() => handleSave(displayValue, name)}
       />
       {openDeleteConfirmation && renderDeleteModal()}
     </>

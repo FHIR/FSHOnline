@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { PlayArrow, Settings } from '@material-ui/icons';
+import { PlayArrow, SaveAlt, Settings } from '@material-ui/icons';
 import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -290,6 +290,9 @@ export default function FSHControls(props) {
       </div>
 
       <div className={classes.rightControls}>
+        <Button name="SaveAll" className={classes.secondaryButton} onClick={props.saveAll}>
+          <SaveAlt /> Save All
+        </Button>
         <Button name="Configuration" className={classes.secondaryButton} onClick={handleOpenConfig}>
           <Settings /> Configuration
         </Button>

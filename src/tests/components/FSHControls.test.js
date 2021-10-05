@@ -298,6 +298,15 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   });
 });
 
+it('should call saveAll when clicking Save All', () => {
+  const mockSaveAll = jest.fn();
+  const { getByRole } = render(<FSHControls saveAll={mockSaveAll} exampleConfig={[]} />, container);
+
+  const saveAllButton = getByRole('button', { name: /Save All/i });
+  fireEvent.click(saveAllButton);
+  expect(mockSaveAll).toHaveBeenCalledTimes(1);
+});
+
 it('should not call runSUSHI while waiting for SUSHI or GoFSH', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();

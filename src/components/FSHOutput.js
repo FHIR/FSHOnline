@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FileSaver from 'file-saver';
 import CodeMirrorComponent from './CodeMirrorComponent';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 
@@ -14,6 +15,10 @@ export default function FSHOutput(props) {
     props.setInitialText('');
   };
 
+  const handleSave = () => {
+    FileSaver.saveAs(new Blob([props.text]), 'FSH.fsh');
+  };
+
   return (
     <>
       <CodeMirrorComponent
@@ -25,6 +30,7 @@ export default function FSHOutput(props) {
         mode={'fsh'}
         placeholder={props.isWaiting ? 'Loading...' : 'Paste or edit FSH here...'}
         delete={handleOpenDeleteModal}
+        save={handleSave}
         config={props.config}
       />
       {openDeleteModal && (
