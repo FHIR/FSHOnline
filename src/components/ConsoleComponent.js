@@ -71,7 +71,6 @@ export default function Console(props) {
   }, [problemCount, setExpandConsole]);
 
   const toggleExpandConsole = () => {
-    setProblemsView(false);
     props.setExpandConsole(!props.expandConsole);
   };
 
