@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, IconButton } from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
@@ -59,9 +59,18 @@ const useStyles = makeStyles((theme) => ({
 export default function Console(props) {
   const classes = useStyles();
   const [problemsView, setProblemsView] = useState(false);
+  const { problemCount, setExpandConsole } = props;
+
+  useEffect(() => {
+    // When props.problemCount changes and if there is a problem, make sure to open the console.
+    // If the problemCount is 0, we don't need to open it.
+    // The console should be able to be closed, so don't track whether the props.expandConsole value has changed.
+    if (problemCount) {
+      setExpandConsole(true);
+    }
+  }, [problemCount, setExpandConsole]);
 
   const toggleExpandConsole = () => {
-    setProblemsView(false);
     props.setExpandConsole(!props.expandConsole);
   };
 
