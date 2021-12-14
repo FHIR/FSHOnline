@@ -2,6 +2,7 @@ import { runSUSHI, runGoFSH } from '../../utils/FSHHelpers';
 import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
+import Quantity from './fixtures/StructureDefinition-Quantity.json';
 import 'fake-indexeddb/auto';
 
 const defaultConfig = {
@@ -43,6 +44,25 @@ describe('#runSUSHI', () => {
     const outPackage = await runSUSHI(text, defaultConfig);
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
     expect(outPackage.profiles).toHaveLength(1);
+  });
+
+  it('should not return inline instances in the output package', async () => {
+    const loadAndCleanDBSpy = jest
+      .spyOn(processing, 'loadAndCleanDatabase')
+      .mockReset()
+      .mockImplementation((defs, deps) => {
+        // Add necessary FHIR definitions to defs
+        defs.add(Patient);
+        defs.add(StructureDefinition);
+        defs.add(Quantity);
+        return Promise.resolve(defs);
+      });
+    const text =
+      'Instance: ZeroScore\nInstanceOf: Quantity\nUsage: #inline\n* value = 0\n* code = #{score}\n* system = "http://unitsofmeasure.org"\n* unit = "Punktwert"' +
+      '\n\nInstance: JohnDoe\nInstanceOf: Patient\n* name.given = "John"\n* name.family = "Doe"';
+    const outPackage = await runSUSHI(text, defaultConfig);
+    expect(loadAndCleanDBSpy).toHaveBeenCalled();
+    expect(outPackage.instances).toHaveLength(1);
   });
 
   it('should return an empty package when fillTank does not execute properly', async () => {
