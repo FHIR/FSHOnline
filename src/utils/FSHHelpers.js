@@ -111,6 +111,19 @@ export async function runSUSHI(input, config, dependencyArr) {
   logger.info('Converting FSH to FHIR resources...');
   const outPackage = exportFHIR(tank, defs);
 
+  const count =
+    outPackage.profiles.length +
+    outPackage.extensions.length +
+    outPackage.logicals.length +
+    outPackage.resources.length +
+    // Don't count the inline instances that won't have their own JSON output
+    // but do include them in the SUSHI Results box (so don't filter out of outPackage here)
+    outPackage.instances.filter((i) => i._instanceMeta.usage !== 'Inline').length +
+    outPackage.valueSets.length +
+    outPackage.codeSystems.length;
+
+  logger.info(`Exported ${count} FHIR resources as JSON.`);
+
   console.log(' ');
   printSUSHIResults(outPackage);
 
@@ -119,6 +132,9 @@ export async function runSUSHI(input, config, dependencyArr) {
   outPackage.extensions = outPackage.extensions.map((e) => e.toJSON(false));
   outPackage.logicals = outPackage.logicals.map((l) => l.toJSON(false));
   outPackage.resources = outPackage.resources.map((r) => r.toJSON(false));
+
+  // Filter out inline instances
+  outPackage.instances = outPackage.instances.filter((i) => i._instanceMeta.usage !== 'Inline');
 
   return outPackage;
 }
