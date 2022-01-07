@@ -7,41 +7,46 @@ const logger = utils.logger;
 export function unzipDependencies(resources, dependency, id) {
   let returnPackage = { resourceArr: resources, emptyDependencies: [] };
   return new Promise((resolve) => {
-    http.get(`https://packages.fhir.org/${dependency}/${id}`, function (res) {
-      const extract = tarStream.extract();
-      // Unzip files
-      extract.on('entry', function (header, stream, next) {
-        let buf = '';
-        stream.on('data', function (chunk) {
-          buf += chunk.toString();
+    http
+      .get(`https://packages.fhir.org/${dependency}/${id}`, function (res) {
+        const extract = tarStream.extract();
+        // Unzip files
+        extract.on('entry', function (header, stream, next) {
+          let buf = '';
+          stream.on('data', function (chunk) {
+            buf += chunk.toString();
+          });
+          stream.on('end', function () {
+            try {
+              const resource = JSON.parse(buf);
+              if (resource.resourceType) {
+                returnPackage.resourceArr.push(resource);
+              }
+            } catch {} //eslint-disable-line no-empty
+            next();
+          });
+          stream.resume();
         });
-        stream.on('end', function () {
-          try {
-            const resource = JSON.parse(buf);
-            if (resource.resourceType) {
-              returnPackage.resourceArr.push(resource);
-            }
-          } catch {} //eslint-disable-line no-empty
-          next();
+        extract.on('finish', function () {
+          resolve(returnPackage);
         });
-        stream.resume();
-      });
-      extract.on('finish', function () {
-        resolve(returnPackage);
-      });
-      if (res.statusCode < 400) {
-        res.pipe(zlib.createGunzip()).pipe(extract);
-        logger.info(`Downloaded ${dependency}#${id}`);
-      } else {
-        if (id === 'current' || id === 'dev') {
-          logger.error(`FSHOnline does not currently support "current" or "dev" package versions`);
+        if (res.statusCode < 400) {
+          res.pipe(zlib.createGunzip()).pipe(extract);
+          logger.info(`Downloaded ${dependency}#${id}`);
         } else {
-          logger.error(`your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
-          returnPackage.emptyDependencies.push(`${dependency}${id}`);
+          if (id === 'current' || id === 'dev') {
+            logger.error(`FSHOnline does not currently support "current" or "dev" package versions`);
+          } else {
+            logger.error(`Your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+            returnPackage.emptyDependencies.push(`${dependency}${id}`);
+          }
+          resolve(returnPackage);
         }
+      })
+      .on('error', (e) => {
+        logger.error('An error occurred while downloading FHIR packages. Your output may be invalid: ', e);
         resolve(returnPackage);
-      }
-    });
+      });
   });
 }
 
