@@ -1,13 +1,13 @@
 import tarStream from 'tar-stream';
 import zlib from 'zlib';
-import http from 'http';
+import https from 'https';
 import { utils } from 'fsh-sushi';
 const logger = utils.logger;
 
 export function unzipDependencies(resources, dependency, id) {
   let returnPackage = { resourceArr: resources, emptyDependencies: [] };
   return new Promise((resolve) => {
-    http
+    https
       .get(`https://packages.fhir.org/${dependency}/${id}`, function (res) {
         const extract = tarStream.extract();
         // Unzip files
@@ -45,6 +45,7 @@ export function unzipDependencies(resources, dependency, id) {
       })
       .on('error', (e) => {
         logger.error('An error occurred while downloading FHIR packages. Your output may be invalid: ', e);
+        returnPackage.emptyDependencies.push(`${dependency}${id}`);
         resolve(returnPackage);
       });
   });
