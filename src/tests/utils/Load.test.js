@@ -1,38 +1,56 @@
 import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs } from '../../utils/Load';
 import { fhirdefs } from 'fsh-sushi';
-import http from 'http';
+import path from 'path';
+import nock from 'nock';
 import 'fake-indexeddb/auto';
 
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 
 describe('#unzipDependencies', () => {
-  let getSpy = jest.SpyInstance;
-  let resources = [];
-
   beforeAll(() => {
-    resources = [];
-    getSpy = jest.spyOn(http, 'get').mockImplementation(() => {
-      return 'hl7.fhir.r4.core-4.0.1.tgz';
-    });
+    nock.disableNetConnect();
   });
 
-  beforeEach(() => {
-    getSpy.mockClear();
+  afterAll(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
   });
 
-  it('should make an http request and extract data from the resulting zip folder', () => {
-    unzipDependencies(resources, 'hl7.fhir.r4.core', '4.0.1');
-    const callbackFunction = getSpy.mock.calls[0][1];
-    expect(getSpy).toBeCalled();
-    expect(getSpy).toBeCalledWith('https://packages.fhir.org/hl7.fhir.r4.core/4.0.1', callbackFunction);
+  it('should make an http request and extract data from the resulting zip file', async () => {
+    const scope = nock('https://packages.fhir.org')
+      .get('/hl7.fhir.r4.core/4.0.1')
+      .replyWithFile(200, path.join(__dirname, 'fixtures', 'hl7.fhir.r4.fake-4.0.1.tgz'), {
+        'Content-Type': 'application/tar+gzip'
+      });
+    const resources = [];
+    const results = await unzipDependencies(resources, 'hl7.fhir.r4.core', '4.0.1');
+    expect(results).toBeDefined();
+    expect(results.resourceArr).toHaveLength(2);
+    expect(results.emptyDependencies).toHaveLength(0);
+    expect(resources).toHaveLength(2);
+    scope.done(); // will throw if the nocked URL was never requested
   });
 
-  it('should add failed http requests to a list of emptyDependencies', async () => {
-    const unzipPromise = unzipDependencies(resources, 'hello', '123');
-    const callbackFunction = getSpy.mock.calls[0][1];
-    callbackFunction({ statusCode: 404 });
-    expect(getSpy).toBeCalled();
-    await expect(unzipPromise).resolves.toEqual({ emptyDependencies: ['hello123'], resourceArr: resources });
+  it('should add failed http requests (HTTP 404) to a list of emptyDependencies', async () => {
+    const scope = nock('https://packages.fhir.org').get('/hello/123').reply(404, 'Not Found');
+    const resources = [];
+    const results = await unzipDependencies(resources, 'hello', '123');
+    expect(results).toBeDefined();
+    expect(results.resourceArr).toHaveLength(0);
+    expect(results.emptyDependencies).toEqual(['hello123']);
+    expect(resources).toHaveLength(0);
+    scope.done(); // will throw if the nocked URL was never requested
+  });
+
+  it('should add failed http requests (error) to a list of emptyDependencies', async () => {
+    const scope = nock('https://packages.fhir.org').get('/badcert/1').replyWithError('Certificate Error');
+    const resources = [];
+    const results = await unzipDependencies(resources, 'badcert', '1');
+    expect(results).toBeDefined();
+    expect(results.resourceArr).toHaveLength(0);
+    expect(results.emptyDependencies).toEqual(['badcert1']);
+    expect(resources).toHaveLength(0);
+    scope.done(); // will throw if the nocked URL was never requested
   });
 });
 
