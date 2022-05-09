@@ -85,7 +85,13 @@ CodeMirror.defineSimpleMode('fsh', {
       regex: /'.*'/, // 'ucum'
       token: 'string'
     },
-    { regex: /\/\/.*/, token: 'comment' },
+    // The following two regex should be combined into: /(\s|^)\/\/.*/
+    // However, the ^ doesn't work as expected. See sol section: https://codemirror.net/demo/simplemode.html
+    // Instead, we break them into two separate cases:
+    // the comment is preceded by whitespace and the comment is at the start of a line.
+    { regex: /\s\/\/.*/, token: 'comment' },
+    { regex: /\/\/.*/, token: 'comment', sol: true },
+    // Start of multiline comment
     { regex: /\/\*/, token: 'comment', next: 'comment' }
   ],
   closingParen: [
