@@ -97,9 +97,19 @@ export default function ShareLink(props) {
 
   const handleOpenShare = async () => {
     let encoded;
-    if (props.config?.canonical || props.config?.version || props.config?.dependencies) {
+    if (
+      props.config?.canonical ||
+      props.config?.version ||
+      props.config?.fhirVersion.length > 0 ||
+      props.config?.dependencies
+    ) {
       encoded = deflateSync(
-        JSON.stringify({ c: props.config?.canonical, v: props.config?.version, d: props.config?.dependencies }) +
+        JSON.stringify({
+          c: props.config?.canonical,
+          v: props.config?.version,
+          f: props.config?.fhirVersion,
+          d: props.config?.dependencies
+        }) +
           '\n' +
           props.shareText
       ).toString('base64');
