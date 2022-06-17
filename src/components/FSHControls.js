@@ -357,7 +357,12 @@ export default function FSHControls(props) {
             <InputLabel id="fhir-version-select-label">FHIR Version</InputLabel>
             <Select id="fhir-versino-select" label="FHIR Version" value={fhirVersion} onChange={updateFhirVersion}>
               <MenuItem value={'4.0.1'}>4.0.1</MenuItem>
+              <MenuItem value={'4.0.0'}>4.0.0</MenuItem>
+              <MenuItem value={'4.1.0'}>4.1.0</MenuItem>
+              <MenuItem value={'4.3.0'}>4.3.0</MenuItem>
               <MenuItem value={'5.0.0'}>5.0.0</MenuItem>
+              <MenuItem value={'5.0.0-snapshot1'}>5.0.0-snapshot1</MenuItem>
+              <MenuItem value={'5.5.0'}>5.5.0</MenuItem>
             </Select>
             <FormHelperText>Default: 4.0.1</FormHelperText>
           </FormControl>

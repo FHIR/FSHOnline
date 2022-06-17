@@ -134,7 +134,23 @@ export async function loadExternalDependencies(
           shouldUnzip = true;
         }
         if (shouldUnzip) {
-          let unzipReturn = await unzipDependencies(resources, dependency, id);
+          let unzipReturn = await unzipDependencies(
+            resources,
+            dependency,
+            id,
+            `https://packages.fhir.org/${dependency}/${id}`
+          );
+          if (unzipReturn.emptyDependencies.length > 0 && unzipReturn.resourceArr.length === 0) {
+            unzipReturn = await unzipDependencies(
+              resources,
+              dependency,
+              id,
+              `https://packages2.fhir.org/packages/${dependency}/${id}`
+            );
+          }
+          if (unzipReturn.emptyDependencies.length > 0 && unzipReturn.resourceArr.length === 0) {
+            logger.error(`Your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
+          }
           if (unzipReturn.emptyDependencies.length !== 0) {
             returnPackage.emptyDependencies.push(unzipReturn.emptyDependencies);
           }
