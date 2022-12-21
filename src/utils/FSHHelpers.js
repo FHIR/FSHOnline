@@ -60,7 +60,7 @@ export async function runGoFSH(input, options) {
   defs = await loadAndCleanDatabase(defs, dependencies);
 
   // Process the FHIR to rules, and then export to FSH
-  const pkg = await gofshUtils.getResources(fhirProcessor, configuration);
+  const pkg = await gofshUtils.getResources(fhirProcessor, configuration, { indent: options.indent });
 
   // Return the string of FSH definitions
   const fsh = new gofshExport.FSHExporter(pkg).apiExport('string');

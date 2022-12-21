@@ -4,6 +4,7 @@ import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
 import Quantity from './fixtures/StructureDefinition-Quantity.json';
 import 'fake-indexeddb/auto';
+import { EOL } from 'os';
 
 const defaultConfig = {
   canonical: 'http://example.org',
@@ -112,7 +113,7 @@ describe('#runGoFSH', () => {
         // Don't add any FHIR definitions to defs
         return Promise.resolve(defs);
       });
-    const expectedFSH = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example'].join('\n');
+    const expectedFSH = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example'].join(EOL);
     const expectedConfig = {
       FSHOnly: true,
       applyExtensionMetadataToRoot: false,
@@ -145,7 +146,7 @@ describe('#runGoFSH', () => {
       '* name.family = "Smith"',
       '* name.given = "Jane"',
       '* gender = #female'
-    ].join('\n');
+    ].join(EOL);
     const expectedConfig = {
       FSHOnly: true,
       applyExtensionMetadataToRoot: false,
@@ -156,6 +157,60 @@ describe('#runGoFSH', () => {
     };
 
     const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
+
+    expect(loadAndCleanDBSpy).toHaveBeenCalled();
+    expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
+  });
+
+  it('should return indented FSH when the indent option is true', async () => {
+    const patientWithExtensionDef = {
+      resourceType: 'Patient',
+      id: 'MyPatient',
+      name: [
+        {
+          given: ['Jane'],
+          family: 'Smith',
+          _family: {
+            extension: [
+              {
+                url: 'http://example.org/StructureDefinition/family-extension',
+                valueString: 'Extension value'
+              }
+            ]
+          }
+        }
+      ]
+    };
+    const dependencies = [];
+    const loadAndCleanDBSpy = jest
+      .spyOn(processing, 'loadAndCleanDatabase')
+      .mockReset()
+      .mockImplementation((defs, deps) => {
+        // Add necessary FHIR definitions to defs
+        defs.add(Patient);
+        defs.add(StructureDefinition);
+        return Promise.resolve(defs);
+      });
+
+    const expectedFSH = [
+      'Instance: MyPatient',
+      'InstanceOf: Patient',
+      'Usage: #example',
+      '* name.given = "Jane"',
+      '* name.family = "Smith"',
+      '  * extension.url = "http://example.org/StructureDefinition/family-extension"',
+      '  * extension.valueString = "Extension value"'
+    ].join(EOL);
+    const expectedConfig = {
+      FSHOnly: true,
+      applyExtensionMetadataToRoot: false,
+      canonical: 'http://example.org',
+      fhirVersion: ['4.0.1'],
+      id: 'example',
+      name: 'Example'
+    };
+
+    const outputFSH = await runGoFSH([JSON.stringify(patientWithExtensionDef)], { dependencies, indent: true });
 
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
     expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
