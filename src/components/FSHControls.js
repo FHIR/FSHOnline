@@ -343,8 +343,8 @@ export default function FSHControls(props) {
             margin="dense"
             fullwidth
             control={<Checkbox checked={isGoFSHIndented} />}
-            label="Indent GoFSH output"
-            helperText="If set, GoFSH will output FSH using path rules"
+            label="Indent output of Convert to FSH"
+            helperText="If set, Convert to FSH will output FSH using path rules"
             onChange={updateIsGoFSHIndented}
           />
         </DialogContent>
