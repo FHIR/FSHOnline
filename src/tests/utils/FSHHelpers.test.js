@@ -215,4 +215,58 @@ describe('#runGoFSH', () => {
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
     expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
   });
+
+  it('should return unindented FSH when the indent option is false', async () => {
+    const patientWithExtensionDef = {
+      resourceType: 'Patient',
+      id: 'MyPatient',
+      name: [
+        {
+          given: ['Jane'],
+          family: 'Smith',
+          _family: {
+            extension: [
+              {
+                url: 'http://example.org/StructureDefinition/family-extension',
+                valueString: 'Extension value'
+              }
+            ]
+          }
+        }
+      ]
+    };
+    const dependencies = [];
+    const loadAndCleanDBSpy = jest
+      .spyOn(processing, 'loadAndCleanDatabase')
+      .mockReset()
+      .mockImplementation((defs, deps) => {
+        // Add necessary FHIR definitions to defs
+        defs.add(Patient);
+        defs.add(StructureDefinition);
+        return Promise.resolve(defs);
+      });
+
+    const expectedFSH = [
+      'Instance: MyPatient',
+      'InstanceOf: Patient',
+      'Usage: #example',
+      '* name.given = "Jane"',
+      '* name.family = "Smith"',
+      '* name.family.extension.url = "http://example.org/StructureDefinition/family-extension"',
+      '* name.family.extension.valueString = "Extension value"'
+    ].join(EOL);
+    const expectedConfig = {
+      FSHOnly: true,
+      applyExtensionMetadataToRoot: false,
+      canonical: 'http://example.org',
+      fhirVersion: ['4.0.1'],
+      id: 'example',
+      name: 'Example'
+    };
+
+    const outputFSH = await runGoFSH([JSON.stringify(patientWithExtensionDef)], { dependencies, indent: false });
+
+    expect(loadAndCleanDBSpy).toHaveBeenCalled();
+    expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
+  });
 });

@@ -222,7 +222,7 @@ it('calls GoFSH with the indent option if the configuration checkbox is checked'
 
   const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
-  const indentCheckbox = getByLabelText('Indent GoFSH output');
+  const indentCheckbox = getByLabelText('Indent output of Convert to FSH');
   expect(indentCheckbox).not.toBeChecked();
   fireEvent.click(indentCheckbox);
   const button = document.querySelector('[testid=GoFSH-button]');

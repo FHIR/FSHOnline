@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, SaveAlt, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, Tooltip, FormControlLabel } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, Tooltip, FormControlLabel, FormHelperText } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
@@ -341,12 +341,11 @@ export default function FSHControls(props) {
           <FormControlLabel
             id="goFSHIndent"
             margin="dense"
-            fullwidth
-            control={<Checkbox checked={isGoFSHIndented} />}
+            control={<Checkbox checked={isGoFSHIndented} color="primary" />}
             label="Indent output of Convert to FSH"
-            helperText="If set, Convert to FSH will output FSH using path rules"
             onChange={updateIsGoFSHIndented}
           />
+          <FormHelperText>If set, Convert to FSH will output FSH using path rules</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
