@@ -196,10 +196,12 @@ describe('#runGoFSH', () => {
       'Instance: MyPatient',
       'InstanceOf: Patient',
       'Usage: #example',
-      '* name.given = "Jane"',
-      '* name.family = "Smith"',
-      '  * extension.url = "http://example.org/StructureDefinition/family-extension"',
-      '  * extension.valueString = "Extension value"'
+      '* name',
+      '  * given = "Jane"',
+      '  * family = "Smith"',
+      '    * extension',
+      '      * url = "http://example.org/StructureDefinition/family-extension"',
+      '      * valueString = "Extension value"'
     ].join(EOL);
     const expectedConfig = {
       FSHOnly: true,
