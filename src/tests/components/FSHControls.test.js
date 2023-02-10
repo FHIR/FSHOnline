@@ -136,7 +136,10 @@ it('calls GoFSH function and returns FSH', async () => {
 
   await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
-    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], { dependencies: [] }); // No IG resource added because canonical and version set to defaults
+    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
+      dependencies: [],
+      indent: false
+    }); // No IG resource added because canonical and version set to defaults
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
     expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
@@ -189,8 +192,50 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalledWith(
       [JSON.stringify(examplePatient, null, 2), JSON.stringify(expectedIgResource, null, 2)], // Adds IG resource with canonical and version
-      { dependencies: [] }
+      { dependencies: [], indent: false }
     );
+    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
+    expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+  });
+});
+
+it('calls GoFSH with the indent option if the configuration checkbox is checked', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
+  const { getByRole, getByLabelText } = render(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+    />,
+    container
+  );
+
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const indentCheckbox = getByLabelText('Indent output of Convert to FSH');
+  expect(indentCheckbox).not.toBeChecked();
+  fireEvent.click(indentCheckbox);
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await waitFor(() => {
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
+    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
+      dependencies: [],
+      indent: true
+    }); // No IG resource added because canonical and version set to defaults
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
     expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);

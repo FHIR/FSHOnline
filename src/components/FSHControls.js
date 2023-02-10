@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlayArrow, SaveAlt, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, Tooltip } from '@material-ui/core';
+import { Box, Button, CircularProgress, Grid, Tooltip, FormControlLabel, FormHelperText } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -92,6 +93,7 @@ export default function FSHControls(props) {
   const [canonical, setCanonical] = useState('');
   const [version, setVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
+  const [isGoFSHIndented, setIsGoFSHIndented] = useState(false);
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
   const [isFetchingExample, setIsFetchingExample] = useState(false);
@@ -119,7 +121,7 @@ export default function FSHControls(props) {
 
   const handleCloseConfig = () => {
     setOpenConfig(false);
-    props.onConfigChange({ canonical, version, dependencies });
+    props.onConfigChange({ canonical, version, dependencies, isGoFSHIndented });
   };
 
   const updateCanonical = (event) => {
@@ -135,6 +137,11 @@ export default function FSHControls(props) {
   const updateDependencyString = (event) => {
     const dependencyString = event.target.value;
     setDependencies(dependencyString);
+  };
+
+  const updateIsGoFSHIndented = (event) => {
+    const isIndented = event.target.checked;
+    setIsGoFSHIndented(isIndented);
   };
 
   async function handleSUSHIClick() {
@@ -199,7 +206,7 @@ export default function FSHControls(props) {
       gofshInputStrings.push(JSON.stringify(igResource, null, 2));
     }
 
-    const options = { dependencies: parsedDependencies };
+    const options = { dependencies: parsedDependencies, indent: isGoFSHIndented };
     const { fsh, config } = await runGoFSH(gofshInputStrings, options);
     props.onGoFSHClick(fsh, false);
     setIsGoFSHRunning(false);
@@ -331,6 +338,14 @@ export default function FSHControls(props) {
             defaultValue={dependencies}
             onChange={updateDependencyString}
           />
+          <FormControlLabel
+            id="goFSHIndent"
+            margin="dense"
+            control={<Checkbox checked={isGoFSHIndented} color="primary" />}
+            label="Indent output of Convert to FSH"
+            onChange={updateIsGoFSHIndented}
+          />
+          <FormHelperText>If set, Convert to FSH will output FSH using path rules</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
