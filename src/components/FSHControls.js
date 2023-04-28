@@ -20,13 +20,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
   FormControlLabel,
   FormHelperText,
   Grid,
-  InputLabel,
   MenuItem,
-  Select,
   Tooltip,
   TextField
 } from '@material-ui/core';
@@ -353,25 +350,25 @@ export default function FSHControls(props) {
             defaultValue={version}
             onChange={updateVersion}
           />
-          <FormControl fullWidth margin="dense">
-            <InputLabel id="fhir-version-select-label">FHIR Version</InputLabel>
-            <Select id="fhir-versino-select" label="FHIR Version" value={fhirVersion} onChange={updateFhirVersion}>
-              <MenuItem value={'4.0.1'}>4.0.1</MenuItem>
-              <MenuItem value={'4.0.0'}>4.0.0</MenuItem>
-              <MenuItem value={'4.1.0'}>4.1.0</MenuItem>
-              <MenuItem value={'4.3.0'}>4.3.0</MenuItem>
-              <MenuItem value={'5.0.0'}>5.0.0</MenuItem>
-              <MenuItem value={'5.0.0-snapshot1'}>5.0.0-snapshot1</MenuItem>
-              <MenuItem value={'5.5.0'}>5.5.0</MenuItem>
-            </Select>
-            <FormHelperText>Default: 4.0.1</FormHelperText>
-          </FormControl>
+          <TextField
+            id="fhir-version-select"
+            margin="dense"
+            fullWidth
+            select
+            label="FHIR Version"
+            helperText="Default: 4.0.1 (R4)"
+            value={fhirVersion}
+            onChange={updateFhirVersion}
+          >
+            <MenuItem value={'4.0.1'}>4.0.1 (R4)</MenuItem>
+            <MenuItem value={'4.3.0'}>4.3.0 (R4B)</MenuItem>
+          </TextField>
           <TextField
             id="dependencies"
             margin="dense"
             fullWidth
             label="Dependencies"
-            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#3.1.1)"
+            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#5.0.1)"
             defaultValue={dependencies}
             onChange={updateDependencyString}
           />

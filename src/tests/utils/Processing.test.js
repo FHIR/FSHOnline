@@ -91,7 +91,7 @@ describe('#loadExternalDependencies()', () => {
   it('should log an error when it fails to make the database', () => {
     const defs = new FHIRDefinitions();
     const version = -1;
-    const dependencyDefs = loadExternalDependencies(defs, version, []);
+    const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
     return expect(dependencyDefs).rejects.toThrow(TypeError);
   });
 
@@ -107,7 +107,7 @@ describe('#loadExternalDependencies()', () => {
     const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
       return undefined;
     });
-    const dependencyDefs = loadExternalDependencies(defs, version, []);
+    const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
     await dependencyDefs;
     expect(unzipSpy).toBeCalled();
     expect(loadInStorageSpy).toBeCalled();
@@ -128,7 +128,7 @@ describe('#loadExternalDependencies()', () => {
     });
     const dbRequest = indexedDB.open('FSH Playground Dependencies', version);
     dbRequest.onsuccess = async () => {
-      const dependencyDefs = loadExternalDependencies(defs, version, []);
+      const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
       await dependencyDefs;
       expect(unzipSpy).toBeCalledTimes(0);
       expect(loadInStorageSpy).toBeCalledTimes(0);
@@ -167,7 +167,7 @@ describe('#loadExternalDependencies()', () => {
     });
 
     // This call should upgrade our database and delete the 'resources' objectStore
-    await loadExternalDependencies(defs, version + 1, [], 'Test Database Resources');
+    await loadExternalDependencies(defs, version + 1, [['hl7.fhir.r4.core', '4.0.1']], 'Test Database Resources');
 
     // Reopen the database to update our existingObjectStores variable
     await new Promise((resolve) => {
@@ -198,7 +198,7 @@ describe('#loadExternalDependencies()', () => {
     const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
       return undefined;
     });
-    const dependencyDefs = await loadExternalDependencies(defs, version, [], true);
+    const dependencyDefs = await loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']], true);
     expect(dependencyDefs).toEqual({ finalDefs: undefined, emptyDependencies: [['hello#123']] });
     expect(unzipSpy).toBeCalled();
     expect(loadInStorageSpy).toBeCalled();

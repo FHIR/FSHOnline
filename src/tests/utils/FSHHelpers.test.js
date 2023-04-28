@@ -1,4 +1,4 @@
-import { runSUSHI, runGoFSH, getCoreFHIRPackageIdentifier, isSupportedFHIRVersion } from '../../utils/FSHHelpers';
+import { runSUSHI, runGoFSH, getCoreFHIRPackageIdentifier } from '../../utils/FSHHelpers';
 import * as processing from '../../utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
@@ -274,44 +274,18 @@ describe('#runGoFSH', () => {
 });
 
 describe('getCoreFHIRPackageIdentifier', () => {
-  it('should recognize FHIR R4 version numbers', () => {
-    const packageId1 = getCoreFHIRPackageIdentifier('4.0.1');
-    const packageId2 = getCoreFHIRPackageIdentifier('4.0.0');
-    expect(packageId1).toBe('hl7.fhir.r4.core#4.0.1');
-    expect(packageId2).toBe('hl7.fhir.r4.core#4.0.0');
+  it('should recognize FHIR R4 version', () => {
+    const packageId = getCoreFHIRPackageIdentifier('4.0.1');
+    expect(packageId).toBe('hl7.fhir.r4.core');
   });
 
-  it('should recognize FHIR R4B version numbers', () => {
-    const packageId1 = getCoreFHIRPackageIdentifier('4.1.0');
-    const packageId2 = getCoreFHIRPackageIdentifier('4.3.0');
-    expect(packageId1).toBe('hl7.fhir.r4b.core#4.1.0');
-    expect(packageId2).toBe('hl7.fhir.r4b.core#4.3.0');
+  it('should recognize FHIR R4B version', () => {
+    const packageId = getCoreFHIRPackageIdentifier('4.3.0');
+    expect(packageId).toBe('hl7.fhir.r4b.core');
   });
 
-  it('should recognize FHIR R5 version numbers', () => {
-    const packageId1 = getCoreFHIRPackageIdentifier('5.0.0');
-    const packageId2 = getCoreFHIRPackageIdentifier('5.5.0');
-    expect(packageId1).toBe('hl7.fhir.r5.core#5.0.0');
-    expect(packageId2).toBe('hl7.fhir.r5.core#5.5.0');
-  });
-});
-
-describe('#isSupportedFHIRVersion', () => {
-  it('should support published version >= 4.0.1', () => {
-    expect(isSupportedFHIRVersion('4.0.1')).toBe(true);
-    expect(isSupportedFHIRVersion('4.2.0')).toBe(true);
-    expect(isSupportedFHIRVersion('4.4.0')).toBe(true);
-    expect(isSupportedFHIRVersion('4.5.0')).toBe(true);
-  });
-
-  it('should support current version', () => {
-    expect(isSupportedFHIRVersion('current')).toBe(true);
-  });
-
-  it('should not support published versions < 4.0.1', () => {
-    expect(isSupportedFHIRVersion('4.0.0')).toBe(false);
-    expect(isSupportedFHIRVersion('3.0.2')).toBe(false);
-    expect(isSupportedFHIRVersion('1.0.2')).toBe(false);
-    expect(isSupportedFHIRVersion('0.0.82')).toBe(false);
+  it('should recognize FHIR R5 version', () => {
+    const packageId = getCoreFHIRPackageIdentifier('5.0.0');
+    expect(packageId).toBe('hl7.fhir.r5.core');
   });
 });

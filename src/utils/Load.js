@@ -4,11 +4,11 @@ import https from 'https';
 import { utils } from 'fsh-sushi';
 const logger = utils.logger;
 
-export function unzipDependencies(resources, dependency, id, url) {
+export function unzipDependencies(resources, dependency, id) {
   let returnPackage = { resourceArr: resources, emptyDependencies: [] };
   return new Promise((resolve) => {
     https
-      .get(url, function (res) {
+      .get(`https://packages.fhir.org/${dependency}/${id}`, function (res) {
         const extract = tarStream.extract();
         // Unzip files
         extract.on('entry', function (header, stream, next) {
@@ -37,6 +37,7 @@ export function unzipDependencies(resources, dependency, id, url) {
           if (id === 'current' || id === 'dev') {
             logger.error(`FSHOnline does not currently support "current" or "dev" package versions`);
           } else {
+            logger.error(`Your dependency ${dependency}#${id} could not be loaded. Your output may be invalid.`);
             returnPackage.emptyDependencies.push(`${dependency}${id}`);
           }
           resolve(returnPackage);

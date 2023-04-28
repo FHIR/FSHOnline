@@ -77,19 +77,19 @@ export async function runGoFSH(input, options) {
  * config.canonical: user set, defaults to http://example.org
  * config.version: user set, defaults to 1.0.0
  * config.FSHOnly: true
- * config.fhirVersion: [4.0.1]
+ * config.fhirVersion: [4.0.1] - NOTE fhirVersion array will only have one item in it
  *
  * @returns Package with FHIR resources
  */
-export async function runSUSHI(input, config, dependencyArr) {
+export async function runSUSHI(input, config, dependencyArr = []) {
   stats.reset();
 
   // Load dependencies
   let defs = new FHIRDefinitions();
-  const coreFHIRVersion = [getCoreFHIRPackageIdentifier(config.fhirVersion.at(0)), config.fhirVersion.at(0)];
+  const coreFHIRVersion = [getCoreFHIRPackageIdentifier(config.fhirVersion[0]), config.fhirVersion[0]];
   const coreFHIRDependencyIndex = findIndex(
     dependencyArr,
-    (elem) => elem[0] === coreFHIRVersion[0] && elem[1] === coreFHIRVersion[1]
+    (dep) => dep[0] === coreFHIRVersion[0] && dep[1] === coreFHIRVersion[1]
   );
   if (coreFHIRDependencyIndex < 0) {
     dependencyArr.push(coreFHIRVersion);
@@ -108,7 +108,7 @@ export async function runSUSHI(input, config, dependencyArr) {
 
   // Check for StructureDefinition
   const structDef = defs.fishForFHIR('StructureDefinition', Type.Resource);
-  if (structDef == null || !isSupportedFHIRVersion(structDef.version)) {
+  if (structDef?.version !== config.fhirVersion[0]) {
     logger.error(
       'StructureDefinition resource not found. The FHIR package in the browser cache' +
         ' may be corrupt. Clear cookies and site data on this webpage to reload the FHIR package.'
@@ -230,21 +230,13 @@ function printGoFSHresults(pkg) {
 }
 
 export function getCoreFHIRPackageIdentifier(fhirVersion) {
-  if (/^4\.0\./.test(fhirVersion)) {
+  if (/^4\.0\.1$/.test(fhirVersion)) {
     return `hl7.fhir.r4.core`;
-  } else if (/^(4\.1\.|4\.3.\d+-)/.test(fhirVersion)) {
-    return `hl7.fhir.r4b.core`;
   } else if (/^4\.3.\d+$/.test(fhirVersion)) {
     return `hl7.fhir.r4b.core`;
   } else if (/^5\.0.\d+$/.test(fhirVersion)) {
     return `hl7.fhir.r5.core`;
   } else {
-    return `hl7.fhir.r5.core`;
+    return `hl7.fhir.r4.core`;
   }
-}
-
-export function isSupportedFHIRVersion(version) {
-  // For now, allow current or any 4.x/5.x version of FHIR except 4.0.0. This is a quick check; not a guarantee.  If a user passes
-  // in an invalid version that passes this test (e.g., 4.99.0), it is still expected to fail when we load dependencies.
-  return version !== '4.0.0' && /^(current|[45]\.\d+.\d+(-.+)?)$/.test(version);
 }
