@@ -20,9 +20,9 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
  * If FhirToFsh ever supports a way to load dependencies in the browser,
  * we can update this to simply use that function.
  * @param {array} input array of JSON definitions to be processed
- * @param {object} options - config options for GoFSH based on user input and defaults
+ * @param {object} options config options for GoFSH based on user input and defaults
  * dependencies: user set, defaults to []
- * @param {FHIRDefinitions} testDefs - this should only be used by the unit tests so they can provide their own definitions.
+ * indent: user set, defaults to false
  * @returns {string} the FSH
  */
 export async function runGoFSH(input, options) {
@@ -50,12 +50,19 @@ export async function runGoFSH(input, options) {
   const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
 
   // Process the configuration
-  const configuration = fhirProcessor.processConfig(options.dependencies ?? []);
+  const goFSHDependencies = options.dependencies.map((d) => d.replace('#', '@')); // GoFSH expects a different format
+  const configuration = fhirProcessor.processConfig(goFSHDependencies ?? []); // The created IG files includes the user specified FHIR Version
 
   // Load dependencies, including those inferred from an IG file, and those given as input
   let dependencies = configuration?.config.dependencies
     ? configuration?.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
     : [];
+
+  const coreFhirVersion = configuration?.config.fhirVersion ?? '4.0.1';
+  const fhirVersionForDep = `${getCoreFHIRPackageIdentifier(coreFhirVersion)}#${coreFhirVersion}`;
+  if (!dependencies.some((d) => d === fhirVersionForDep)) {
+    dependencies.push(fhirVersionForDep);
+  }
   dependencies = sliceDependency(dependencies.join(','));
   defs = await loadAndCleanDatabase(defs, dependencies);
 

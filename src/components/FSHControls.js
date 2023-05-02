@@ -215,7 +215,7 @@ export default function FSHControls(props) {
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
 
     // Create small ImplementationGuide resource to send canonical and version information
-    if (canonical || version) {
+    if (canonical || version || fhirVersion !== '') {
       const igResource = {
         resourceType: 'ImplementationGuide',
         fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1'],
