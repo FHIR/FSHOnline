@@ -1,6 +1,6 @@
 import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
 import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
-import { findIndex, flatten } from 'lodash';
+import { flatten } from 'lodash';
 
 const logger = utils.logger;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
@@ -125,10 +125,6 @@ export async function loadExternalDependencies(
     // If successful the database exists
     OpenIDBRequest.onsuccess = async function (event) {
       database = event.target.result;
-      let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
-      if (findR4 < 0) {
-        dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
-      }
       for (let i = 0; i < dependencyArr.length; i++) {
         let resources = [];
         shouldUnzip = false;
@@ -152,10 +148,6 @@ export async function loadExternalDependencies(
 
     // If upgrade is needed to the version, the database does not yet exist
     OpenIDBRequest.onupgradeneeded = function (event) {
-      let findR4 = findIndex(dependencyArr, (elem) => elem[0] === 'hl7.fhir.r4.core' && elem[1] === '4.0.1');
-      if (findR4 < 0) {
-        dependencyArr.push(['hl7.fhir.r4.core', '4.0.1']);
-      }
       database = event.target.result;
       let existingObjectStores = database.objectStoreNames;
       if (existingObjectStores.contains('resources')) {

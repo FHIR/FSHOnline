@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { PlayArrow, SaveAlt, Settings } from '@material-ui/icons';
-import { Box, Button, CircularProgress, Grid, Tooltip, FormControlLabel, FormHelperText } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import {
+  AssignmentOutlined as AssignmentOutlinedIcon,
+  ChevronRight as ChevronRightIcon,
+  ExpandMore as ExpandMoreIcon,
+  LibraryBooks as LibraryBooksIcon,
+  PlayArrow,
+  SaveAlt,
+  Settings
+} from '@material-ui/icons';
+import {
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
+  FormHelperText,
+  Grid,
+  MenuItem,
+  Tooltip,
+  TextField
+} from '@material-ui/core';
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
@@ -92,6 +105,7 @@ export default function FSHControls(props) {
   const [openConfig, setOpenConfig] = useState(false);
   const [canonical, setCanonical] = useState('');
   const [version, setVersion] = useState('');
+  const [fhirVersion, setFhirVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isGoFSHIndented, setIsGoFSHIndented] = useState(false);
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
@@ -103,6 +117,7 @@ export default function FSHControls(props) {
   useEffect(() => {
     setCanonical(props.config?.canonical || '');
     setVersion(props.config?.version || '');
+    setFhirVersion(props.config?.fhirVersion?.length > 0 ? props.config.fhirVersion.at(0) : '');
     setDependencies(props.config?.dependencies || '');
   }, [props.config]);
 
@@ -121,7 +136,7 @@ export default function FSHControls(props) {
 
   const handleCloseConfig = () => {
     setOpenConfig(false);
-    props.onConfigChange({ canonical, version, dependencies, isGoFSHIndented });
+    props.onConfigChange({ canonical, version, fhirVersion: [fhirVersion], dependencies, isGoFSHIndented });
   };
 
   const updateCanonical = (event) => {
@@ -132,6 +147,11 @@ export default function FSHControls(props) {
   const updateVersion = (event) => {
     const newVersion = event.target.value;
     setVersion(newVersion);
+  };
+
+  const updateFhirVersion = (event) => {
+    const newFhirVersion = event.target.value;
+    setFhirVersion(newFhirVersion);
   };
 
   const updateDependencyString = (event) => {
@@ -158,7 +178,7 @@ export default function FSHControls(props) {
       canonical: canonical ? canonical : 'http://example.org',
       version: version ? version : '1.0.0',
       FSHOnly: true,
-      fhirVersion: ['4.0.1']
+      fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1']
     };
     const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
@@ -195,10 +215,10 @@ export default function FSHControls(props) {
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
 
     // Create small ImplementationGuide resource to send canonical and version information
-    if (canonical || version) {
+    if (canonical || version || fhirVersion !== '') {
       const igResource = {
         resourceType: 'ImplementationGuide',
-        fhirVersion: ['4.0.1'],
+        fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1'],
         id: '1',
         ...(canonical && { url: `${canonical}/ImplementationGuide/1` }),
         ...(version && { version: version })
@@ -212,6 +232,7 @@ export default function FSHControls(props) {
     setIsGoFSHRunning(false);
     if (canonical === '' && config.canonical) setCanonical(config.canonical);
     if (version === '' && config.version) setVersion(config.version);
+    if (fhirVersion === '' && config.fhirVersion) setFhirVersion(config.fhirVersion.at(0));
   }
 
   async function fetchExampleFSH(event, value) {
@@ -330,11 +351,24 @@ export default function FSHControls(props) {
             onChange={updateVersion}
           />
           <TextField
+            id="fhir-version-select"
+            margin="dense"
+            fullWidth
+            select
+            label="FHIR Version"
+            helperText="Default: 4.0.1 (R4)"
+            value={fhirVersion}
+            onChange={updateFhirVersion}
+          >
+            <MenuItem value={'4.0.1'}>4.0.1 (R4)</MenuItem>
+            <MenuItem value={'4.3.0'}>4.3.0 (R4B)</MenuItem>
+          </TextField>
+          <TextField
             id="dependencies"
             margin="dense"
             fullWidth
             label="Dependencies"
-            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#3.1.1)"
+            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#5.0.1)"
             defaultValue={dependencies}
             onChange={updateDependencyString}
           />

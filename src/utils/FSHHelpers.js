@@ -1,4 +1,4 @@
-import { pad, padStart, padEnd } from 'lodash';
+import { findIndex, pad, padStart, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
 import { fillTank, loadAndCleanDatabase } from './Processing';
@@ -20,9 +20,9 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
  * If FhirToFsh ever supports a way to load dependencies in the browser,
  * we can update this to simply use that function.
  * @param {array} input array of JSON definitions to be processed
- * @param {object} options - config options for GoFSH based on user input and defaults
+ * @param {object} options config options for GoFSH based on user input and defaults
  * dependencies: user set, defaults to []
- * @param {FHIRDefinitions} testDefs - this should only be used by the unit tests so they can provide their own definitions.
+ * indent: user set, defaults to false
  * @returns {string} the FSH
  */
 export async function runGoFSH(input, options) {
@@ -50,12 +50,19 @@ export async function runGoFSH(input, options) {
   const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
 
   // Process the configuration
-  const configuration = fhirProcessor.processConfig(options.dependencies ?? []);
+  const goFSHDependencies = options.dependencies.map((d) => d.replace('#', '@')); // GoFSH expects a different format
+  const configuration = fhirProcessor.processConfig(goFSHDependencies ?? []); // The created IG files includes the user specified FHIR Version
 
   // Load dependencies, including those inferred from an IG file, and those given as input
   let dependencies = configuration?.config.dependencies
     ? configuration?.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
     : [];
+
+  const coreFhirVersion = configuration?.config.fhirVersion ?? '4.0.1';
+  const fhirVersionForDep = `${getCoreFHIRPackageIdentifier(coreFhirVersion)}#${coreFhirVersion}`;
+  if (!dependencies.some((d) => d === fhirVersionForDep)) {
+    dependencies.push(fhirVersionForDep);
+  }
   dependencies = sliceDependency(dependencies.join(','));
   defs = await loadAndCleanDatabase(defs, dependencies);
 
@@ -77,15 +84,23 @@ export async function runGoFSH(input, options) {
  * config.canonical: user set, defaults to http://example.org
  * config.version: user set, defaults to 1.0.0
  * config.FSHOnly: true
- * config.fhirVersion: [4.0.1]
+ * config.fhirVersion: [4.0.1] - NOTE fhirVersion array will only have one item in it
  *
  * @returns Package with FHIR resources
  */
-export async function runSUSHI(input, config, dependencyArr) {
+export async function runSUSHI(input, config, dependencyArr = []) {
   stats.reset();
 
   // Load dependencies
   let defs = new FHIRDefinitions();
+  const coreFHIRVersion = [getCoreFHIRPackageIdentifier(config.fhirVersion[0]), config.fhirVersion[0]];
+  const coreFHIRDependencyIndex = findIndex(
+    dependencyArr,
+    (dep) => dep[0] === coreFHIRVersion[0] && dep[1] === coreFHIRVersion[1]
+  );
+  if (coreFHIRDependencyIndex < 0) {
+    dependencyArr.push(coreFHIRVersion);
+  }
   defs = await loadAndCleanDatabase(defs, dependencyArr);
 
   // Load and fill FSH Tank
@@ -97,13 +112,13 @@ export async function runSUSHI(input, config, dependencyArr) {
     logger.error('Something went wrong when importing the FSH definitions');
     return;
   }
-  //Check for StructureDefinition
+
+  // Check for StructureDefinition
   const structDef = defs.fishForFHIR('StructureDefinition', Type.Resource);
-  if (structDef?.version !== '4.0.1') {
+  if (structDef?.version !== config.fhirVersion[0]) {
     logger.error(
-      'StructureDefinition resource not found for v4.0.1. The FHIR R4 package in local cache' +
-        ' may be corrupt. Local FHIR cache can be found at <home-directory>/.fhir/packages.' +
-        ' For more information, see https://wiki.hl7.org/FHIR_Package_Cache#Location.'
+      'StructureDefinition resource not found. The FHIR package in the browser cache' +
+        ' may be corrupt. Clear cookies and site data on this webpage to reload the FHIR package.'
     );
     return;
   }
@@ -219,4 +234,16 @@ function printGoFSHresults(pkg) {
 
   console.log(' ');
   results.forEach((r) => console.log(r));
+}
+
+export function getCoreFHIRPackageIdentifier(fhirVersion) {
+  if (/^4\.0\.1$/.test(fhirVersion)) {
+    return `hl7.fhir.r4.core`;
+  } else if (/^4\.3.\d+$/.test(fhirVersion)) {
+    return `hl7.fhir.r4b.core`;
+  } else if (/^5\.0.\d+$/.test(fhirVersion)) {
+    return `hl7.fhir.r5.core`;
+  } else {
+    return `hl7.fhir.r4.core`;
+  }
 }
