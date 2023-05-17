@@ -36,14 +36,16 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'atom'
     },
     {
-      regex: /\b(Alias|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Logical|Mapping|Mixins|Parent|Profile|Resource|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
+      regex:
+        /\b(Alias|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Logical|Mapping|Mixins|Parent|Profile|Resource|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
       token: 'keyword'
     },
     {
       // NOTE: Original regex has (?<=\s|^) at start and (?=\s) at the end, and (?<=\\bfrom\\s*) before 'system'.
       // However, there are known shortcomings with look ahead/look behind with the simple mode approach
       // NOTE: "from system" must come before "from" in order to properly match the full phrase.
-      regex: /(\s|^)(and|codes|contains|descendent-of|exclude|exists|from system|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|units|valueset|where|D|MS|N|SU|TU|\\?!)(\s|$)/,
+      regex:
+        /(\s|^)(and|codes|contains|descendent-of|exclude|exists|from system|from|generalizes|include|in|insert|is-a|is-not-a|named|not-in|obeys|only|or|regex|units|valueset|where|D|MS|N|SU|TU|\\?!)(\s|$)/,
       token: 'def'
     },
     {
