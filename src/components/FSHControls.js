@@ -368,7 +368,7 @@ export default function FSHControls(props) {
             margin="dense"
             fullWidth
             label="Dependencies"
-            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#5.0.1)"
+            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#6.0.0)"
             defaultValue={dependencies}
             onChange={updateDependencyString}
           />
