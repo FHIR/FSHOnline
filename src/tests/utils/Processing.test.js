@@ -1,4 +1,11 @@
-import { loadExternalDependencies, fillTank, checkForDatabaseUpgrade, cleanDatabase } from '../../utils/Processing';
+import nock from 'nock';
+import {
+  checkForDatabaseUpgrade,
+  cleanDatabase,
+  fillTank,
+  loadExternalDependencies,
+  resolveDependencies
+} from '../../utils/Processing';
 import { fhirdefs, sushiImport } from 'fsh-sushi';
 import * as loadModule from '../../utils/Load';
 import 'fake-indexeddb/auto';
@@ -128,8 +135,7 @@ describe('#loadExternalDependencies()', () => {
     });
     const dbRequest = indexedDB.open('FSH Playground Dependencies', version);
     dbRequest.onsuccess = async () => {
-      const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
-      await dependencyDefs;
+      await loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
       expect(unzipSpy).toBeCalledTimes(0);
       expect(loadInStorageSpy).toBeCalledTimes(0);
       expect(loadAsDefsSpy).toBeCalled();
@@ -199,7 +205,7 @@ describe('#loadExternalDependencies()', () => {
       return undefined;
     });
     const dependencyDefs = await loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']], true);
-    expect(dependencyDefs).toEqual({ finalDefs: undefined, emptyDependencies: [['hello#123']] });
+    expect(dependencyDefs).toEqual({ defs: undefined, emptyDependencies: [['hello#123']] });
     expect(unzipSpy).toBeCalled();
     expect(loadInStorageSpy).toBeCalled();
     expect(loadAsDefsSpy).toBeCalled();
@@ -246,6 +252,55 @@ describe('#cleanDatabase()', () => {
     });
 
     expect(existingObjectStores).toHaveLength(0);
+  });
+});
+
+describe('#resolveDependencies', () => {
+  it('should replace any "latest" dependencies with the latest version number', async () => {
+    const dependencies = [
+      ['hl7.fhir.r4.core', '4.0.1'],
+      ['hl7.terminology.r4', 'latest']
+    ];
+    nock('https://packages.fhir.org')
+      .get('/hl7.terminology.r4')
+      .reply(200, {
+        name: 'hl7.terminology.r4',
+        'dist-tags': {
+          latest: '1.0.0'
+        }
+      });
+    const resolvedDependencies = await resolveDependencies(dependencies);
+    expect(resolvedDependencies).toHaveLength(2);
+    expect(resolvedDependencies[0]).toEqual(['hl7.fhir.r4.core', '4.0.1']);
+    expect(resolvedDependencies[1]).toEqual(['hl7.terminology.r4', '1.0.0']);
+  });
+
+  it('should remove any "latest" dependencies that are unable to identify the latest version number', async () => {
+    const dependencies = [
+      ['hl7.fhir.r4.core', '4.0.1'],
+      ['hl7.terminology.r4', 'latest'],
+      ['a.package.without.latest', 'latest']
+    ];
+    nock('https://packages.fhir.org')
+      .get('/hl7.terminology.r4')
+      .reply(200, {
+        name: 'hl7.terminology.r4',
+        'dist-tags': {
+          latest: '1.0.0'
+        }
+      })
+      .get('/a.package.without.latest')
+      .reply(200, {
+        name: 'a.package.without.latest',
+        'dist-tags': {
+          // no latest tag
+          beta: '1.0.0-rc'
+        }
+      });
+    const resolvedDependencies = await resolveDependencies(dependencies);
+    expect(resolvedDependencies).toHaveLength(2);
+    expect(resolvedDependencies[0]).toEqual(['hl7.fhir.r4.core', '4.0.1']);
+    expect(resolvedDependencies[1]).toEqual(['hl7.terminology.r4', '1.0.0']);
   });
 });
 

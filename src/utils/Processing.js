@@ -1,5 +1,5 @@
 import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
-import { loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
+import { getLatestVersionNumber, loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
 import { flatten } from 'lodash';
 
 const logger = utils.logger;
@@ -14,6 +14,8 @@ export function fillTank(rawFSHes, config) {
 }
 
 export async function loadAndCleanDatabase(defs, dependencies) {
+  dependencies = await resolveDependencies(dependencies);
+
   let helperUpdate = await checkForDatabaseUpgrade(dependencies);
   let loadExternalDependenciesReturn = { defs, emptyDependencies: [] };
 
@@ -170,4 +172,30 @@ export async function loadExternalDependencies(
       reject(event);
     };
   });
+}
+
+export async function resolveDependencies(dependencies) {
+  // Replace any 'latest' versions with the latest version number
+  const resolvedDependencies = await Promise.all(dependencies.map(async (dep) => replaceLatestVersion(dep[0], dep[1])));
+
+  // Remove any dependencies that can't identify a latest version
+  const filteredResolvedDependencies = resolvedDependencies.filter((d) => d[1] !== null);
+
+  return filteredResolvedDependencies;
+}
+
+async function replaceLatestVersion(dependency, version) {
+  let updatedVersion = version;
+  if (version === 'latest') {
+    await getLatestVersionNumber(dependency)
+      .then((latestId) => {
+        updatedVersion = latestId;
+      })
+      .catch(() => {
+        // No 'latest' version could be found, so mark
+        // this to be filtered out of the list to be loaded
+        updatedVersion = null;
+      });
+  }
+  return [dependency, updatedVersion];
 }

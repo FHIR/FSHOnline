@@ -362,6 +362,7 @@ export default function FSHControls(props) {
           >
             <MenuItem value={'4.0.1'}>4.0.1 (R4)</MenuItem>
             <MenuItem value={'4.3.0'}>4.3.0 (R4B)</MenuItem>
+            <MenuItem value={'5.0.0'}>5.0.0 (R5)</MenuItem>
           </TextField>
           <TextField
             id="dependencies"

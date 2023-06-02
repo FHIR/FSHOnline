@@ -1,4 +1,4 @@
-import { findIndex, pad, padStart, padEnd } from 'lodash';
+import { pad, padStart, padEnd } from 'lodash';
 import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
 import { fillTank, loadAndCleanDatabase } from './Processing';
@@ -58,7 +58,7 @@ export async function runGoFSH(input, options) {
     ? configuration?.config.dependencies.map((dep) => `${dep.packageId}#${dep.version}`)
     : [];
 
-  const coreFhirVersion = configuration?.config.fhirVersion ?? '4.0.1';
+  const coreFhirVersion = configuration?.config.fhirVersion[0] ?? '4.0.1';
   const fhirVersionForDep = `${getCoreFHIRPackageIdentifier(coreFhirVersion)}#${coreFhirVersion}`;
   if (!dependencies.some((d) => d === fhirVersionForDep)) {
     dependencies.push(fhirVersionForDep);
@@ -94,12 +94,19 @@ export async function runSUSHI(input, config, dependencyArr = []) {
   // Load dependencies
   let defs = new FHIRDefinitions();
   const coreFHIRVersion = [getCoreFHIRPackageIdentifier(config.fhirVersion[0]), config.fhirVersion[0]];
-  const coreFHIRDependencyIndex = findIndex(
-    dependencyArr,
-    (dep) => dep[0] === coreFHIRVersion[0] && dep[1] === coreFHIRVersion[1]
-  );
-  if (coreFHIRDependencyIndex < 0) {
+  const hasCoreFHIR = hasDependency(dependencyArr, coreFHIRVersion[0], coreFHIRVersion[1]);
+  if (!hasCoreFHIR) {
     dependencyArr.push(coreFHIRVersion);
+  }
+  const hasTerminology = hasDependency(dependencyArr, 'hl7.terminology.r4', 'latest');
+  if (!hasTerminology) {
+    dependencyArr.push(['hl7.terminology.r4', 'latest']);
+  }
+  if (coreFHIRVersion[1].match(/^5\.0\.\d+$/)) {
+    const hasExtensions = hasDependency(dependencyArr, 'hl7.fhir.uv.extensions', 'latest');
+    if (!hasExtensions) {
+      dependencyArr.push(['hl7.fhir.uv.extensions', 'latest']);
+    }
   }
   defs = await loadAndCleanDatabase(defs, dependencyArr);
 
@@ -236,12 +243,16 @@ function printGoFSHresults(pkg) {
   results.forEach((r) => console.log(r));
 }
 
+function hasDependency(dependenciesList, currentDependencyName, currentDependencyVersion) {
+  return dependenciesList.some((dep) => dep[0] === currentDependencyName && dep[1] === currentDependencyVersion);
+}
+
 export function getCoreFHIRPackageIdentifier(fhirVersion) {
   if (/^4\.0\.1$/.test(fhirVersion)) {
     return `hl7.fhir.r4.core`;
-  } else if (/^4\.3.\d+$/.test(fhirVersion)) {
+  } else if (/^4\.3\.\d+$/.test(fhirVersion)) {
     return `hl7.fhir.r4b.core`;
-  } else if (/^5\.0.\d+$/.test(fhirVersion)) {
+  } else if (/^5\.0\.\d+$/.test(fhirVersion)) {
     return `hl7.fhir.r5.core`;
   } else {
     return `hl7.fhir.r4.core`;
