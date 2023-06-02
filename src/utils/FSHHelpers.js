@@ -63,6 +63,14 @@ export async function runGoFSH(input, options) {
   if (!dependencies.some((d) => d === fhirVersionForDep)) {
     dependencies.push(fhirVersionForDep);
   }
+  if (!dependencies.some((d) => d === 'hl7.terminology.r4#latest')) {
+    dependencies.push('hl7.terminology.r4#latest');
+  }
+  if (coreFhirVersion.match(/^5\.0\.\d+$/)) {
+    if (!dependencies.some((d) => d === 'hl7.fhir.uv.extensions#latest')) {
+      dependencies.push('hl7.fhir.uv.extensions#latest');
+    }
+  }
   dependencies = sliceDependency(dependencies.join(','));
   defs = await loadAndCleanDatabase(defs, dependencies);
 
