@@ -5,8 +5,8 @@ describe('#sliceDependency()', () => {
     const input = 'hl7.fhir.us.core#3.1.1, , testing#123';
     const returnArr = sliceDependency(input);
     expect(returnArr).toEqual([
-      ['hl7.fhir.us.core', '3.1.1'],
-      ['testing', '123']
+      { packageId: 'hl7.fhir.us.core', version: '3.1.1' },
+      { packageId: 'testing', version: '123' }
     ]);
   });
 

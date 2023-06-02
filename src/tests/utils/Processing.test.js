@@ -15,8 +15,8 @@ const RawFSH = sushiImport.RawFSH;
 
 describe('#checkForDatabaseUpgrade()', () => {
   it('should say we need to upgrade database if we have no ObjectStores or dependency inputs and should return proper version number', async () => {
-    const dependencyArr = [];
-    const checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr);
+    const dependencies = [];
+    const checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencies);
     expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
     expect(checkForDatabaseUpgradeReturn.version).toEqual(1);
   });
@@ -39,8 +39,8 @@ describe('#checkForDatabaseUpgrade()', () => {
         reject(event);
       };
     });
-    const dependencyArr = [['testDependency', '1.0.0']];
-    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    const dependencies = [{ packageId: 'testDependency', version: '1.0.0' }];
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencies, 'Test Database');
     expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(false);
   });
 
@@ -62,11 +62,11 @@ describe('#checkForDatabaseUpgrade()', () => {
         reject(event);
       };
     });
-    const dependencyArr = [
-      ['testDependency', '1.0.0'],
-      ['newTestDependency', '2.0.0']
+    const dependencies = [
+      { packageId: 'testDependency', version: '1.0.0' },
+      { packageId: 'newTestDependency', version: '2.0.0' }
     ];
-    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencies, 'Test Database');
     expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
   });
 
@@ -88,8 +88,8 @@ describe('#checkForDatabaseUpgrade()', () => {
         reject(event);
       };
     });
-    const dependencyArr = [];
-    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencyArr, 'Test Database');
+    const dependencies = [];
+    let checkForDatabaseUpgradeReturn = await checkForDatabaseUpgrade(dependencies, 'Test Database');
     expect(checkForDatabaseUpgradeReturn.shouldUpdate).toEqual(true);
   });
 });
@@ -98,7 +98,9 @@ describe('#loadExternalDependencies()', () => {
   it('should log an error when it fails to make the database', () => {
     const defs = new FHIRDefinitions();
     const version = -1;
-    const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
+    const dependencyDefs = loadExternalDependencies(defs, version, [
+      { packageId: 'hl7.fhir.r4.core', version: '4.0.1' }
+    ]);
     return expect(dependencyDefs).rejects.toThrow(TypeError);
   });
 
@@ -114,7 +116,9 @@ describe('#loadExternalDependencies()', () => {
     const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
       return undefined;
     });
-    const dependencyDefs = loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
+    const dependencyDefs = loadExternalDependencies(defs, version, [
+      { packageId: 'hl7.fhir.r4.core', version: '4.0.1' }
+    ]);
     await dependencyDefs;
     expect(unzipSpy).toBeCalled();
     expect(loadInStorageSpy).toBeCalled();
@@ -135,7 +139,7 @@ describe('#loadExternalDependencies()', () => {
     });
     const dbRequest = indexedDB.open('FSH Playground Dependencies', version);
     dbRequest.onsuccess = async () => {
-      await loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']]);
+      await loadExternalDependencies(defs, version, [{ packageId: 'hl7.fhir.r4.core', version: '4.0.1' }]);
       expect(unzipSpy).toBeCalledTimes(0);
       expect(loadInStorageSpy).toBeCalledTimes(0);
       expect(loadAsDefsSpy).toBeCalled();
@@ -173,7 +177,12 @@ describe('#loadExternalDependencies()', () => {
     });
 
     // This call should upgrade our database and delete the 'resources' objectStore
-    await loadExternalDependencies(defs, version + 1, [['hl7.fhir.r4.core', '4.0.1']], 'Test Database Resources');
+    await loadExternalDependencies(
+      defs,
+      version + 1,
+      [{ packageId: 'hl7.fhir.r4.core', version: '4.0.1' }],
+      'Test Database Resources'
+    );
 
     // Reopen the database to update our existingObjectStores variable
     await new Promise((resolve) => {
@@ -204,7 +213,12 @@ describe('#loadExternalDependencies()', () => {
     const loadAsDefsSpy = jest.spyOn(loadModule, 'loadAsFHIRDefs').mockImplementation(() => {
       return undefined;
     });
-    const dependencyDefs = await loadExternalDependencies(defs, version, [['hl7.fhir.r4.core', '4.0.1']], true);
+    const dependencyDefs = await loadExternalDependencies(
+      defs,
+      version,
+      [{ packageId: 'hl7.fhir.r4.core', version: '4.0.1' }],
+      true
+    );
     expect(dependencyDefs).toEqual({ defs: undefined, emptyDependencies: [['hello#123']] });
     expect(unzipSpy).toBeCalled();
     expect(loadInStorageSpy).toBeCalled();
@@ -258,8 +272,8 @@ describe('#cleanDatabase()', () => {
 describe('#resolveDependencies', () => {
   it('should replace any "latest" dependencies with the latest version number', async () => {
     const dependencies = [
-      ['hl7.fhir.r4.core', '4.0.1'],
-      ['hl7.terminology.r4', 'latest']
+      { packageId: 'hl7.fhir.r4.core', version: '4.0.1' },
+      { packageId: 'hl7.terminology.r4', version: 'latest' }
     ];
     nock('https://packages.fhir.org')
       .get('/hl7.terminology.r4')
@@ -271,15 +285,15 @@ describe('#resolveDependencies', () => {
       });
     const resolvedDependencies = await resolveDependencies(dependencies);
     expect(resolvedDependencies).toHaveLength(2);
-    expect(resolvedDependencies[0]).toEqual(['hl7.fhir.r4.core', '4.0.1']);
-    expect(resolvedDependencies[1]).toEqual(['hl7.terminology.r4', '1.0.0']);
+    expect(resolvedDependencies[0]).toEqual({ packageId: 'hl7.fhir.r4.core', version: '4.0.1' });
+    expect(resolvedDependencies[1]).toEqual({ packageId: 'hl7.terminology.r4', version: '1.0.0' });
   });
 
   it('should remove any "latest" dependencies that are unable to identify the latest version number', async () => {
     const dependencies = [
-      ['hl7.fhir.r4.core', '4.0.1'],
-      ['hl7.terminology.r4', 'latest'],
-      ['a.package.without.latest', 'latest']
+      { packageId: 'hl7.fhir.r4.core', version: '4.0.1' },
+      { packageId: 'hl7.terminology.r4', version: 'latest' },
+      { packageId: 'a.package.without.latest', version: 'latest' }
     ];
     nock('https://packages.fhir.org')
       .get('/hl7.terminology.r4')
@@ -299,8 +313,8 @@ describe('#resolveDependencies', () => {
       });
     const resolvedDependencies = await resolveDependencies(dependencies);
     expect(resolvedDependencies).toHaveLength(2);
-    expect(resolvedDependencies[0]).toEqual(['hl7.fhir.r4.core', '4.0.1']);
-    expect(resolvedDependencies[1]).toEqual(['hl7.terminology.r4', '1.0.0']);
+    expect(resolvedDependencies[0]).toEqual({ packageId: 'hl7.fhir.r4.core', version: '4.0.1' });
+    expect(resolvedDependencies[1]).toEqual({ packageId: 'hl7.terminology.r4', version: '1.0.0' });
   });
 });
 

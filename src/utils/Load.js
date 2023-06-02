@@ -99,7 +99,8 @@ export function loadAsFHIRDefs(FHIRdefs, database, dependency, id) {
 
 export function getLatestVersionNumber(dependency) {
   return new Promise((resolve, reject) => {
-    https.get(`https://packages.fhir.org/${dependency}`, function (res) {
+    const { packageId, isAutomatic } = dependency;
+    https.get(`https://packages.fhir.org/${packageId}`, function (res) {
       let body = '';
       res.on('data', function (chunk) {
         body += chunk;
@@ -109,7 +110,11 @@ export function getLatestVersionNumber(dependency) {
         if (parsedBody?.['dist-tags']?.latest?.length) {
           resolve(parsedBody['dist-tags'].latest);
         } else {
-          logger.error(`Could not determine latest released version of ${dependency}.`);
+          logger.error(
+            `Could not determine latest released version of ${
+              isAutomatic ? 'automatically-loaded dependency ' : ''
+            }${packageId}.`
+          );
           reject('no latest version found');
         }
       });

@@ -73,7 +73,7 @@ export function cleanDatabase(emptyDependencies, version, databaseName = 'FSH Pl
   });
 }
 
-export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playground Dependencies') {
+export function checkForDatabaseUpgrade(dependencies, databaseName = 'FSH Playground Dependencies') {
   let helperReturn = { shouldUpdate: false, version: 1 };
   return new Promise((resolve, reject) => {
     let database = null;
@@ -84,20 +84,19 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
       helperReturn.version = database.version;
       if (
         existingObjectStores.length === 0 ||
-        dependencyArr.length === 0 ||
+        dependencies.length === 0 ||
         existingObjectStores.contains('resources')
       ) {
         helperReturn.shouldUpdate = true;
         database.close();
         resolve(helperReturn);
       } else {
-        for (let i = 0; i < dependencyArr.length; i++) {
-          let dependency = dependencyArr[i][0];
-          let id = dependencyArr[i][1];
-          if (!existingObjectStores.contains(`${dependency}${id}`)) {
+        dependencies.forEach((dep) => {
+          const { packageId, version } = dep;
+          if (!existingObjectStores.contains(`${packageId}${version}`)) {
             helperReturn.shouldUpdate = true;
           }
-        }
+        });
         database.close();
         resolve(helperReturn);
       }
@@ -114,7 +113,7 @@ export function checkForDatabaseUpgrade(dependencyArr, databaseName = 'FSH Playg
 export async function loadExternalDependencies(
   FHIRdefs,
   version,
-  dependencyArr,
+  dependencies,
   databaseName = 'FSH Playground Dependencies',
   shouldUnzip = false
 ) {
@@ -127,22 +126,21 @@ export async function loadExternalDependencies(
     // If successful the database exists
     OpenIDBRequest.onsuccess = async function (event) {
       database = event.target.result;
-      for (let i = 0; i < dependencyArr.length; i++) {
+      for (let i = 0; i < dependencies.length; i++) {
         let resources = [];
         shouldUnzip = false;
-        const dependency = dependencyArr[i][0];
-        const id = dependencyArr[i][1];
-        if (newDependencies.includes(`${dependency}${id}`)) {
+        const { packageId, version } = dependencies[i];
+        if (newDependencies.includes(`${packageId}${version}`)) {
           shouldUnzip = true;
         }
         if (shouldUnzip) {
-          let unzipReturn = await unzipDependencies(resources, dependency, id);
+          let unzipReturn = await unzipDependencies(resources, packageId, version);
           if (unzipReturn.emptyDependencies.length !== 0) {
             returnPackage.emptyDependencies.push(unzipReturn.emptyDependencies);
           }
-          await loadDependenciesInStorage(database, unzipReturn.resourceArr, dependency, id);
+          await loadDependenciesInStorage(database, unzipReturn.resourceArr, packageId, version);
         }
-        returnPackage.defs = await loadAsFHIRDefs(FHIRdefs, database, dependency, id);
+        returnPackage.defs = await loadAsFHIRDefs(FHIRdefs, database, packageId, version);
       }
       database.close();
       resolve(returnPackage);
@@ -155,14 +153,13 @@ export async function loadExternalDependencies(
       if (existingObjectStores.contains('resources')) {
         database.deleteObjectStore('resources');
       }
-      for (let i = 0; i < dependencyArr.length; i++) {
-        const dependency = dependencyArr[i][0];
-        const id = dependencyArr[i][1];
-        if (!existingObjectStores.contains(`${dependency}${id}`)) {
-          database.createObjectStore(`${dependency}${id}`, {
+      for (let i = 0; i < dependencies.length; i++) {
+        const { packageId, version } = dependencies[i];
+        if (!existingObjectStores.contains(`${packageId}${version}`)) {
+          database.createObjectStore(`${packageId}${version}`, {
             keyPath: ['id', 'resourceType']
           });
-          newDependencies.push(`${dependency}${id}`);
+          newDependencies.push(`${packageId}${version}`);
         }
       }
     };
@@ -176,15 +173,16 @@ export async function loadExternalDependencies(
 
 export async function resolveDependencies(dependencies) {
   // Replace any 'latest' versions with the latest version number
-  const resolvedDependencies = await Promise.all(dependencies.map(async (dep) => replaceLatestVersion(dep[0], dep[1])));
+  const resolvedDependencies = await Promise.all(dependencies.map(async (dep) => replaceLatestVersion(dep)));
 
   // Remove any dependencies that can't identify a latest version
-  const filteredResolvedDependencies = resolvedDependencies.filter((d) => d[1] !== null);
+  const filteredResolvedDependencies = resolvedDependencies.filter((d) => d.version !== null);
 
   return filteredResolvedDependencies;
 }
 
-async function replaceLatestVersion(dependency, version) {
+async function replaceLatestVersion(dependency) {
+  const { packageId, version } = dependency;
   let updatedVersion = version;
   if (version === 'latest') {
     await getLatestVersionNumber(dependency)
@@ -197,5 +195,5 @@ async function replaceLatestVersion(dependency, version) {
         updatedVersion = null;
       });
   }
-  return [dependency, updatedVersion];
+  return { packageId, version: updatedVersion };
 }

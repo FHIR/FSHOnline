@@ -1,13 +1,13 @@
 export function sliceDependency(dependencies) {
-  let returnArr = [];
-  const arr = dependencies.split(',');
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = arr[i].trim();
-    if (arr[i] === '') {
-      continue;
-    }
-    let singleDep = arr[i].split('#');
-    returnArr.push([singleDep[0], singleDep[1]]);
-  }
-  return returnArr;
+  const dependenciesArray = dependencies.split(',');
+  return dependenciesArray
+    .map((dependency) => {
+      const trimmedDep = dependency.trim();
+      if (trimmedDep === '') {
+        return trimmedDep;
+      }
+      const [packageId, version] = trimmedDep.split('#');
+      return { packageId, version };
+    })
+    .filter((d) => d); // filter out any empty strings
 }

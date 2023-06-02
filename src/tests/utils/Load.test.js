@@ -128,7 +128,7 @@ describe('#getLatestVersionNumber', () => {
           latest: '1.0.0'
         }
       });
-    const latestVersion = await getLatestVersionNumber('example.mock.package');
+    const latestVersion = await getLatestVersionNumber({ packageId: 'example.mock.package', version: 'latest' });
     expect(latestVersion).toEqual('1.0.0');
   });
 
@@ -142,7 +142,7 @@ describe('#getLatestVersionNumber', () => {
           beta: '1.0.0-rc'
         }
       });
-    const latestVersion = getLatestVersionNumber('example.mock.without.version');
+    const latestVersion = getLatestVersionNumber({ packageId: 'example.mock.without.version', version: 'latest' });
     await expect(latestVersion).rejects.toEqual('no latest version found');
   });
 });

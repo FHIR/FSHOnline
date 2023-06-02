@@ -173,14 +173,14 @@ export default function FSHControls(props) {
     props.resetLogMessages();
     props.onSUSHIClick(true, [''], true);
     setIsSUSHIRunning(true);
-    const dependencyArr = sliceDependency(dependencies);
+    const parsedDependencies = sliceDependency(dependencies);
     const config = {
       canonical: canonical ? canonical : 'http://example.org',
       version: version ? version : '1.0.0',
       FSHOnly: true,
       fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1']
     };
-    const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
+    const outPackage = await runSUSHI(props.fshText, config, parsedDependencies);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
