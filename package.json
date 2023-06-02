@@ -36,6 +36,11 @@
     "react-app-rewired": "^2.1.6",
     "react-scripts": "^4.0.3"
   },
+  "overrides": {
+    "react-dev-utils": {
+      "react-error-overlay": "6.0.9"
+    }
+  },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
