@@ -1,4 +1,4 @@
-import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs } from '../../utils/Load';
+import { unzipDependencies, loadDependenciesInStorage, loadAsFHIRDefs, getLatestVersionNumber } from '../../utils/Load';
 import { fhirdefs } from 'fsh-sushi';
 import path from 'path';
 import nock from 'nock';
@@ -115,5 +115,34 @@ describe('#loadAsFHIRDefs', () => {
     expect(databaseReturn.allValueSets()).toHaveLength(1);
     expect(databaseReturn.allCodeSystems()).toHaveLength(1);
     expect(databaseReturn.allExtensions()).toHaveLength(0);
+  });
+});
+
+describe('#getLatestVersionNumber', () => {
+  it('should resolve with an id when latest tag is available', async () => {
+    nock('https://packages.fhir.org')
+      .get('/example.mock.package')
+      .reply(200, {
+        name: 'example.mock.package',
+        'dist-tags': {
+          latest: '1.0.0'
+        }
+      });
+    const latestVersion = await getLatestVersionNumber({ packageId: 'example.mock.package', version: 'latest' });
+    expect(latestVersion).toEqual('1.0.0');
+  });
+
+  it('should reject when no latest tag is available', async () => {
+    nock('https://packages.fhir.org')
+      .get('/example.mock.without.version')
+      .reply(200, {
+        name: 'example.mock.without.version',
+        'dist-tags': {
+          // no latest
+          beta: '1.0.0-rc'
+        }
+      });
+    const latestVersion = getLatestVersionNumber({ packageId: 'example.mock.without.version', version: 'latest' });
+    await expect(latestVersion).rejects.toEqual('no latest version found');
   });
 });

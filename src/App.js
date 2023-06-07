@@ -4,7 +4,7 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 import { debounce, partition } from 'lodash';
 import clsx from 'clsx';
-import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import { createTheme, makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
@@ -75,7 +75,7 @@ const colors = {
   red: '#FD6668'
 };
 
-export const theme = createMuiTheme({
+export const theme = createTheme({
   palette: {
     success: {
       main: colors.blue,

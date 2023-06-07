@@ -173,14 +173,14 @@ export default function FSHControls(props) {
     props.resetLogMessages();
     props.onSUSHIClick(true, [''], true);
     setIsSUSHIRunning(true);
-    const dependencyArr = sliceDependency(dependencies);
+    const parsedDependencies = sliceDependency(dependencies);
     const config = {
       canonical: canonical ? canonical : 'http://example.org',
       version: version ? version : '1.0.0',
       FSHOnly: true,
       fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1']
     };
-    const outPackage = await runSUSHI(props.fshText, config, dependencyArr);
+    const outPackage = await runSUSHI(props.fshText, config, parsedDependencies);
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -362,13 +362,14 @@ export default function FSHControls(props) {
           >
             <MenuItem value={'4.0.1'}>4.0.1 (R4)</MenuItem>
             <MenuItem value={'4.3.0'}>4.3.0 (R4B)</MenuItem>
+            <MenuItem value={'5.0.0'}>5.0.0 (R5)</MenuItem>
           </TextField>
           <TextField
             id="dependencies"
             margin="dense"
             fullWidth
             label="Dependencies"
-            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#5.0.1)"
+            helperText="Format: packageId#version, packageId#version (e.g., hl7.fhir.us.core#6.0.0)"
             defaultValue={dependencies}
             onChange={updateDependencyString}
           />

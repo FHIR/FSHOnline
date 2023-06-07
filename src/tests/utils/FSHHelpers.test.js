@@ -15,7 +15,7 @@ const defaultConfig = {
 
 describe('#runSUSHI', () => {
   it('should return an undefined package when we get invalid FHIRDefinitions', async () => {
-    const dependencyArr = [];
+    const dependencies = [];
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
@@ -25,7 +25,7 @@ describe('#runSUSHI', () => {
       });
     const text =
       'Profile: FishPatient Parent: Patient Id: fish-patient Title: "Fish Patient" Description: "A patient that is a type of fish."';
-    const outPackage = await runSUSHI(text, defaultConfig, dependencyArr);
+    const outPackage = await runSUSHI(text, defaultConfig, dependencies);
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
     expect(outPackage).toBeUndefined();
   });

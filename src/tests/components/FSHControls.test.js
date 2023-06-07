@@ -333,13 +333,13 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
 
   const defaultConfig = { FSHOnly: true, canonical: 'http://example.org', fhirVersion: ['4.0.1'], version: '1.0.0' };
 
-  const expectedDependencyArr = [
-    ['hl7.fhir.us.core', '3.1.1'],
-    ['hello', '123']
+  const expectedDependencies = [
+    { packageId: 'hl7.fhir.us.core', version: '3.1.1' },
+    { packageId: 'hello', version: '123' }
   ];
 
   await waitFor(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencyArr); // Called with new dependencies
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencies); // Called with new dependencies
   });
 });
 

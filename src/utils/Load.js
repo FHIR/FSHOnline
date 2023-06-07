@@ -96,3 +96,28 @@ export function loadAsFHIRDefs(FHIRdefs, database, dependency, id) {
     };
   });
 }
+
+export function getLatestVersionNumber(dependency) {
+  return new Promise((resolve, reject) => {
+    const { packageId, isAutomatic } = dependency;
+    https.get(`https://packages.fhir.org/${packageId}`, function (res) {
+      let body = '';
+      res.on('data', function (chunk) {
+        body += chunk;
+      });
+      res.on('end', function () {
+        const parsedBody = JSON.parse(body);
+        if (parsedBody?.['dist-tags']?.latest?.length) {
+          resolve(parsedBody['dist-tags'].latest);
+        } else {
+          logger.error(
+            `Could not determine latest released version of ${
+              isAutomatic ? 'automatically-loaded dependency ' : ''
+            }${packageId}.`
+          );
+          reject('no latest version found');
+        }
+      });
+    });
+  });
+}
