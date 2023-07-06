@@ -15,7 +15,7 @@
     "browserify-zlib": "^0.2.0",
     "codemirror": "^5.62.3",
     "file-saver": "^2.0.5",
-    "fsh-sushi": "^2.10.1",
+    "fsh-sushi": "^3.0.0",
     "gofsh": "^1.6.5",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
