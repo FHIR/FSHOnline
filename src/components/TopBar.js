@@ -59,7 +59,7 @@ export default function TopBar() {
                   FSH ONLINE
                 </Typography>
                 <Typography order={2} className={classes.versionText}>
-                  Powered by SUSHI v3.0.0 and GoFSH v1.6.5
+                  Powered by SUSHI v3.0.0 and GoFSH v2.0.1
                 </Typography>
               </StylesProvider>
             </Box>
