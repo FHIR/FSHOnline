@@ -37,7 +37,7 @@ CodeMirror.defineSimpleMode('fsh', {
     },
     {
       regex:
-        /\b(Alias|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Logical|Mapping|Mixins|Parent|Profile|Resource|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
+        /\b(Alias|Characteristics|Context|CodeSystem|Expression|Extension|Description|Id|Instance|InstanceOf|Invariant|Logical|Mapping|Mixins|Parent|Profile|Resource|RuleSet|Severity|Source|Target|Title|Usage|ValueSet|XPath)(?=\s*:)\b/,
       token: 'keyword'
     },
     {
@@ -53,7 +53,7 @@ CodeMirror.defineSimpleMode('fsh', {
       token: 'def'
     },
     {
-      regex: /\b(Reference|Canonical)\s*\(/,
+      regex: /\b(CodeableReference|Reference|Canonical)\s*\(/,
       push: 'closingParen', // Matches the closing parenthesis while not highlighting the content between ( )
       token: 'atom'
     },
