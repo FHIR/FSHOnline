@@ -24,14 +24,6 @@ module.exports = function override(config, env) {
     {
       test: /.*gofsh.*.d\.ts$/,
       loader: 'null-loader'
-    },
-    {
-      test: /.*tsconfig-paths\/lib\/filesystem\.js.*/,
-      loader: 'null-loader'
-    },
-    {
-      test: /.*tsconfig-paths\/lib\/match-path-async\.js.*/,
-      loader: 'null-loader'
     }
   );
   config.module.exprContextCritical = false;
