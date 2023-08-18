@@ -15,7 +15,7 @@
     "browserify-zlib": "^0.2.0",
     "codemirror": "^5.62.3",
     "file-saver": "^2.0.5",
-    "fsh-sushi": "^3.2.0",
+    "fsh-sushi": "3.3.0",
     "gofsh": "^2.0.1",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
@@ -52,6 +52,9 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "jest": {
+    "resolver": "<rootDir>/resolver.js"
   },
   "browserslist": {
     "production": [
