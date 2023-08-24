@@ -26,5 +26,6 @@ module.exports = function override(config, env) {
       loader: 'null-loader'
     }
   );
+  config.module.exprContextCritical = false;
   return config;
 };
