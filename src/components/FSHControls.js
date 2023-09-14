@@ -23,6 +23,7 @@ import {
   FormControlLabel,
   FormHelperText,
   Grid,
+  Link,
   MenuItem,
   Tooltip,
   TextField
@@ -89,6 +90,13 @@ const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     maxHeight: '80vh',
     minHeight: '80vh'
+  },
+  dialogActions: {
+    justifyContent: 'space-between'
+  },
+  dialogActionsMessage: {
+    fontStyle: 'italic',
+    padding: '6px 8px'
   }
 }));
 
@@ -423,13 +431,19 @@ export default function FSHControls(props) {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCopyToClipboard} color="primary">
-            <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
-          </Button>
-          <Button onClick={handleCloseExamples} color="secondary">
-            Close
-          </Button>
+        <DialogActions className={classes.dialogActions}>
+          <div className={classes.dialogActionsMessage}>
+            Feel like an example is missing? Add to our collection of examples on{' '}
+            <Link href="https://github.com/FSHSchool/FSHOnline-Examples">GitHub</Link>!
+          </div>
+          <div>
+            <Button onClick={handleCopyToClipboard} color="primary">
+              <AssignmentOutlinedIcon></AssignmentOutlinedIcon> Copy to clipboard
+            </Button>
+            <Button onClick={handleCloseExamples} color="secondary">
+              Close
+            </Button>
+          </div>
         </DialogActions>
       </Dialog>
     </Box>
