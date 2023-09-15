@@ -96,6 +96,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogActionsMessage: {
     fontStyle: 'italic',
+    fontSize: 'small',
     padding: '6px 8px'
   }
 }));
