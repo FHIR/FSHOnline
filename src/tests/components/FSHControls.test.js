@@ -464,7 +464,7 @@ it('should include a link to the examples repo', () => {
   expect(exampleRepoText).toBeInTheDocument();
   const exampleRepoUrl = getByRole('link');
   expect(exampleRepoUrl).toBeInTheDocument();
-  expect(exampleRepoUrl).toHaveAttribute('href', 'https://github.com/FSHSchool/FSHOnline-Examples');
+  expect(exampleRepoUrl).toHaveAttribute('href', 'https://github.com/FSHSchool/FSHOnline-Examples#readme');
 });
 
 it.skip('should populate editor when examples are collected', async () => {

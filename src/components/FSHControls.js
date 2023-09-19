@@ -96,7 +96,6 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogActionsMessage: {
     fontStyle: 'italic',
-    fontSize: 'small',
     padding: '6px 8px'
   }
 }));
@@ -435,7 +434,7 @@ export default function FSHControls(props) {
         <DialogActions className={classes.dialogActions}>
           <div className={classes.dialogActionsMessage}>
             Feel like an example is missing? Add to our collection of examples on{' '}
-            <Link href="https://github.com/FSHSchool/FSHOnline-Examples">GitHub</Link>!
+            <Link href="https://github.com/FSHSchool/FSHOnline-Examples#readme">GitHub</Link>!
           </div>
           <div>
             <Button onClick={handleCopyToClipboard} color="primary">
