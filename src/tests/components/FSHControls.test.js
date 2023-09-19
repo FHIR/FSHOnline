@@ -460,7 +460,7 @@ it('should include a link to the examples repo', () => {
   expect(examplesButton).toBeInTheDocument();
   fireEvent.click(examplesButton);
 
-  const exampleRepoText = getByText(/Feel like an example is missing?/);
+  const exampleRepoText = getByText(/Have an example that might be bene-fish-al?/);
   expect(exampleRepoText).toBeInTheDocument();
   const exampleRepoUrl = getByRole('link');
   expect(exampleRepoUrl).toBeInTheDocument();

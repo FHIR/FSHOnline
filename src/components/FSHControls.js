@@ -433,7 +433,7 @@ export default function FSHControls(props) {
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <div className={classes.dialogActionsMessage}>
-            Feel like an example is missing? Add to our collection of examples on{' '}
+            Have an example that might be bene-fish-al? Seas the day and add to our collection on{' '}
             <Link href="https://github.com/FSHSchool/FSHOnline-Examples#readme">GitHub</Link>!
           </div>
           <div>
