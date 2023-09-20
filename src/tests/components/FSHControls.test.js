@@ -453,6 +453,20 @@ it('should properly render the examples in the file tree', async () => {
   expect(manifestChild2).toBeInTheDocument();
 });
 
+it('should include a link to the examples repo', () => {
+  const { getByRole, getByText } = render(<FSHControls exampleConfig={[]} />, container);
+
+  const examplesButton = getByRole('button', { name: /Examples/i });
+  expect(examplesButton).toBeInTheDocument();
+  fireEvent.click(examplesButton);
+
+  const exampleRepoText = getByText(/Have an example that might be bene-fish-al?/);
+  expect(exampleRepoText).toBeInTheDocument();
+  const exampleRepoUrl = getByRole('link');
+  expect(exampleRepoUrl).toBeInTheDocument();
+  expect(exampleRepoUrl).toHaveAttribute('href', 'https://github.com/FSHSchool/FSHOnline-Examples#readme');
+});
+
 it.skip('should populate editor when examples are collected', async () => {
   const updateTextValueSpy = jest.fn();
 
