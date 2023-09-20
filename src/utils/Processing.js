@@ -1,8 +1,8 @@
-import { fhirdefs, sushiImport, utils } from 'fsh-sushi';
-import { getLatestVersionNumber, loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
 import { flatten } from 'lodash';
+import { fhirdefs, sushiImport } from 'fsh-sushi';
+import { getLatestVersionNumber, loadAsFHIRDefs, loadDependenciesInStorage, unzipDependencies } from './Load';
+import { fshOnlineLogger as logger } from './logger';
 
-const logger = utils.logger;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
 const FSHTank = sushiImport.FSHTank;
 const importText = sushiImport.importText;
