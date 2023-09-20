@@ -3,12 +3,13 @@ import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
 import { fillTank, loadAndCleanDatabase } from './Processing';
 import { sliceDependency } from './helpers';
+import { fshOnlineLogger as logger, setCurrentLogger } from './logger';
 
 const FSHTank = sushiImport.FSHTank;
 const RawFSH = sushiImport.RawFSH;
 const exportFHIR = sushiExport.exportFHIR;
-const logger = utils.logger;
-const stats = utils.stats;
+const sushiStats = utils.stats;
+const gofshStats = gofshUtils.stats;
 const getRandomPun = utils.getRandomPun;
 const Type = utils.Type;
 const FHIRDefinitions = fhirdefs.FHIRDefinitions;
@@ -26,7 +27,8 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
  * @returns {string} the FSH
  */
 export async function runGoFSH(input, options) {
-  stats.reset();
+  gofshStats.reset();
+  setCurrentLogger('gofsh');
 
   // Read in the resources as strings
   const docs = [];
@@ -88,7 +90,8 @@ export async function runGoFSH(input, options) {
  * @returns Package with FHIR resources
  */
 export async function runSUSHI(input, config, dependencies = []) {
-  stats.reset();
+  sushiStats.reset();
+  setCurrentLogger('sushi');
 
   // Load dependencies
   let defs = new FHIRDefinitions();
@@ -148,8 +151,8 @@ export async function runSUSHI(input, config, dependencies = []) {
 }
 
 function printSUSHIResults(pkg) {
-  const numError = stats.numError;
-  const numWarn = stats.numWarn;
+  const numError = sushiStats.numError;
+  const numWarn = sushiStats.numWarn;
   // NOTE: These variables are creatively names to align well in the strings below while keeping prettier happy
   const profileNum = pad(pkg.profiles.length.toString(), 13);
   const extentNum = pad(pkg.extensions.length.toString(), 12);
@@ -197,9 +200,9 @@ function printGoFSHresults(pkg) {
   const instNum = pad(pkg.instances.length.toString(), 18);
   const invNum = pad(pkg.invariants.length.toString(), 17);
   const mapNum = pad(pkg.mappings.length.toString(), 18);
-  const errNumMsg = pad(`${stats.numError} Error${stats.numError !== 1 ? 's' : ''}`, 12);
-  const wrnNumMsg = padStart(`${stats.numWarn} Warning${stats.numWarn !== 1 ? 's' : ''}`, 12);
-  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(stats.numError, stats.numWarn), 37);
+  const errNumMsg = pad(`${gofshStats.numError} Error${gofshStats.numError !== 1 ? 's' : ''}`, 12);
+  const wrnNumMsg = padStart(`${gofshStats.numWarn} Warning${gofshStats.numWarn !== 1 ? 's' : ''}`, 12);
+  const aWittyMessageInvolvingABadFishPun = padEnd(getRandomPun(gofshStats.numError, gofshStats.numWarn), 37);
 
   // prettier-ignore
   const results = [

@@ -1,8 +1,7 @@
 import tarStream from 'tar-stream';
 import zlib from 'zlib';
 import https from 'https';
-import { utils } from 'fsh-sushi';
-const logger = utils.logger;
+import { fshOnlineLogger as logger } from './logger';
 
 export function unzipDependencies(resources, dependency, id) {
   let returnPackage = { resourceArr: resources, emptyDependencies: [] };
