@@ -74,6 +74,16 @@ This will bundle the project in production mode and optimize the build for the b
 
 The build can be used to deploy the application. For more information, see the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) in the Create React App documentation.
 
+### Serve Build
+
+To serve the built application locally for testing, run the following command:
+
+```bash
+npm run serve-build
+```
+
+This will serve the built application from the `build` directory. It will be served on port 8000. You can access it at the following URL: [http://localhost:8000/FSHOnline/](http://localhost:8000/FSHOnline/).
+
 ### Eject
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
