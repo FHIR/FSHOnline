@@ -114,6 +114,18 @@ const checkFshType = (def) => {
   return null;
 };
 
+const checkIdToDisplay = (def) => {
+  if (def.id) {
+    return def.id;
+  }
+  if (def.resourceType) {
+    // Logical Models don't always have an id, so fall back to last part of the resourceType
+    return def.resourceType.substring(def.resourceType.lastIndexOf('/') + 1);
+  }
+  // If can't determine an id or a best guess from the resourceType, just return 'Untitled'
+  return 'Untitled';
+};
+
 // Flatten the package so we can render and navigate it more easily,
 // but keep high level attributes we'll need accessible
 const getIterablePackage = (defsPackage) => {
@@ -126,7 +138,11 @@ const getIterablePackage = (defsPackage) => {
     ...defsPackage.valueSets,
     ...defsPackage.codeSystems
   ];
-  return defArray.map((def) => ({ resourceType: checkFshType(def), id: def.id, def: JSON.stringify(def, null, 2) }));
+  return defArray.map((def) => ({
+    resourceType: checkFshType(def),
+    id: checkIdToDisplay(def),
+    def: JSON.stringify(def, null, 2)
+  }));
 };
 
 export default function JSONOutput(props) {
@@ -189,7 +205,7 @@ export default function JSONOutput(props) {
       if (!fhirDefinitions[currentDef]) {
         updatedDefs[currentDef] = {
           resourceType: checkFshType(latestJSON),
-          id: latestJSON.id ?? 'Untitled'
+          id: checkIdToDisplay(latestJSON)
         };
       }
 
@@ -200,7 +216,7 @@ export default function JSONOutput(props) {
 
       // Update id if it has changed or it is new
       if (!fhirDefinitions[currentDef] || latestJSON.id !== fhirDefinitions[currentDef].id) {
-        updatedDefs[currentDef].id = latestJSON.id ?? 'Untitled';
+        updatedDefs[currentDef].id = checkIdToDisplay(latestJSON);
       }
     } catch (e) {
       // Invalid JSON typed. Keep track of index.
