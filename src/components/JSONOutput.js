@@ -119,8 +119,10 @@ const checkIdToDisplay = (def) => {
     return def.id;
   }
   if (def.resourceType) {
-    // Logical Models don't always have an id, so fall back to last part of the resourceType
-    return def.resourceType.substring(def.resourceType.lastIndexOf('/') + 1);
+    // Logical Model instances don't always have an id, so fall back to last part of the resourceType
+    // All other definitions are StructureDefinitions/ValueSets/CodeSystems, which are guaranteed to have id
+    // so the only time this case is reached is through Logical Model Instances or someone typing/removing an id
+    return `Instance of ${def.resourceType.substring(def.resourceType.lastIndexOf('/') + 1)}`;
   }
   // If can't determine an id or a best guess from the resourceType, just return 'Untitled'
   return 'Untitled';

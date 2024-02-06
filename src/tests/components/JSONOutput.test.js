@@ -394,9 +394,9 @@ describe('file tree display', () => {
       container
     );
 
-    const structureDef = getByText('StructureDefinition');
+    const structureDef = getByText('Instance of StructureDefinition');
     expect(structureDef).toBeInTheDocument();
-    const exampleLM = getByText('example-logical-model');
+    const exampleLM = getByText('Instance of example-logical-model');
     expect(exampleLM).toBeInTheDocument();
     const untitledDef = getByText('Untitled');
     expect(untitledDef).toBeInTheDocument();
