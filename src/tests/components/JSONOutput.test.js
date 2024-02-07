@@ -367,7 +367,13 @@ describe('file tree display', () => {
       profiles: [
         {
           resourceType: 'StructureDefinition'
-          // No id field - this is to represent the case when someone removed or never included an id. SUSHI packages should always have ids.
+          // No id field - this is to represent the case when someone removed or never included an id or a Logical Model without an id.
+        },
+        {
+          resourceType: 'http://example.org/StructureDefinition/example-logical-model'
+        },
+        {
+          other: 'not a resource type'
         }
       ],
       extensions: [],
@@ -388,6 +394,10 @@ describe('file tree display', () => {
       container
     );
 
+    const structureDef = getByText('Instance of StructureDefinition');
+    expect(structureDef).toBeInTheDocument();
+    const exampleLM = getByText('Instance of example-logical-model');
+    expect(exampleLM).toBeInTheDocument();
     const untitledDef = getByText('Untitled');
     expect(untitledDef).toBeInTheDocument();
   });
