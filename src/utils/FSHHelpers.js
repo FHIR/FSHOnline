@@ -242,33 +242,28 @@ function addCoreFHIRVersionAndAutomaticDependencies(dependencies, coreFHIRVersio
   if (!hasCoreFHIR) {
     dependenciesToAdd.push(coreFHIRPackage);
   }
-  const toolsPkg = { packageId: 'hl7.fhir.uv.tools', version: 'latest', isAutomatic: true };
-  const hasTools = hasDependency(dependencies, toolsPkg, true);
-  if (!hasTools) {
-    dependenciesToAdd.push(toolsPkg);
-  }
+  AUTOMATIC_DEPENDENCIES.filter((dep) => dep.fhirVersions == null).forEach((dep) => {
+    const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
+    if (!hasDependency(dependencies, dependencyToAdd, true)) {
+      dependenciesToAdd.push(dependencyToAdd);
+    }
+  });
   if (coreFHIRPackage.version.match(/^5\.0\.\d+$/)) {
-    const extensionPkg = { packageId: 'hl7.fhir.uv.extensions.r5', version: 'latest', isAutomatic: true };
-    const hasExtensions = hasDependency(dependencies, extensionPkg, true);
-    const terminologyPkg = { packageId: 'hl7.terminology.r5', version: 'latest', isAutomatic: true };
-    const hasTerminology = hasDependency(dependencies, terminologyPkg, true);
-    if (!hasExtensions) {
-      dependenciesToAdd.push(extensionPkg);
-    }
-    if (!hasTerminology) {
-      dependenciesToAdd.push(terminologyPkg);
-    }
+    AUTOMATIC_DEPENDENCIES.filter((dep) => dep.fhirVersions?.includes('R5')).forEach((dep) => {
+      const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
+      if (!hasDependency(dependencies, dependencyToAdd, true)) {
+        dependenciesToAdd.push(dependencyToAdd);
+      }
+    });
   } else if (coreFHIRPackage.version.match(/^4\.0\.1$/) || coreFHIRPackage.version.match(/^4\.3\.\d+$/)) {
-    const extensionPkg = { packageId: 'hl7.fhir.uv.extensions.r4', version: 'latest', isAutomatic: true };
-    const hasExtensions = hasDependency(dependencies, extensionPkg, true);
-    const terminologyPkg = { packageId: 'hl7.terminology.r4', version: 'latest', isAutomatic: true };
-    const hasTerminology = hasDependency(dependencies, terminologyPkg, true);
-    if (!hasExtensions) {
-      dependenciesToAdd.push(extensionPkg);
-    }
-    if (!hasTerminology) {
-      dependenciesToAdd.push(terminologyPkg);
-    }
+    AUTOMATIC_DEPENDENCIES.filter(
+      (dep) => dep.fhirVersions?.includes('R4') || dep.fhirVersions?.includes('R4B')
+    ).forEach((dep) => {
+      const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
+      if (!hasDependency(dependencies, dependencyToAdd, true)) {
+        dependenciesToAdd.push(dependencyToAdd);
+      }
+    });
   }
   return dependenciesToAdd;
 }
@@ -291,3 +286,30 @@ export function getCoreFHIRPackageIdentifier(fhirVersion) {
     return `hl7.fhir.r4.core`;
   }
 }
+
+const AUTOMATIC_DEPENDENCIES = [
+  {
+    packageId: 'hl7.fhir.uv.tools',
+    version: 'latest'
+  },
+  {
+    packageId: 'hl7.terminology.r4',
+    version: 'latest',
+    fhirVersions: ['R4', 'R4B']
+  },
+  {
+    packageId: 'hl7.terminology.r5',
+    version: 'latest',
+    fhirVersions: ['R5']
+  },
+  {
+    packageId: 'hl7.fhir.uv.extensions.r4',
+    version: 'latest',
+    fhirVersions: ['R4', 'R4B']
+  },
+  {
+    packageId: 'hl7.fhir.uv.extensions.r5',
+    version: 'latest',
+    fhirVersions: ['R5']
+  }
+];
