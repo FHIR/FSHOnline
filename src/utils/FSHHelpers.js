@@ -242,16 +242,32 @@ function addCoreFHIRVersionAndAutomaticDependencies(dependencies, coreFHIRVersio
   if (!hasCoreFHIR) {
     dependenciesToAdd.push(coreFHIRPackage);
   }
-  const terminologyPkg = { packageId: 'hl7.terminology.r4', version: 'latest', isAutomatic: true };
-  const hasTerminology = hasDependency(dependencies, terminologyPkg, true);
-  if (!hasTerminology) {
-    dependenciesToAdd.push(terminologyPkg);
+  const toolsPkg = { packageId: 'hl7.fhir.uv.tools', version: 'latest', isAutomatic: true };
+  const hasTools = hasDependency(dependencies, toolsPkg, true);
+  if (!hasTools) {
+    dependenciesToAdd.push(toolsPkg);
   }
   if (coreFHIRPackage.version.match(/^5\.0\.\d+$/)) {
-    const extensionPkg = { packageId: 'hl7.fhir.uv.extensions', version: 'latest', isAutomatic: true };
+    const extensionPkg = { packageId: 'hl7.fhir.uv.extensions.r5', version: 'latest', isAutomatic: true };
     const hasExtensions = hasDependency(dependencies, extensionPkg, true);
+    const terminologyPkg = { packageId: 'hl7.terminology.r5', version: 'latest', isAutomatic: true };
+    const hasTerminology = hasDependency(dependencies, terminologyPkg, true);
     if (!hasExtensions) {
       dependenciesToAdd.push(extensionPkg);
+    }
+    if (!hasTerminology) {
+      dependenciesToAdd.push(terminologyPkg);
+    }
+  } else if (coreFHIRPackage.version.match(/^4\.0\.1$/) || coreFHIRPackage.version.match(/^4\.3\.\d+$/)) {
+    const extensionPkg = { packageId: 'hl7.fhir.uv.extensions.r4', version: 'latest', isAutomatic: true };
+    const hasExtensions = hasDependency(dependencies, extensionPkg, true);
+    const terminologyPkg = { packageId: 'hl7.terminology.r4', version: 'latest', isAutomatic: true };
+    const hasTerminology = hasDependency(dependencies, terminologyPkg, true);
+    if (!hasExtensions) {
+      dependenciesToAdd.push(extensionPkg);
+    }
+    if (!hasTerminology) {
+      dependenciesToAdd.push(terminologyPkg);
     }
   }
   return dependenciesToAdd;
