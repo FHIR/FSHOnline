@@ -242,29 +242,14 @@ function addCoreFHIRVersionAndAutomaticDependencies(dependencies, coreFHIRVersio
   if (!hasCoreFHIR) {
     dependenciesToAdd.push(coreFHIRPackage);
   }
-  AUTOMATIC_DEPENDENCIES.filter((dep) => dep.fhirVersions == null).forEach((dep) => {
+  AUTOMATIC_DEPENDENCIES.filter(
+    (dep) => dep.fhirVersions == null || dep.fhirVersions.some((v) => coreFHIRPackage.version.startsWith(v))
+  ).forEach((dep) => {
     const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
     if (!hasDependency(dependencies, dependencyToAdd, true)) {
       dependenciesToAdd.push(dependencyToAdd);
     }
   });
-  if (coreFHIRPackage.version.match(/^5\.0\.\d+$/)) {
-    AUTOMATIC_DEPENDENCIES.filter((dep) => dep.fhirVersions?.includes('R5')).forEach((dep) => {
-      const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
-      if (!hasDependency(dependencies, dependencyToAdd, true)) {
-        dependenciesToAdd.push(dependencyToAdd);
-      }
-    });
-  } else if (coreFHIRPackage.version.match(/^4\.0\.1$/) || coreFHIRPackage.version.match(/^4\.3\.\d+$/)) {
-    AUTOMATIC_DEPENDENCIES.filter(
-      (dep) => dep.fhirVersions?.includes('R4') || dep.fhirVersions?.includes('R4B')
-    ).forEach((dep) => {
-      const dependencyToAdd = { packageId: dep.packageId, version: dep.version, isAutomatic: true };
-      if (!hasDependency(dependencies, dependencyToAdd, true)) {
-        dependenciesToAdd.push(dependencyToAdd);
-      }
-    });
-  }
   return dependenciesToAdd;
 }
 
@@ -295,21 +280,21 @@ const AUTOMATIC_DEPENDENCIES = [
   {
     packageId: 'hl7.terminology.r4',
     version: 'latest',
-    fhirVersions: ['R4', 'R4B']
+    fhirVersions: ['4.0', '4.3']
   },
   {
     packageId: 'hl7.terminology.r5',
     version: 'latest',
-    fhirVersions: ['R5']
+    fhirVersions: ['5.0']
   },
   {
     packageId: 'hl7.fhir.uv.extensions.r4',
     version: 'latest',
-    fhirVersions: ['R4', 'R4B']
+    fhirVersions: ['4.0', '4.3']
   },
   {
     packageId: 'hl7.fhir.uv.extensions.r5',
     version: 'latest',
-    fhirVersions: ['R5']
+    fhirVersions: ['5.0']
   }
 ];
