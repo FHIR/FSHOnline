@@ -15,7 +15,7 @@
     "browserify-zlib": "^0.2.0",
     "codemirror": "^5.65.16",
     "file-saver": "^2.0.5",
-    "fsh-sushi": "^3.6.1",
+    "fsh-sushi": "^3.8.0",
     "gofsh": "^2.3.0",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
@@ -41,6 +41,10 @@
   },
   "overrides": {
     "antlr4": "4.13.1-patch-1",
+    "fsh-sushi": {
+      "https-proxy-agent": "5.0.0",
+      "ini": "4.0.0"
+    },
     "react-dev-utils": {
       "react-error-overlay": "6.0.9"
     }
