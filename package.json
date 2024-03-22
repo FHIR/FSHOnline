@@ -62,6 +62,11 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/axios.js"
+    }
+  },
   "browserslist": [
     "defaults"
   ]
