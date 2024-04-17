@@ -46,7 +46,7 @@
       "https-proxy-agent": "5.0.0",
       "ini": "4.0.0"
     },
-    "gofsh": {
+    "fhir-package-loader": {
       "https-proxy-agent": "5.0.0"
     },
     "react-dev-utils": {
