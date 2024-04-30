@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import AppRouter from '../../utils/AppRouter';
+import AppRouter from '../AppRouter';
 
-jest.mock('../../App', () => () => <div>Mock FSH Online</div>);
+jest.mock('../App', () => () => <div>Mock FSH Online</div>);
 
 test('Renders FSH Online App when visiting /FSHOnline', () => {
   const { getByText } = render(
