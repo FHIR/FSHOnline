@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import { fshOnlineLogger as logger } from './../utils/logger';
 import {
   AssignmentOutlined as AssignmentOutlinedIcon,
   ChevronRight as ChevronRightIcon,
@@ -221,7 +222,10 @@ export default function FSHControls(props) {
     setIsGoFSHRunning(true);
     const gofshInputStrings = props.gofshText.map((def) => def.def).filter((d) => d);
     const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
-
+    // Check if JSON resource is incorrect and display error message in console
+    if (gofshInputStrings.toString().includes('resourceType') === false) {
+      logger.error('FHIR JSON input is missing the required "resourceType" property');
+    }
     // Create small ImplementationGuide resource to send canonical and version information
     if (canonical || version || fhirVersion !== '') {
       const igResource = {
