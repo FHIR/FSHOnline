@@ -36,6 +36,9 @@ export async function runGoFSH(input, options) {
     const location = `Input_${i}`;
     try {
       resource = JSON.parse(resource);
+      if (!resource.resourceType) {
+        logger.error(`FHIR JSON ${resource.id ?? location} is missing the required "resourceType" property`);
+      }
     } catch (e) {
       logger.error(`Could not parse ${location} to JSON`);
       return;
