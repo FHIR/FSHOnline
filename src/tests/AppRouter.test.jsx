@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AppRouter from '../AppRouter';
 
+// eslint-disable-next-line react/display-name
 jest.mock('../App', () => () => <div>Mock FSH Online</div>);
 
 test('Renders FSH Online App when visiting /FSHOnline', () => {

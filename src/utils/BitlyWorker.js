@@ -1,5 +1,5 @@
-const BitlyClient = require('bitly').BitlyClient;
-const bitly = new BitlyClient(process.env.REACT_APP_BITLY_KEY);
+import { BitlyClient } from 'bitly';
+const bitly = new BitlyClient(import.meta.env.VITE_BITLY_KEY);
 
 export async function generateLink(longLink) {
   return new Promise((resolve) => {
@@ -8,10 +8,10 @@ export async function generateLink(longLink) {
       .then(function (result) {
         resolve({ link: result.link, errorNeeded: false });
       })
-      .catch(function (error) {
-        if (process.env.REACT_APP_BITLY_KEY == null) {
+      .catch(function () {
+        if (import.meta.env.VITE_BITLY_KEY == null) {
           console.error(
-            'Error: REACT_APP_BITLY_KEY needs to be set as an environment variable in order to share FSH Online links.'
+            'Error: VITE_BITLY_KEY needs to be set as an environment variable in order to share FSH Online links.'
           );
           resolve({ link: undefined, errorNeeded: true });
         } else {

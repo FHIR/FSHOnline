@@ -19,7 +19,7 @@ describe('#runSUSHI', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Don't add any FHIR definitions to defs
         return Promise.resolve(defs);
       });
@@ -34,7 +34,7 @@ describe('#runSUSHI', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);
@@ -51,7 +51,7 @@ describe('#runSUSHI', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);
@@ -70,7 +70,7 @@ describe('#runSUSHI', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);
@@ -109,7 +109,7 @@ describe('#runGoFSH', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Don't add any FHIR definitions to defs
         return Promise.resolve(defs);
       });
@@ -132,7 +132,7 @@ describe('#runGoFSH', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);
@@ -185,7 +185,7 @@ describe('#runGoFSH', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);
@@ -241,7 +241,7 @@ describe('#runGoFSH', () => {
     const loadAndCleanDBSpy = jest
       .spyOn(processing, 'loadAndCleanDatabase')
       .mockReset()
-      .mockImplementation((defs, deps) => {
+      .mockImplementation((defs) => {
         // Add necessary FHIR definitions to defs
         defs.add(Patient);
         defs.add(StructureDefinition);

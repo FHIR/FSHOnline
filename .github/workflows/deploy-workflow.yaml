@@ -17,7 +17,7 @@ jobs:
       - run: npm install
       - run: npm run build
         env:
-          REACT_APP_BITLY_KEY: ${{ secrets.REACT_APP_BITLY_KEY }}
+          VITE_BITLY_KEY: ${{ secrets.VITE_BITLY_KEY }}
       - name: Publish build to github pages
         uses: peaceiris/actions-gh-pages@v3.5.7
         with:
