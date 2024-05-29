@@ -3,7 +3,7 @@ import { decodeFSH } from '../App';
 import * as bitlyWorker from '../utils/BitlyWorker';
 
 test('decodeFSH will return a properly decoded string from base64', async () => {
-  const expandLinkSpy = jest.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
+  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
     long_url: 'https://fshschool.org/FSHOnline/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
   });
   const base64 = {

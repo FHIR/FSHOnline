@@ -38,11 +38,13 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "fake-indexeddb": "^3.1.1",
+    "jsdom": "^24.0.0",
     "nock": "^13.4.0",
     "null-loader": "^4.0.1",
     "prettier": "^2.0.5",
     "vite": "^5.2.10",
-    "vite-plugin-node-polyfills": "^0.21.0"
+    "vite-plugin-node-polyfills": "^0.21.0",
+    "vitest": "^1.6.0"
   },
   "scripts": {
     "start": "vite",
@@ -51,12 +53,7 @@
     "lint": "eslint \"./src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"./src/**/*.{js,jsx}\" --fix",
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx}\"",
-    "test": "jest"
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "^axios$": "axios/dist/axios.js"
-    }
+    "test": "vitest"
   },
   "browserslist": [
     "defaults"

@@ -15,6 +15,9 @@
     "jest": true,
     "node": true
   },
+  "globals": {
+    "vi": true
+  },
   "settings": {
     "react": {
       "version": "detect"

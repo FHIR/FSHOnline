@@ -32,5 +32,10 @@ export default defineConfig({
       'readline-sync': './src/stubs/empty.js',
       tar: './src/stubs/empty.js'
     }
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: 'src/setupTests.js'
   }
 });
