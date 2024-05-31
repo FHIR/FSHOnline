@@ -275,7 +275,7 @@ describe('#resolveDependencies', () => {
       { packageId: 'hl7.fhir.r4.core', version: '4.0.1' },
       { packageId: 'hl7.terminology.r4', version: 'latest' }
     ];
-    nock('https://packages.fhir.org')
+    nock('http://packages.fhir.org')
       .get('/hl7.terminology.r4')
       .reply(200, {
         name: 'hl7.terminology.r4',
@@ -295,7 +295,7 @@ describe('#resolveDependencies', () => {
       { packageId: 'hl7.terminology.r4', version: 'latest' },
       { packageId: 'a.package.without.latest', version: 'latest' }
     ];
-    nock('https://packages.fhir.org')
+    nock('http://packages.fhir.org')
       .get('/hl7.terminology.r4')
       .reply(200, {
         name: 'hl7.terminology.r4',
