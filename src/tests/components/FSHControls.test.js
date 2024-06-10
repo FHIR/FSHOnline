@@ -242,6 +242,52 @@ it('calls GoFSH with the indent option if the configuration checkbox is checked'
   });
 });
 
+it('displays code with line wrapping in the code editors if the configuration checkbox is checked', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  const setTextWrap = jest.fn();
+  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
+  const { getByRole, getByLabelText } = render(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setTextWrap={setTextWrap}
+      textWrapped={false}
+    />,
+    container
+  );
+
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const textWrapCheckbox = getByLabelText('Line wrap within code editors');
+  expect(textWrapCheckbox).not.toBeChecked();
+  fireEvent.click(textWrapCheckbox);
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await waitFor(() => {
+    expect(textWrapCheckbox).toBeChecked();
+    expect(resetLogMessages).toHaveBeenCalledTimes(1);
+    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
+      dependencies: [],
+      indent: false
+    }); // No IG resource added because canonical and version set to defaults
+    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
+    expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
+    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+  });
+});
+
 it('uses user provided canonical when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
