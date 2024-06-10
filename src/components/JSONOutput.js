@@ -421,6 +421,7 @@ export default function JSONOutput(props) {
         isExamples={false}
         delete={handleOpenDeleteConfirmation}
         save={() => handleSave(displayValue, name)}
+        textWrapped={props.textWrapped}
       />
       {openDeleteConfirmation && renderDeleteModal()}
     </>

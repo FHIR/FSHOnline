@@ -32,6 +32,7 @@ export default function FSHOutput(props) {
         delete={handleOpenDeleteModal}
         save={handleSave}
         config={props.config}
+        textWrapped={props.textWrapped}
       />
       {openDeleteModal && (
         <DeleteConfirmationModal

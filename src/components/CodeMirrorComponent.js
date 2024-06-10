@@ -323,7 +323,8 @@ export default function CodeMirrorComponent(props) {
             'Ctrl-Q': (cm) => {
               cm.foldCode(cm.getCursor());
             }
-          }
+          },
+          lineWrapping: props.textWrapped
         }}
         onChange={(editor, data, value) => {
           updateText(value);

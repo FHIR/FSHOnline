@@ -116,6 +116,7 @@ export default function FSHControls(props) {
   const [fhirVersion, setFhirVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isGoFSHIndented, setIsGoFSHIndented] = useState(false);
+  const [isGoFSHLineWrap, setIsGoFSHLineWrap] = useState(props.textWrapped);
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
   const [isFetchingExample, setIsFetchingExample] = useState(false);
@@ -170,6 +171,12 @@ export default function FSHControls(props) {
   const updateIsGoFSHIndented = (event) => {
     const isIndented = event.target.checked;
     setIsGoFSHIndented(isIndented);
+  };
+
+  const updateIsGoFSHWrap = (event) => {
+    const isLineWrapped = event.target.checked;
+    setIsGoFSHLineWrap(isLineWrapped);
+    props.setTextWrap(isLineWrapped);
   };
 
   async function handleSUSHIClick() {
@@ -388,6 +395,14 @@ export default function FSHControls(props) {
             onChange={updateIsGoFSHIndented}
           />
           <FormHelperText>If set, Convert to FSH will output FSH using path rules</FormHelperText>
+          <FormControlLabel
+            id="goFSHLineWrap"
+            margin="dense"
+            control={<Checkbox checked={isGoFSHLineWrap} color="primary" />}
+            label="Line wrap output of Convert to FSH"
+            onChange={updateIsGoFSHWrap}
+          />
+          <FormHelperText>If set, Convert to FSH will output FSH with line wrapping</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
@@ -426,6 +441,7 @@ export default function FSHControls(props) {
                 updateTextValue={updateExampleValue}
                 mode={'fsh'}
                 placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
+                textWrapped={isGoFSHLineWrap}
               />
             </Grid>
           </Grid>
