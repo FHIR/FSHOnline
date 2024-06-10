@@ -399,10 +399,10 @@ export default function FSHControls(props) {
             id="goFSHLineWrap"
             margin="dense"
             control={<Checkbox checked={isGoFSHLineWrap} color="primary" />}
-            label="Line wrap output of Convert to FSH"
+            label="Line wrap within code editors"
             onChange={updateIsGoFSHWrap}
           />
-          <FormHelperText>If set, Convert to FSH will output FSH with line wrapping</FormHelperText>
+          <FormHelperText>If set, FSH Online will display code with line wrapping</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
