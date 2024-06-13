@@ -116,7 +116,7 @@ export default function FSHControls(props) {
   const [fhirVersion, setFhirVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isGoFSHIndented, setIsGoFSHIndented] = useState(false);
-  const [isGoFSHLineWrap, setIsGoFSHLineWrap] = useState(props.textWrapped);
+  const [isLineWrap, setIsLineWrap] = useState(props.isLineWrapped);
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
   const [isFetchingExample, setIsFetchingExample] = useState(false);
@@ -174,9 +174,9 @@ export default function FSHControls(props) {
   };
 
   const updateIsGoFSHWrap = (event) => {
-    const isLineWrapped = event.target.checked;
-    setIsGoFSHLineWrap(isLineWrapped);
-    props.setTextWrap(isLineWrapped);
+    const isLineWrappedChecked = event.target.checked;
+    setIsLineWrap(isLineWrappedChecked);
+    props.setIsLineWrapped(isLineWrappedChecked);
   };
 
   async function handleSUSHIClick() {
@@ -396,9 +396,9 @@ export default function FSHControls(props) {
           />
           <FormHelperText>If set, Convert to FSH will output FSH using path rules</FormHelperText>
           <FormControlLabel
-            id="goFSHLineWrap"
+            id="lineWrap"
             margin="dense"
-            control={<Checkbox checked={isGoFSHLineWrap} color="primary" />}
+            control={<Checkbox checked={isLineWrap} color="primary" />}
             label="Line wrap within code editors"
             onChange={updateIsGoFSHWrap}
           />
@@ -441,7 +441,7 @@ export default function FSHControls(props) {
                 updateTextValue={updateExampleValue}
                 mode={'fsh'}
                 placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
-                textWrapped={isGoFSHLineWrap}
+                isLineWrapped={isLineWrap}
               />
             </Grid>
           </Grid>

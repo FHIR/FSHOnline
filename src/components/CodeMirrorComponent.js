@@ -324,7 +324,7 @@ export default function CodeMirrorComponent(props) {
               cm.foldCode(cm.getCursor());
             }
           },
-          lineWrapping: props.textWrapped
+          lineWrapping: props.isLineWrapped
         }}
         onChange={(editor, data, value) => {
           updateText(value);

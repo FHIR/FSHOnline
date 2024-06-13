@@ -251,7 +251,7 @@ it('displays code with line wrapping in the code editors if the configuration ch
   const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const setTextWrap = jest.fn();
+  const setIsLineWrapped = jest.fn();
   const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
   const { getByRole, getByLabelText } = render(
     <FSHControls
@@ -259,24 +259,24 @@ it('displays code with line wrapping in the code editors if the configuration ch
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
       resetLogMessages={resetLogMessages}
       exampleConfig={[]}
-      setTextWrap={setTextWrap}
-      textWrapped={false}
+      setIsLineWrapped={setIsLineWrapped}
+      isLineWrapped={false}
     />,
     container
   );
 
   const configButton = getByRole('button', { name: /Configuration/i });
   fireEvent.click(configButton);
-  const textWrapCheckbox = getByLabelText('Line wrap within code editors');
-  expect(textWrapCheckbox).not.toBeChecked();
-  fireEvent.click(textWrapCheckbox);
+  const isLineWrappedCheckbox = getByLabelText('Line wrap within code editors');
+  expect(isLineWrappedCheckbox).not.toBeChecked();
+  fireEvent.click(isLineWrappedCheckbox);
   const button = document.querySelector('[testid=GoFSH-button]');
   act(() => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 
   await waitFor(() => {
-    expect(textWrapCheckbox).toBeChecked();
+    expect(isLineWrappedCheckbox).toBeChecked();
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
       dependencies: [],

@@ -216,7 +216,7 @@ export default function App(props) {
   const [isDragging, setIsDragging] = useState(false);
   const [configToShare, setConfigToShare] = useState({ canonical: '', version: '', fhirVersion: [], dependencies: '' });
   const [sharedConfig, setSharedConfig] = useState({});
-  const [textWrapped, setTextWrapped] = useState(false);
+  const [isLineWrapped, setIsLineWrapped] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -314,8 +314,8 @@ export default function App(props) {
     setIsDragging(false);
   }
 
-  function setTextWrap(wrapSelected) {
-    setTextWrapped(wrapSelected);
+  function setLineWrap(wrapSelected) {
+    setIsLineWrapped(wrapSelected);
   }
 
   function debouncedMove(clientX) {
@@ -414,8 +414,8 @@ export default function App(props) {
             exampleMetadata={exampleFilePaths}
             isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
             saveAll={saveAll}
-            setTextWrap={setTextWrap}
-            textWrapped={textWrapped}
+            setIsLineWrapped={setLineWrap}
+            isLineWrapped={isLineWrapped}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>
@@ -440,7 +440,7 @@ export default function App(props) {
                   isWaiting={isWaitingForFSHOutput}
                   setInitialText={setInitialText}
                   config={configToShare}
-                  textWrapped={textWrapped}
+                  isLineWrapped={isLineWrapped}
                 />
               </Grid>
               <Grid
@@ -465,7 +465,7 @@ export default function App(props) {
                   setShowNewText={setShowNewFHIRText}
                   isWaiting={isWaitingForFHIROutput}
                   updateTextValue={updateInputFHIRTextValue}
-                  textWrapped={textWrapped}
+                  isLineWrapped={isLineWrapped}
                 />
               </Grid>
             </Grid>
