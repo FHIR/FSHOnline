@@ -248,19 +248,20 @@ it('displays code with line wrapping in the code editors if the configuration ch
     id: 'MyPatient',
     gender: 'female'
   };
-  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
   const onGoFSHClick = jest.fn();
   const resetLogMessages = jest.fn();
-  const setIsLineWrapped = jest.fn();
-  const runGoFSHSpy = jest.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
-  const { getByRole, getByLabelText } = render(
+  let wrapped = false;
+  const setIsLineWrapped = jest.fn(() => {
+    wrapped = !wrapped;
+  });
+  const { getByRole, getByLabelText, rerender } = render(
     <FSHControls
       onGoFSHClick={onGoFSHClick}
       gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
       resetLogMessages={resetLogMessages}
       exampleConfig={[]}
       setIsLineWrapped={setIsLineWrapped}
-      isLineWrapped={false}
+      isLineWrapped={wrapped}
     />,
     container
   );
@@ -270,22 +271,18 @@ it('displays code with line wrapping in the code editors if the configuration ch
   const isLineWrappedCheckbox = getByLabelText('Line wrap within code editors');
   expect(isLineWrappedCheckbox).not.toBeChecked();
   fireEvent.click(isLineWrappedCheckbox);
-  const button = document.querySelector('[testid=GoFSH-button]');
-  act(() => {
-    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  });
-
-  await waitFor(() => {
-    expect(isLineWrappedCheckbox).toBeChecked();
-    expect(resetLogMessages).toHaveBeenCalledTimes(1);
-    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
-      dependencies: [],
-      indent: false
-    }); // No IG resource added because canonical and version set to defaults
-    expect(onGoFSHClick).toHaveBeenCalledTimes(2);
-    expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
-    expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
-  });
+  rerender(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsLineWrapped={setIsLineWrapped}
+      isLineWrapped={wrapped}
+    />,
+    container
+  );
+  expect(isLineWrappedCheckbox).toBeChecked();
 });
 
 it('uses user provided canonical when calling runSUSHI', async () => {

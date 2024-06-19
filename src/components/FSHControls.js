@@ -116,7 +116,6 @@ export default function FSHControls(props) {
   const [fhirVersion, setFhirVersion] = useState('');
   const [dependencies, setDependencies] = useState('');
   const [isGoFSHIndented, setIsGoFSHIndented] = useState(false);
-  const [isLineWrap, setIsLineWrap] = useState(props.isLineWrapped);
   const [isSUSHIRunning, setIsSUSHIRunning] = useState(false);
   const [isGoFSHRunning, setIsGoFSHRunning] = useState(false);
   const [isFetchingExample, setIsFetchingExample] = useState(false);
@@ -173,9 +172,8 @@ export default function FSHControls(props) {
     setIsGoFSHIndented(isIndented);
   };
 
-  const updateIsGoFSHWrap = (event) => {
+  const updateLineWrapping = (event) => {
     const isLineWrappedChecked = event.target.checked;
-    setIsLineWrap(isLineWrappedChecked);
     props.setIsLineWrapped(isLineWrappedChecked);
   };
 
@@ -398,9 +396,9 @@ export default function FSHControls(props) {
           <FormControlLabel
             id="lineWrap"
             margin="dense"
-            control={<Checkbox checked={isLineWrap} color="primary" />}
+            control={<Checkbox checked={props.isLineWrapped} color="primary" />}
             label="Line wrap within code editors"
-            onChange={updateIsGoFSHWrap}
+            onChange={updateLineWrapping}
           />
           <FormHelperText>If set, FSH Online will display code with line wrapping</FormHelperText>
         </DialogContent>
@@ -441,7 +439,7 @@ export default function FSHControls(props) {
                 updateTextValue={updateExampleValue}
                 mode={'fsh'}
                 placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
-                isLineWrapped={isLineWrap}
+                isLineWrapped={props.isLineWrapped}
               />
             </Grid>
           </Grid>
