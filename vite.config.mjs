@@ -21,7 +21,10 @@ export default defineConfig({
   define: {
     // Override __dirname in case a dependency (likely SUSHI or GoFSH) tries to use it
     // see: https://main.vitejs.dev/config/shared-options.html#define
-    __dirname: '""'
+    __dirname: '""',
+    // Override load variable -- for some reason, this variable is sometimes undefined when
+    // running the built code.
+    load: {}
   },
   plugins: [
     react(),
