@@ -50,6 +50,7 @@
     "lint": "eslint \"./src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"./src/**/*.{js,jsx}\" --fix",
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx}\"",
+    "prettier-fix": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
     "test": "vitest"
   },
   "browserslist": [

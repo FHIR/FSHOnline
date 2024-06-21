@@ -1,8 +1,14 @@
-import { waitFor } from '@testing-library/react';
-import { decodeFSH } from '../App';
+import { waitFor, render, fireEvent } from '@testing-library/react';
+import App, { decodeFSH } from '../App';
 import * as bitlyWorker from '../utils/BitlyWorker';
 
-test('decodeFSH will return a properly decoded string from base64', async () => {
+it('basic app renders', () => {
+  const { getByText } = render(<App match={{}} />);
+  const linkElement = getByText(/FSH Online/i);
+  expect(linkElement).toBeInTheDocument();
+});
+
+it('decodeFSH will return a properly decoded string from base64', async () => {
   const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
     long_url: 'https://fshschool.org/FSHOnline/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
   });
@@ -15,4 +21,22 @@ test('decodeFSH will return a properly decoded string from base64', async () => 
     expect(decoded).toEqual(expectedDecoded);
     expect(expandLinkSpy).toHaveBeenCalled();
   });
+});
+
+it('line wrapping selection is reflected in parent on selection of checkbox', async () => {
+  const { container, getByRole, getByLabelText } = render(<App match={{}} />);
+  // wrapping not set by default
+  expect(container.querySelector('.CodeMirror')).toBeInTheDocument();
+  expect(container.querySelector('.CodeMirror-wrap')).not.toBeInTheDocument();
+
+  // click check box for line wrapping
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const isLineWrappedCheckbox = getByLabelText('Line wrap within code editors');
+  expect(isLineWrappedCheckbox).not.toBeChecked();
+  fireEvent.click(isLineWrappedCheckbox);
+
+  // line wrapping set after clicked
+  expect(container.querySelector('.CodeMirror')).toBeInTheDocument();
+  expect(container.querySelector('.CodeMirror-wrap')).toBeInTheDocument();
 });

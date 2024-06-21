@@ -172,6 +172,11 @@ export default function FSHControls(props) {
     setIsGoFSHIndented(isIndented);
   };
 
+  const updateLineWrapping = (event) => {
+    const isLineWrappedChecked = event.target.checked;
+    props.setIsLineWrapped(isLineWrappedChecked);
+  };
+
   async function handleSUSHIClick() {
     if (props.isWaiting) {
       // If SUSHI or GoFSH is in the middle of processes, don't do anything
@@ -388,6 +393,14 @@ export default function FSHControls(props) {
             onChange={updateIsGoFSHIndented}
           />
           <FormHelperText>If set, Convert to FSH will output FSH using path rules</FormHelperText>
+          <FormControlLabel
+            id="lineWrap"
+            margin="dense"
+            control={<Checkbox checked={props.isLineWrapped} color="primary" />}
+            label="Line wrap within code editors"
+            onChange={updateLineWrapping}
+          />
+          <FormHelperText>If set, FSH Online will display code with line wrapping</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
@@ -426,6 +439,7 @@ export default function FSHControls(props) {
                 updateTextValue={updateExampleValue}
                 mode={'fsh'}
                 placeholder={isFetchingExample ? 'Fetching example...' : 'Select an example'}
+                isLineWrapped={props.isLineWrapped}
               />
             </Grid>
           </Grid>

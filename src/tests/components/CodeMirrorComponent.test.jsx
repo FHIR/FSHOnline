@@ -63,6 +63,22 @@ it('Drawer can be collapsed and expanded', async () => {
   });
 });
 
+it('Editor wraps when text wrapping is true', async () => {
+  const { container: renderContainer } = render(
+    <CodeMirrorComponent initialText="Some text" isLineWrapped={true} />,
+    container
+  );
+  expect(renderContainer.querySelector('.CodeMirror-wrap')).toBeInTheDocument();
+});
+
+it('Editor does not wrap when text wrapping is false', async () => {
+  const { container: renderContainer } = render(
+    <CodeMirrorComponent initialText="Some text" isLineWrapped={false} />,
+    container
+  );
+  expect(renderContainer.querySelector('.CodeMirror-wrap')).not.toBeInTheDocument();
+});
+
 it('Does not renders a drawer or expand button when one is not provided in props', () => {
   // No renderDrawer prop passed in
   const { queryByRole } = render(<CodeMirrorComponent initialText="Some text" />, container);
