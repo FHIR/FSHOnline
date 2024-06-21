@@ -1,3 +1,4 @@
+import React from 'react';
 import { waitFor, render, fireEvent } from '@testing-library/react';
 import App, { decodeFSH } from '../App';
 import * as bitlyWorker from '../utils/BitlyWorker';
