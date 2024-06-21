@@ -242,6 +242,49 @@ it('calls GoFSH with the indent option if the configuration checkbox is checked'
   });
 });
 
+it('displays code with line wrapping in the code editors if the configuration checkbox is checked', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
+  const onGoFSHClick = jest.fn();
+  const resetLogMessages = jest.fn();
+  let wrapped = false;
+  const setIsLineWrapped = jest.fn(() => {
+    wrapped = !wrapped;
+  });
+  const { getByRole, getByLabelText, rerender } = render(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsLineWrapped={setIsLineWrapped}
+      isLineWrapped={wrapped}
+    />,
+    container
+  );
+
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const isLineWrappedCheckbox = getByLabelText('Line wrap within code editors');
+  expect(isLineWrappedCheckbox).not.toBeChecked();
+  fireEvent.click(isLineWrappedCheckbox);
+  rerender(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsLineWrapped={setIsLineWrapped}
+      isLineWrapped={wrapped}
+    />,
+    container
+  );
+  expect(isLineWrappedCheckbox).toBeChecked();
+});
+
 it('uses user provided canonical when calling runSUSHI', async () => {
   const onClick = jest.fn();
   const resetLogMessages = jest.fn();
