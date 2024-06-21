@@ -60,6 +60,7 @@
     "lint": "eslint \"./src/**/*.js\"",
     "lint-fix": "eslint \"./src/**/*.js\" --fix",
     "prettier": "prettier --check \"**/*.{js,ts}\"",
+    "prettier-fix": "prettier --write \"**/*.{js,ts}\"",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
