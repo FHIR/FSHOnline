@@ -2,6 +2,15 @@
 
 FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It also runs the [GoFSH](https://github.com/FHIR/GoFSH) decompiler to translate FHIR definitions into FSH. It is available on https://fshschool.org/FSHOnline/.
 
+## FHIR Foundation Project Statement
+
+- Maintainers: This project is maintained by The MITRE Corporation.
+- Issues / Discussion: For FSH Online issues, such as bug reports, comments, suggestions, questions, and feature requests, visit [FSH Online GitHub Issues](https://github.com/FSHSchool/FSHOnline/issues). For discussion of FHIR Shorthand and its associated projects, visit the FHIR Community Chat @ https://chat.fhir.org. The [#shorthand stream](https://chat.fhir.org/#narrow/stream/215610-shorthand) is used for all FHIR Shorthand questions and discussion.
+- License: All contributions to this project will be released under the Apache 2.0 License, and a copy of this license can be found in [LICENSE](LICENSE).
+- Contribution Policy: The FSH Online Contribution Policy can be found in [CONTRIBUTING.md](CONTRIBUTING.md).
+- Security Information: The FSH Online Security Information can be found in [SECURITY.md](SECURITY.md).
+- Compliance Information: FSH Online uses SUSHI and GoFSH, which are designed for use with FHIR artifacts conforming to FHIR R4, FHIR R4B, or FHIR R5. For more details, see the README files for SUSHI and GoFSH.
+
 ## Getting Started
 
 To run the project locally, [Node.js](https://nodejs.org/) must be installed on the user's system.
