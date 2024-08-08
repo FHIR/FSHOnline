@@ -31,7 +31,7 @@ import {
 import { runSUSHI, runGoFSH } from '../utils/FSHHelpers';
 import { sliceDependency } from '../utils/helpers';
 import { TreeView, TreeItem } from '@material-ui/lab';
-import CodeMirrorComponent from './CodeMirrorComponent';
+import CodeEditor from './CodeEditor';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -431,7 +431,7 @@ export default function FSHControls(props) {
               </TreeView>
             </Grid>
             <Grid item xs={8}>
-              <CodeMirrorComponent
+              <CodeEditor
                 name={currentExample ? currentExampleName : ''}
                 isExamples={true}
                 value={currentExample}

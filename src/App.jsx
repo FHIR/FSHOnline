@@ -10,7 +10,7 @@ import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
 import JSONOutput from './components/JSONOutput';
 import FSHOutput from './components/FSHOutput';
-import ConsoleComponent from './components/ConsoleComponent';
+import Console from './components/Console';
 import FSHControls from './components/FSHControls';
 import theme from './theme';
 
@@ -420,7 +420,7 @@ export default function App(props) {
           </ExpandedConsoleContext.Provider>
         </div>
         <div className={expandConsole ? classes.expandedConsole : classes.collapsedConsole}>
-          <ConsoleComponent
+          <Console
             consoleMessages={infoMessages}
             problemMessages={problemMessages}
             problemCount={problemCount}
