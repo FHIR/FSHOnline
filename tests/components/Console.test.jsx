@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import Console from '../../components/Console';
+import Console from '../../src/components/Console';
 
 let container = null;
 beforeEach(() => {

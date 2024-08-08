@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import FileSaver from 'file-saver';
-import JSONOutput from '../../components/JSONOutput';
+import JSONOutput from '../../src/components/JSONOutput';
 
 let container = null;
 beforeEach(() => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
-import CodeEditor from '../../components/CodeEditor';
+import CodeEditor from '../../src/components/CodeEditor';
 
 let container = null;
 beforeEach(() => {
