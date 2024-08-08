@@ -292,6 +292,12 @@ export default function FSHControls(props) {
 
   return (
     <Box className={classes.box}>
+      <div className={classes.leftControls}>
+        <Button name="Examples" className={classes.button} onClick={handleOpenExamples}>
+          <LibraryBooksIcon /> &nbsp; FSH Examples
+        </Button>
+      </div>
+
       <Grid container>
         <Grid item xs={5}>
           <Button className={clsx(classes.button, classes.buttonLeft)} onClick={handleSUSHIClick} testid="Button">
@@ -322,12 +328,6 @@ export default function FSHControls(props) {
           </Button>
         </Grid>
       </Grid>
-
-      <div className={classes.leftControls}>
-        <Button name="Examples" className={classes.button} onClick={handleOpenExamples}>
-          <LibraryBooksIcon /> &nbsp; FSH Examples
-        </Button>
-      </div>
 
       <div className={classes.rightControls}>
         <Button name="SaveAll" className={classes.secondaryButton} onClick={props.saveAll}>
