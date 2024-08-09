@@ -3,7 +3,7 @@ import FileSaver from 'file-saver';
 import CodeEditor from './CodeEditor';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 
-export default function FSHOutput(props) {
+export default function FSHEditor(props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const handleOpenDeleteModal = () => {

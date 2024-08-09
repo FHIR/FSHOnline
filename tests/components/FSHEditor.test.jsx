@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import FileSaver from 'file-saver';
-import FSHOutput from '../../src/components/FSHOutput';
+import FSHEditor from '../../src/components/FSHEditor';
 
 let container = null;
 beforeEach(() => {
@@ -21,7 +21,7 @@ it('should render a delete button in editor header that opens a confirmation and
   const fshText = 'Profile: MyImportantProfile';
 
   const { getByRole, queryByText } = render(
-    <FSHOutput
+    <FSHEditor
       text={fshText}
       initialText={fshText}
       updateTextValue={vi.fn()}
@@ -56,7 +56,7 @@ it('should render a save button in the editor header that saves the FSH', () => 
   const fshText = 'Profile: MyImportantProfile';
 
   const { getByRole } = render(
-    <FSHOutput
+    <FSHEditor
       text={fshText}
       initialText={fshText}
       updateTextValue={vi.fn()}

@@ -147,7 +147,7 @@ const getIterablePackage = (defsPackage) => {
   }));
 };
 
-export default function JSONOutput(props) {
+export default function JSONEditor(props) {
   const classes = useStyles();
   const [initialText, setInitialText] = useState('');
   const [fhirDefinitions, setFhirDefinitions] = useState([{ resourceType: null, id: 'Untitled', def: null }]);

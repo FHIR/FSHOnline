@@ -8,8 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
 import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
-import JSONOutput from './components/JSONOutput';
-import FSHOutput from './components/FSHOutput';
+import JSONEditor from './components/JSONEditor';
+import FSHEditor from './components/FSHEditor';
 import Console from './components/Console';
 import FSHControls from './components/FSHControls';
 import theme from './theme';
@@ -155,8 +155,8 @@ export default function App(props) {
   const [inputFSHText, setInputFSHText] = useState('');
   const [inputFHIRText, setInputFHIRText] = useState(['']);
   const [initialText, setInitialText] = useState('');
-  const [isWaitingForFHIROutput, setIsWaitingForFHIROutput] = useState(false);
-  const [isWaitingForFSHOutput, setIsWaitingForFSHOutput] = useState(false);
+  const [isWaitingForFHIR, setIsWaitingForFHIR] = useState(false);
+  const [isWaitingForFSH, setIsWaitingForFSH] = useState(false);
   const [expandConsole, setExpandConsole] = useState(false);
   const [exampleConfig, setExampleConfig] = useState([]);
   const [exampleFilePaths, setExampleFilePaths] = useState({});
@@ -215,13 +215,13 @@ export default function App(props) {
 
   function handleSUSHIControls(showNewText, sushiOutput, isWaiting) {
     setShowNewFHIRText(showNewText);
-    setInputFHIRText(sushiOutput); // JSONOutput component handles resetting initial text, so don't reset here
-    setIsWaitingForFHIROutput(isWaiting);
+    setInputFHIRText(sushiOutput); // JSONEditor component handles resetting initial text, so don't reset here
+    setIsWaitingForFHIR(isWaiting);
   }
 
-  function handleGoFSHControls(fshOutput, isWaiting) {
-    setIsWaitingForFSHOutput(isWaiting);
-    setInitialText(fshOutput === '' ? null : fshOutput); // Reset initial text to null if empty in order to display placeholder text
+  function handleGoFSHControls(fshText, isWaiting) {
+    setIsWaitingForFSH(isWaiting);
+    setInitialText(fshText === '' ? null : fshText); // Reset initial text to null if empty in order to display placeholder text
   }
 
   function updateInputFSHTextValue(text) {
@@ -360,7 +360,7 @@ export default function App(props) {
             resetLogMessages={resetLogMessages}
             exampleConfig={exampleConfig}
             exampleMetadata={exampleFilePaths}
-            isWaiting={isWaitingForFSHOutput || isWaitingForFHIROutput}
+            isWaiting={isWaitingForFSH || isWaitingForFHIR}
             saveAll={saveAll}
             setIsLineWrapped={setLineWrap}
             isLineWrapped={isLineWrapped}
@@ -381,11 +381,11 @@ export default function App(props) {
                 className={clsx(classes.fullHeightGrid, classes.editorPane)}
                 style={{ maxWidth: `calc(${leftWidth}% - 2px)`, flexBasis: `calc(${leftWidth}% - 2px)` }}
               >
-                <FSHOutput
+                <FSHEditor
                   text={inputFSHText}
                   initialText={initialText}
                   updateTextValue={updateInputFSHTextValue}
-                  isWaiting={isWaitingForFSHOutput}
+                  isWaiting={isWaitingForFSH}
                   setInitialText={setInitialText}
                   config={configToShare}
                   isLineWrapped={isLineWrapped}
@@ -407,11 +407,11 @@ export default function App(props) {
                   flexBasis: `calc(${100 - leftWidth}% - 2px)`
                 }}
               >
-                <JSONOutput
+                <JSONEditor
                   text={inputFHIRText}
                   showNewText={showNewFHIRText}
                   setShowNewText={setShowNewFHIRText}
-                  isWaiting={isWaitingForFHIROutput}
+                  isWaiting={isWaitingForFHIR}
                   updateTextValue={updateInputFHIRTextValue}
                   isLineWrapped={isLineWrapped}
                 />
