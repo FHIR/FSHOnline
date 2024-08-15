@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import FileSaver from 'file-saver';
-import JSONOutput from '../../components/JSONOutput';
+import JSONEditor from '../../src/components/JSONEditor';
 
 let container = null;
 beforeEach(() => {
@@ -18,7 +18,7 @@ afterEach(() => {
 
 it('Renders with the placeholder text if showNewText is false and no text', () => {
   // Initial case, nothing from SUSHI is displayed
-  const { getByText } = render(<JSONOutput showNewText={false} text={''} />, container);
+  const { getByText } = render(<JSONEditor showNewText={false} text={''} />, container);
 
   const placeholderText = getByText(/Paste or edit single FHIR JSON artifact here.../i);
 
@@ -26,17 +26,17 @@ it('Renders with the placeholder text if showNewText is false and no text', () =
 });
 
 it('Renders with the proper text and updates with proper text when loading', () => {
-  const { getByText } = render(<JSONOutput showNewText={false} text={''} isWaiting={true} />, container);
+  const { getByText } = render(<JSONEditor showNewText={false} text={''} isWaiting={true} />, container);
 
   const loadingPlaceholderText = getByText('Loading...');
 
   expect(loadingPlaceholderText).toBeInTheDocument();
 });
 
-// TODO: CodeMirrorComponent doesn't get the package text properly - not sure why
+// TODO: CodeEditor doesn't get the package text properly - not sure why
 it.skip('Renders with the first profile when text is an object (SUSHI Package)', async () => {
   const { getByText } = render(
-    <JSONOutput
+    <JSONEditor
       showNewText={true}
       text={JSON.stringify(
         {
@@ -100,7 +100,7 @@ it('renders a delete button in editor header that opens a confirmation and then 
   ];
 
   const { getByRole, getByText, queryByText } = render(
-    <JSONOutput
+    <JSONEditor
       showNewText={true}
       setShowNewText={() => {}}
       isWaiting={false}
@@ -162,7 +162,7 @@ it('renders a save button in editor header that saves the definition', () => {
     codeSystems: []
   };
   const { getByRole, getByText } = render(
-    <JSONOutput
+    <JSONEditor
       showNewText={true}
       setShowNewText={() => {}}
       isWaiting={false}
@@ -203,7 +203,7 @@ it('Renders an Add Definition button that adds a blank definition', () => {
     codeSystems: []
   };
   const { getByText, queryByText } = render(
-    <JSONOutput
+    <JSONEditor
       showNewText={true}
       setShowNewText={() => {}}
       isWaiting={false}
@@ -299,7 +299,7 @@ describe('file tree display', () => {
 
   it('renders a list of JSON definitions in a file tree', () => {
     const { getAllByTestId } = render(
-      <JSONOutput
+      <JSONEditor
         showNewText={true}
         setShowNewText={() => {}}
         isWaiting={false}
@@ -344,7 +344,7 @@ describe('file tree display', () => {
 
   it('resets currentDef and initialText of editor when a new definition is clicked', () => {
     const { getByText } = render(
-      <JSONOutput
+      <JSONEditor
         showNewText={true}
         setShowNewText={() => {}}
         isWaiting={false}
@@ -384,7 +384,7 @@ describe('file tree display', () => {
       codeSystems: []
     };
     const { getByText } = render(
-      <JSONOutput
+      <JSONEditor
         showNewText={true}
         setShowNewText={() => {}}
         isWaiting={false}
@@ -418,7 +418,7 @@ describe('file tree display', () => {
       codeSystems: []
     };
     const { getAllByTestId } = render(
-      <JSONOutput
+      <JSONEditor
         showNewText={true}
         setShowNewText={() => {}}
         isWaiting={false}
