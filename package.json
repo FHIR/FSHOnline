@@ -38,7 +38,7 @@
     "fake-indexeddb": "^3.1.1",
     "jsdom": "^24.0.0",
     "nock": "^13.5.5",
-    "prettier": "^2.0.5",
+    "prettier": "^3.3.3",
     "vite": "^5.4.2",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vitest": "^2.0.5"
