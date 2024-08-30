@@ -70,7 +70,8 @@ let problemMessages = [defaultProblemMessage];
 let problemCount = 0;
 let problemColor = '#FDD835'; // Default yellow color for warnings
 let exampleMetadata = {};
-console.log = function getMessages(message) {
+console._stdout = {}; // mock out console._stdout so SUSHI/GoFSH logger messages are captured
+console.log = console._stdout.write = function getMessages(message) {
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     if (problemMessages[0] === defaultProblemMessage) {
       problemMessages = [];
