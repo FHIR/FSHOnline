@@ -19,7 +19,7 @@ export async function generateLink(longLink) {
 }
 
 export async function expandLink(encodedFsh) {
-  const bitlyURL = `bit.ly/${encodedFsh.text}`;
+  const bitlyURL = `bit.ly/${encodedFsh}`;
   return fetch('https://api-ssl.bitly.com/v4/expand', {
     method: 'POST',
     body: JSON.stringify({ bitlink_id: bitlyURL }),
