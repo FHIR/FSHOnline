@@ -8,7 +8,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "browserify-zlib": "^0.2.0",
-    "codemirror": "^5.65.16",
+    "codemirror": "^5.65.17",
     "file-saver": "^2.0.5",
     "fsh-sushi": "^3.11.1",
     "gofsh": "^2.3.1",
