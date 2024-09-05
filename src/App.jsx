@@ -63,7 +63,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/';
+const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main';
 const defaultInfoMessage = 'There are no messages to display in the console.';
 const defaultProblemMessage = 'There are no problems to display in the console.';
 let infoMessages = [defaultInfoMessage];
@@ -89,7 +89,7 @@ console.log = console._stdout.write = function getMessages(message) {
   infoMessages.push(message);
 };
 
-/* 
+/*
 Parses metadata into a separate object and converts the manifest into a form that can
 be consumed by the TreeView component
 */

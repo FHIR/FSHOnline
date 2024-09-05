@@ -51,7 +51,8 @@
     "lint-fix": "eslint \"./src/**/*.{js,jsx}\" --fix",
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx}\"",
     "prettier-fix": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
-    "test": "vitest"
+    "test": "vitest",
+    "check": "vitest --run && npm run lint && npm run prettier"
   },
   "browserslist": [
     "defaults"
