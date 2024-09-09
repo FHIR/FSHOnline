@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { inflateSync } from 'browserify-zlib';
 import FileSaver from 'file-saver';
 import JSZip from 'jszip';
@@ -70,7 +71,8 @@ let problemMessages = [defaultProblemMessage];
 let problemCount = 0;
 let problemColor = '#FDD835'; // Default yellow color for warnings
 let exampleMetadata = {};
-console.log = function getMessages(message) {
+console._stdout = {}; // mock out console._stdout so SUSHI/GoFSH logger messages are captured
+console.log = console._stdout.write = function getMessages(message) {
   if (message && (message.startsWith('error') || message.startsWith('warn'))) {
     if (problemMessages[0] === defaultProblemMessage) {
       problemMessages = [];
@@ -116,7 +118,7 @@ async function getManifestFromGit() {
 }
 
 export async function decodeFSH(encodedFSH) {
-  if (encodedFSH.text === undefined) {
+  if (encodedFSH === undefined) {
     return '';
   } else {
     const promisedURL = await expandLink(encodedFSH);
@@ -150,7 +152,7 @@ export const ExpandedConsoleContext = createContext(false);
 
 export default function App(props) {
   const classes = useStyles();
-  const urlParam = props.match;
+  const params = useParams();
   const [showNewFHIRText, setShowNewFHIRText] = useState(false);
   const [inputFSHText, setInputFSHText] = useState('');
   const [inputFHIRText, setInputFHIRText] = useState(['']);
@@ -168,8 +170,8 @@ export default function App(props) {
 
   useEffect(() => {
     async function waitForFSH() {
-      if (/\/share/.test(urlParam.path)) {
-        const text = await decodeFSH(urlParam.params);
+      if (props.path === 'share') {
+        const text = await decodeFSH(params.id);
         const splitIndex = text.indexOf('\n');
         const config = text.slice(0, splitIndex);
         let parsedConfig;
@@ -193,8 +195,8 @@ export default function App(props) {
         }
         setSharedConfig(parsedConfig || {});
         setInitialText(fshContent);
-      } else if (/\/gist/.test(urlParam.path)) {
-        const fshContent = await getGistContent(urlParam.params.id);
+      } else if (props.path === 'gist') {
+        const fshContent = await getGistContent(params.id);
         setInitialText(fshContent);
       }
     }
@@ -204,7 +206,7 @@ export default function App(props) {
     }
     waitForFSH();
     fetchExamples();
-  }, [urlParam]);
+  }, [params, props.path]);
 
   function resetLogMessages() {
     infoMessages = [defaultInfoMessage];
