@@ -4,7 +4,7 @@ FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://bui
 
 ## FHIR Foundation Project Statement
 
-- Maintainers: This project is maintained by The MITRE Corporation.
+- Maintainers: This project is maintained by the HL7 community.
 - Issues / Discussion: For FSH Online issues, such as bug reports, comments, suggestions, questions, and feature requests, visit [FSH Online GitHub Issues](https://github.com/FSHSchool/FSHOnline/issues). For discussion of FHIR Shorthand and its associated projects, visit the FHIR Community Chat @ https://chat.fhir.org. The [#shorthand stream](https://chat.fhir.org/#narrow/stream/215610-shorthand) is used for all FHIR Shorthand questions and discussion.
 - License: All contributions to this project will be released under the Apache 2.0 License, and a copy of this license can be found in [LICENSE](LICENSE).
 - Contribution Policy: The FSH Online Contribution Policy can be found in [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -101,7 +101,7 @@ To learn React, check out the [React documentation](https://react.dev/).
 
 # License
 
-Copyright 2019 Health Level Seven International
+Copyright 2019-2024 Health Level Seven International
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
