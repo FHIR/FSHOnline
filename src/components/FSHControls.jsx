@@ -447,7 +447,7 @@ export default function FSHControls(props) {
         <DialogActions className={classes.dialogActions}>
           <div className={classes.dialogActionsMessage}>
             Have an example that might be bene-fish-al? Seas the day and add to our collection on{' '}
-            <Link href="https://github.com/FSHSchool/FSHOnline-Examples#readme">GitHub</Link>!
+            <Link href="https://github.com/FHIR/FSHOnline-Examples#readme">GitHub</Link>!
           </div>
           <div>
             <Button onClick={handleCopyToClipboard} color="primary">

@@ -5,9 +5,9 @@ import AppRouter from '../src/AppRouter';
 
 vi.mock('../src/App.jsx', () => ({ default: () => <div>Mock FSH Online</div> }));
 
-test('Renders FSH Online App when visiting /FSHOnline', () => {
+test('Renders FSH Online App when visiting /', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/FSHOnline']}>
+    <MemoryRouter initialEntries={['/']}>
       <AppRouter />
     </MemoryRouter>
   );
@@ -15,9 +15,9 @@ test('Renders FSH Online App when visiting /FSHOnline', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test('Renders FSH Online App when visiting /FSHOnline/share/:text', () => {
+test('Renders FSH Online App when visiting /share/:text', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/FSHOnline/share/abcd']}>
+    <MemoryRouter initialEntries={['/share/abcd']}>
       <AppRouter />
     </MemoryRouter>
   );
@@ -25,9 +25,9 @@ test('Renders FSH Online App when visiting /FSHOnline/share/:text', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test('Renders FSH Online App when visiting /FSHOnline/gist/:id', () => {
+test('Renders FSH Online App when visiting /gist/:id', () => {
   const { getByText } = render(
-    <MemoryRouter initialEntries={['/FSHOnline/gist/123']}>
+    <MemoryRouter initialEntries={['/gist/123']}>
       <AppRouter />
     </MemoryRouter>
   );

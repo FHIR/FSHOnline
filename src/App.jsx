@@ -63,7 +63,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const githubURL = 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main';
+const githubURL = 'https://raw.githubusercontent.com/FHIR/FSHOnline-Examples/main';
 const defaultInfoMessage = 'There are no messages to display in the console.';
 const defaultProblemMessage = 'There are no problems to display in the console.';
 let infoMessages = [defaultInfoMessage];
@@ -123,9 +123,9 @@ export async function decodeFSH(encodedFSH) {
   } else {
     const promisedURL = await expandLink(encodedFSH);
 
-    // Removes the encoded data from the end of the url, starting at index 38
+    // Removes the encoded data from the end of the url, starting at index 40
     const sliced64 = promisedURL.long_url.slice(40);
-    if (!promisedURL.long_url.includes('https://fshschool.org/FSHOnline/#/share/') || sliced64.length === 0) {
+    if (!promisedURL.long_url.includes('https://fshonline.fshschool.org/#/share/') || sliced64.length === 0) {
       return '';
     } else {
       const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');

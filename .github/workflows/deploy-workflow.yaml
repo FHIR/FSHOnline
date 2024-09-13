@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy-to-pages:
@@ -19,9 +20,10 @@ jobs:
         env:
           VITE_BITLY_KEY: ${{ secrets.VITE_BITLY_KEY }}
       - name: Publish build to github pages
-        uses: peaceiris/actions-gh-pages@v3.5.7
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          cname: fshonline.fshschool.org
           publish_dir: dist
           publish_branch: gh-pages
           user_name: 'github-actions[bot]'

@@ -58,7 +58,7 @@ export default function ShareLink(props) {
   const updateGistLink = (event) => {
     const gistId = event.target.value.match(/gist\.github\.com\/[^/]+\/(.+)/)?.[1];
     if (gistId) {
-      setGistLink(`https://fshschool.org/FSHOnline/#/gist/${gistId}`);
+      setGistLink(`https://fshonline.fshschool.org/#/gist/${gistId}`);
     }
   };
 
@@ -116,14 +116,14 @@ export default function ShareLink(props) {
     } else {
       encoded = deflateSync(props.shareText).toString('base64');
     }
-    const longLink = `https://fshschool.org/FSHOnline/#/share/${encoded}`;
+    const longLink = `https://fshonline.fshschool.org/#/share/${encoded}`;
     const bitlyLink = await generateLink(longLink);
     if (bitlyLink.errorNeeded === true) {
       handleShareError();
     } else {
       // Removes the encoded data from the end of the url, starting at index 15
       const bitlySlice = bitlyLink.link.slice(15);
-      const displayLink = `https://fshschool.org/FSHOnline/#/share/${bitlySlice}`;
+      const displayLink = `https://fshonline.fshschool.org/#/share/${bitlySlice}`;
       setLink(displayLink);
       setOpenShare(true);
       setCopyTip('Copy to Clipboard');
