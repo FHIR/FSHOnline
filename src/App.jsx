@@ -122,14 +122,13 @@ export async function decodeFSH(encodedFSH) {
     return '';
   } else {
     const promisedURL = await expandLink(encodedFSH);
-
-    // Removes the encoded data from the end of the url, starting at index 40
-    const sliced64 = promisedURL.long_url.slice(40);
-    if (!promisedURL.long_url.includes('https://fshonline.fshschool.org/#/share/') || sliced64.length === 0) {
+    const encodedData = promisedURL.long_url?.match(
+      /^https?:\/\/(fshonline\.fshschool\.org|fshschool\.org\/FSHOnline)\/#\/share\/(.*)/
+    )?.[2];
+    if (!encodedData || encodedData === '') {
       return '';
     } else {
-      const displayText = inflateSync(Buffer.from(sliced64, 'base64')).toString('utf-8');
-      return displayText;
+      return inflateSync(Buffer.from(encodedData, 'base64')).toString('utf-8');
     }
   }
 }
