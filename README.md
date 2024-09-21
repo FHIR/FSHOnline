@@ -1,11 +1,11 @@
 # FSH Online
 
-FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It also runs the [GoFSH](https://github.com/FHIR/GoFSH) decompiler to translate FHIR definitions into FSH. It is available on https://fshschool.org/FSHOnline/.
+FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/) and running the [SUSHI](https://github.com/FHIR/sushi) compiler on the authored FSH directly in a web browser. It also runs the [GoFSH](https://github.com/FHIR/GoFSH) decompiler to translate FHIR definitions into FSH. It is available on https://fshonline.fshschool.org/.
 
 ## FHIR Foundation Project Statement
 
 - Maintainers: This project is maintained by the HL7 community.
-- Issues / Discussion: For FSH Online issues, such as bug reports, comments, suggestions, questions, and feature requests, visit [FSH Online GitHub Issues](https://github.com/FSHSchool/FSHOnline/issues). For discussion of FHIR Shorthand and its associated projects, visit the FHIR Community Chat @ https://chat.fhir.org. The [#shorthand stream](https://chat.fhir.org/#narrow/stream/215610-shorthand) is used for all FHIR Shorthand questions and discussion.
+- Issues / Discussion: For FSH Online issues, such as bug reports, comments, suggestions, questions, and feature requests, visit [FSH Online GitHub Issues](https://github.com/FHIR/FSHOnline/issues). For discussion of FHIR Shorthand and its associated projects, visit the FHIR Community Chat @ https://chat.fhir.org. The [#shorthand stream](https://chat.fhir.org/#narrow/stream/215610-shorthand) is used for all FHIR Shorthand questions and discussion.
 - License: All contributions to this project will be released under the Apache 2.0 License, and a copy of this license can be found in [LICENSE](LICENSE).
 - Contribution Policy: The FSH Online Contribution Policy can be found in [CONTRIBUTING.md](CONTRIBUTING.md).
 - Security Information: The FSH Online Security Information can be found in [SECURITY.md](SECURITY.md).
@@ -27,11 +27,11 @@ Once the dependencies are installed, the application can be run in development m
 npm start
 ```
 
-Open [http://localhost:5173/FSHOnline/](http://localhost:5173/FSHOnline/) to view it in the browser. The page will reload if you make edits. Lint and prettier errors will appear in the console.
+Open [http://localhost:5173/](http://localhost:5173/) to view it in the browser. The page will reload if you make edits. Lint and prettier errors will appear in the console.
 
 ## FSH Examples
 
-FSH Online supports easily adding FHIR Shorthand examples that can be viewed in the editor. All examples are kept in the [FSHOnline-Examples repo](https://github.com/FSHSchool/FSHOnline-Examples), and FSH authors are encouraged to submit example FSH files to the FSHOnline-Examples repo.
+FSH Online supports easily adding FHIR Shorthand examples that can be viewed in the editor. All examples are kept in the [FSHOnline-Examples repo](https://github.com/FHIR/FSHOnline-Examples), and FSH authors are encouraged to submit example FSH files to the FSHOnline-Examples repo.
 
 ## NPM Tasks
 
@@ -87,7 +87,7 @@ To serve the built application locally for testing, run the following command:
 npm run preview
 ```
 
-This will serve the built application from the `dist` directory. It will be served on port 4173. You can access it at the following URL: [http://localhost:4173/FSHOnline](http://localhost:4173/FSHOnline).
+This will serve the built application from the `dist` directory. It will be served on port 4173. You can access it at the following URL: [http://localhost:4173/](http://localhost:4173/).
 
 ## Learn More
 

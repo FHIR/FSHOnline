@@ -1,6 +1,6 @@
 # Reporting security issues privately
 
-To report a security issue privately, please [create a security advisory](https://github.com/FSHSchool/FSHOnline/security/advisories) in this repository. This will allow repository administrators to review and address it privately before public disclosure. For more details about this process, see ["Privately reporting a security vulnerability"](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability).
+To report a security issue privately, please [create a security advisory](https://github.com/FHIR/FSHOnline/security/advisories) in this repository. This will allow repository administrators to review and address it privately before public disclosure. For more details about this process, see ["Privately reporting a security vulnerability"](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability).
 
 # Project security practices
 

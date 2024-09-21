@@ -506,7 +506,7 @@ it('should include a link to the examples repo', () => {
   expect(exampleRepoText).toBeInTheDocument();
   const exampleRepoUrl = getByRole('link');
   expect(exampleRepoUrl).toBeInTheDocument();
-  expect(exampleRepoUrl).toHaveAttribute('href', 'https://github.com/FSHSchool/FSHOnline-Examples#readme');
+  expect(exampleRepoUrl).toHaveAttribute('href', 'https://github.com/FHIR/FSHOnline-Examples#readme');
 });
 
 it.skip('should populate editor when examples are collected', async () => {
@@ -526,12 +526,12 @@ it.skip('should populate editor when examples are collected', async () => {
     'manifestchild-1': {
       name: 'manifestchild-1',
       description: 'First manifest object',
-      path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/FHIR-aliases.fsh'
+      path: 'https://raw.githubusercontent.com/FHIR/FSHOnline-Examples/main/Aliases/FHIR-aliases.fsh'
     },
     'manifestchild-2': {
       name: 'manifestchild-2',
       description: 'Second manifest object',
-      path: 'https://raw.githubusercontent.com/FSHSchool/FSHOnline-Examples/main/Aliases/External-aliases.fsh'
+      path: 'https://raw.githubusercontent.com/FHIR/FSHOnline-Examples/main/Aliases/External-aliases.fsh'
     }
   };
 

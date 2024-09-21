@@ -11,6 +11,19 @@ it('basic app renders', () => {
 
 it('decodeFSH will return a properly decoded string from base64', async () => {
   const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
+    long_url: 'https://fshonline.fshschool.org/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
+  });
+  const base64 = '2Lpe5ZL';
+  const decoded = await decodeFSH(base64);
+  const expectedDecoded = 'Hi, this is a test for decoding.';
+  await waitFor(() => {
+    expect(decoded).toEqual(expectedDecoded);
+    expect(expandLinkSpy).toHaveBeenCalled();
+  });
+});
+
+it('decodeFSH will return a properly decoded string for old FSH Online links', async () => {
+  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
     long_url: 'https://fshschool.org/FSHOnline/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
   });
   const base64 = '2Lpe5ZL';
@@ -18,6 +31,30 @@ it('decodeFSH will return a properly decoded string from base64', async () => {
   const expectedDecoded = 'Hi, this is a test for decoding.';
   await waitFor(() => {
     expect(decoded).toEqual(expectedDecoded);
+    expect(expandLinkSpy).toHaveBeenCalled();
+  });
+});
+
+it('decodeFSH will return an empty string if there is no encoded content in URL', async () => {
+  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
+    long_url: 'https://fshonline.fshschool.org/#/share/'
+  });
+  const base64 = '2Lpe5ZL';
+  const decoded = await decodeFSH(base64);
+  await waitFor(() => {
+    expect(decoded).toEqual('');
+    expect(expandLinkSpy).toHaveBeenCalled();
+  });
+});
+
+it('decodeFSH will return an empty string for a non-FSHOnline link', async () => {
+  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
+    long_url: 'https://hl7.org/fhir/'
+  });
+  const base64 = '2Lpe5ZL';
+  const decoded = await decodeFSH(base64);
+  await waitFor(() => {
+    expect(decoded).toEqual('');
     expect(expandLinkSpy).toHaveBeenCalled();
   });
 });

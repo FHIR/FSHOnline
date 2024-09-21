@@ -59,7 +59,7 @@ it('generates direct link with configuration when direct link button is clicked'
   });
   await waitFor(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
-    expect(generateLinkSpy).toHaveBeenCalledWith('https://fshschool.org/FSHOnline/#/share/foo');
+    expect(generateLinkSpy).toHaveBeenCalledWith('https://fshonline.fshschool.org/#/share/foo');
   });
 });
 
