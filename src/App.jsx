@@ -166,6 +166,7 @@ export default function App(props) {
   const [configToShare, setConfigToShare] = useState({ canonical: '', version: '', fhirVersion: [], dependencies: '' });
   const [sharedConfig, setSharedConfig] = useState({});
   const [isLineWrapped, setIsLineWrapped] = useState(false);
+  const [isDebugConsoleChecked, setIsDebugConsoleChecked] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -267,6 +268,10 @@ export default function App(props) {
     setIsLineWrapped(wrapSelected);
   }
 
+  function setDebugConsoleChecked(debugSelected) {
+    setIsDebugConsoleChecked(debugSelected);
+  }
+
   function debouncedMove(clientX) {
     if (isDragging) {
       const newPercentage = (clientX / window.innerWidth) * 100;
@@ -365,6 +370,8 @@ export default function App(props) {
             saveAll={saveAll}
             setIsLineWrapped={setLineWrap}
             isLineWrapped={isLineWrapped}
+            setIsDebugConsoleChecked={setDebugConsoleChecked}
+            isDebugConsoleChecked={isDebugConsoleChecked}
           />
         </div>
         <div className={expandConsole ? classes.collapsedMain : classes.expandedMain}>

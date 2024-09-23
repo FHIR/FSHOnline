@@ -177,6 +177,11 @@ export default function FSHControls(props) {
     props.setIsLineWrapped(isLineWrappedChecked);
   };
 
+  const updateConsoleMessageLevel = (event) => {
+    const isDebugConsoleChecked = event.target.checked;
+    props.setIsDebugConsoleChecked(isDebugConsoleChecked);
+  };
+
   async function handleSUSHIClick() {
     if (props.isWaiting) {
       // If SUSHI or GoFSH is in the middle of processes, don't do anything
@@ -401,6 +406,14 @@ export default function FSHControls(props) {
             onChange={updateLineWrapping}
           />
           <FormHelperText>If set, FSH Online will display code with line wrapping</FormHelperText>
+          <FormControlLabel
+            id="debugLevelConsole"
+            margin="dense"
+            control={<Checkbox checked={props.isDebugConsoleChecked} color="primary" />}
+            label="Debug level console messages"
+            onChange={updateConsoleMessageLevel}
+          />
+          <FormHelperText>If set, FSH Online will display debug level messages within the console</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
