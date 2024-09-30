@@ -11,6 +11,11 @@ FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://bui
 - Security Information: The FSH Online Security Information can be found in [SECURITY.md](SECURITY.md).
 - Compliance Information: FSH Online uses SUSHI and GoFSH, which are designed for use with FHIR artifacts conforming to FHIR R4, FHIR R4B, or FHIR R5. For more details, see the README files for SUSHI and GoFSH.
 
+## Intro to FSH Online Development
+
+To learn more about FSH Online, watch the Knowledge Sharing Sessions for [Developing FSH Tools](https://vimeo.com/990594107/c35c3f5e43) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/256514908/KSS%203%20-%20Developing%20FSH%20Tools.pdf)) and [Developing FSH Online](https://vimeo.com/1001309534/d2ece04c26) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/265488031/KSS%206%20-%20Developing%20FSH%20Online.pdf)).
+These sessions provide a technical overview of the codebase, summarize key concepts for developers, and demonstrate how to add new FSH examples.
+
 ## Getting Started
 
 To run the project locally, [Node.js](https://nodejs.org/) must be installed on the user's system.
