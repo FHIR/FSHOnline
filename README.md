@@ -13,7 +13,7 @@ FSH Online is a web application for authoring [FHIR Shorthand (FSH)](https://bui
 
 ## Intro to FSH Online Development
 
-To learn more about FSH Online, watch the Knowledge Sharing Sessions for [Developing FSH Tools](https://vimeo.com/990594107/c35c3f5e43) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/256514908/KSS%203%20-%20Developing%20FSH%20Tools.pdf)) and [Developing FSH Online](https://vimeo.com/1001309534/d2ece04c26) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/265488031/KSS%206%20-%20Developing%20FSH%20Online.pdf)).
+To learn more about FSH Online, watch the Knowledge Sharing Sessions for [Developing FSH Tools](https://vimeo.com/990594228/056b5c075f) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/256514908/KSS%203%20-%20Developing%20FSH%20Tools.pdf)) and [Developing FSH Online](https://vimeo.com/1001309534/d2ece04c26) (view the slides [here](https://confluence.hl7.org/display/FHIR/FSH+Knowledge+Sharing+Sessions?preview=/256509612/265488031/KSS%206%20-%20Developing%20FSH%20Online.pdf)).
 These sessions provide a technical overview of the codebase, summarize key concepts for developers, and demonstrate how to add new FSH examples.
 
 ## Getting Started
