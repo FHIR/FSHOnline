@@ -198,7 +198,12 @@ export default function FSHControls(props) {
       FSHOnly: true,
       fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1']
     };
-    const outPackage = await runSUSHI(props.fshText, config, parsedDependencies);
+    const outPackage = await runSUSHI(
+      props.fshText,
+      config,
+      parsedDependencies,
+      props.isDebugConsoleChecked ? 'debug' : 'info'
+    );
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -244,7 +249,7 @@ export default function FSHControls(props) {
     }
 
     const options = { dependencies: parsedDependencies, indent: isGoFSHIndented };
-    const { fsh, config } = await runGoFSH(gofshInputStrings, options);
+    const { fsh, config } = await runGoFSH(gofshInputStrings, options, props.isDebugConsoleChecked ? 'debug' : 'info');
     props.onGoFSHClick(fsh, false);
     setIsGoFSHRunning(false);
     if (canonical === '' && config.canonical) setCanonical(config.canonical);

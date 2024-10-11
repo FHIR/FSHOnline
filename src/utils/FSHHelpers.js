@@ -26,9 +26,9 @@ const FHIRDefinitions = fhirdefs.FHIRDefinitions;
  * indent: user set, defaults to false
  * @returns {string} the FSH
  */
-export async function runGoFSH(input, options) {
+export async function runGoFSH(input, options, loggerLevel) {
   gofshStats.reset();
-  setCurrentLogger('gofsh');
+  setCurrentLogger('gofsh', loggerLevel);
 
   // Read in the resources as strings
   const docs = [];
@@ -92,9 +92,9 @@ export async function runGoFSH(input, options) {
  *
  * @returns Package with FHIR resources
  */
-export async function runSUSHI(input, config, dependencies = []) {
+export async function runSUSHI(input, config, dependencies = [], loggerLevel) {
   sushiStats.reset();
-  setCurrentLogger('sushi');
+  setCurrentLogger('sushi', loggerLevel);
 
   // Load dependencies
   let defs = new FHIRDefinitions();

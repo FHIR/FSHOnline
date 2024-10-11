@@ -135,10 +135,14 @@ it('calls GoFSH function and returns FSH', async () => {
 
   await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
-    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
-      dependencies: [],
-      indent: false
-    }); // No IG resource added because canonical and version set to defaults
+    expect(runGoFSHSpy).toHaveBeenCalledWith(
+      [JSON.stringify(examplePatient, null, 2)],
+      {
+        dependencies: [],
+        indent: false
+      },
+      'info'
+    ); // No IG resource added because canonical and version set to defaults
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
     expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
@@ -191,7 +195,8 @@ it('calls GoFSH with user provided canonical and version in mini ImplementationG
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
     expect(runGoFSHSpy).toHaveBeenCalledWith(
       [JSON.stringify(examplePatient, null, 2), JSON.stringify(expectedIgResource, null, 2)], // Adds IG resource with canonical and version
-      { dependencies: [], indent: false }
+      { dependencies: [], indent: false },
+      'info'
     );
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
@@ -231,13 +236,92 @@ it('calls GoFSH with the indent option if the configuration checkbox is checked'
 
   await waitFor(() => {
     expect(resetLogMessages).toHaveBeenCalledTimes(1);
-    expect(runGoFSHSpy).toHaveBeenCalledWith([JSON.stringify(examplePatient, null, 2)], {
-      dependencies: [],
-      indent: true
-    }); // No IG resource added because canonical and version set to defaults
+    expect(runGoFSHSpy).toHaveBeenCalledWith(
+      [JSON.stringify(examplePatient, null, 2)],
+      {
+        dependencies: [],
+        indent: true
+      },
+      'info'
+    ); // No IG resource added because canonical and version set to defaults
     expect(onGoFSHClick).toHaveBeenCalledTimes(2);
     expect(onGoFSHClick).toHaveBeenCalledWith('', true); // Loading
     expect(onGoFSHClick).toHaveBeenCalledWith(simpleFsh, false);
+  });
+});
+
+it('calls GoFSH with the logger level debug if the configuration checkbox is checked', async () => {
+  const examplePatient = {
+    resourceType: 'Patient',
+    id: 'MyPatient',
+    gender: 'female'
+  };
+  const simpleFsh = ['Instance: MyPatient', 'InstanceOf: Patient', 'Usage: #example', '* gender = #female'].join('\n');
+  const onGoFSHClick = vi.fn();
+  const resetLogMessages = vi.fn();
+  let debugLevel = false;
+  const setIsDebugConsoleChecked = vi.fn(() => {
+    debugLevel = !debugLevel;
+  });
+
+  const runGoFSHSpy = vi.spyOn(fshHelpers, 'runGoFSH').mockReset().mockResolvedValue({ fsh: simpleFsh, config: {} });
+  const { getByRole, getByLabelText, rerender } = render(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsDebugConsoleChecked={setIsDebugConsoleChecked}
+      isDebugConsoleChecked={debugLevel}
+    />,
+    container
+  );
+
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const debugLevelCheckbox = getByLabelText('Debug level console messages');
+  expect(debugLevelCheckbox).not.toBeChecked();
+  fireEvent.click(debugLevelCheckbox);
+
+  const button = document.querySelector('[testid=GoFSH-button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  expect(runGoFSHSpy).toHaveBeenCalledWith(
+    [JSON.stringify(examplePatient, null, 2)],
+    {
+      dependencies: [],
+      indent: false
+    },
+    'info'
+  );
+
+  rerender(
+    <FSHControls
+      onGoFSHClick={onGoFSHClick}
+      gofshText={[{ def: JSON.stringify(examplePatient, null, 2) }]}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsDebugConsoleChecked={setIsDebugConsoleChecked}
+      isDebugConsoleChecked={debugLevel}
+    />,
+    container
+  );
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await waitFor(() => {
+    expect(debugLevelCheckbox).toBeChecked();
+    expect(resetLogMessages).toHaveBeenCalledTimes(2);
+    expect(runGoFSHSpy).toHaveBeenCalledWith(
+      [JSON.stringify(examplePatient, null, 2)],
+      {
+        dependencies: [],
+        indent: false
+      },
+      'debug'
+    ); // No IG resource added because canonical and version set to defaults
   });
 });
 
@@ -313,7 +397,7 @@ it('uses user provided canonical when calling runSUSHI', async () => {
     fhirVersion: ['4.0.1']
   };
   await waitFor(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, []); // Includes new config
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, [], 'info'); // Includes new config
   });
 });
 
@@ -347,7 +431,7 @@ it('uses user provided version when calling runSUSHI', async () => {
   };
 
   await waitFor(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, []); // Includes new version
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, [], 'info'); // Includes new version
   });
 });
 
@@ -381,7 +465,7 @@ it('uses user provided dependencies when calling runSUSHI', async () => {
   ];
 
   await waitFor(() => {
-    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencies); // Called with new dependencies
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, defaultConfig, expectedDependencies, 'info'); // Called with new dependencies
   });
 });
 
