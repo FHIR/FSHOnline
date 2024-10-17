@@ -325,6 +325,65 @@ it('calls GoFSH with the logger level debug if the configuration checkbox is che
   });
 });
 
+it('calls runSUSHI with the logger level debug if the configuration checkbox is checked', async () => {
+  const onClick = vi.fn();
+  const resetLogMessages = vi.fn();
+  let debugLevel = false;
+  const setIsDebugConsoleChecked = vi.fn(() => {
+    debugLevel = !debugLevel;
+  });
+
+  const runSUSHISpy = vi.spyOn(fshHelpers, 'runSUSHI').mockReset().mockResolvedValue(goodSUSHIPackage);
+  const { getByRole, getByLabelText, rerender } = render(
+    <FSHControls
+      onSUSHIClick={onClick}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsDebugConsoleChecked={setIsDebugConsoleChecked}
+      isDebugConsoleChecked={debugLevel}
+    />,
+    container
+  );
+
+  const configButton = getByRole('button', { name: /Configuration/i });
+  fireEvent.click(configButton);
+  const debugLevelCheckbox = getByLabelText('Debug level console messages');
+  expect(debugLevelCheckbox).not.toBeChecked();
+  fireEvent.click(debugLevelCheckbox);
+
+  const button = document.querySelector('[testid=Button]');
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  const expectedConfig = {
+    canonical: 'http://example.org',
+    version: '1.0.0',
+    FSHOnly: true,
+    fhirVersion: ['4.0.1']
+  };
+  expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, [], 'info');
+
+  rerender(
+    <FSHControls
+      onSUSHIClick={onClick}
+      resetLogMessages={resetLogMessages}
+      exampleConfig={[]}
+      setIsDebugConsoleChecked={setIsDebugConsoleChecked}
+      isDebugConsoleChecked={debugLevel}
+    />,
+    container
+  );
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await waitFor(() => {
+    expect(debugLevelCheckbox).toBeChecked();
+    expect(resetLogMessages).toHaveBeenCalledTimes(2);
+    expect(runSUSHISpy).toHaveBeenCalledWith(undefined, expectedConfig, [], 'debug');
+  });
+});
+
 it('displays code with line wrapping in the code editors if the configuration checkbox is checked', async () => {
   const examplePatient = {
     resourceType: 'Patient',
