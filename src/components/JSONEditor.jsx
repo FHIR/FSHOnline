@@ -116,7 +116,15 @@ const checkFshType = (def) => {
 
 const checkIdToDisplay = (def) => {
   if (def.id) {
-    return def.id;
+    if (typeof def.id === 'object') {
+      // NOTE: This case shouldn't really happen -- it only comes up when id was assigned using an inline instance
+      if (def.id.value) {
+        return def.id.value;
+      }
+    } else {
+      // Typical case
+      return def.id;
+    }
   }
   if (def.resourceType) {
     // Logical Model instances don't always have an id, so fall back to last part of the resourceType

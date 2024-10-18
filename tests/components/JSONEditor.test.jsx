@@ -402,6 +402,43 @@ describe('file tree display', () => {
     expect(untitledDef).toBeInTheDocument();
   });
 
+  // NOTE: This is not a typical case -- but just check that it works so that FSH Online doesn't crash if an inline instance is assigned to id
+  it('displays the id.value if definition id is an object', () => {
+    const profileWithObjectId = {
+      profiles: [
+        {
+          resourceType: 'StructureDefinition',
+          id: { value: 'example-object-id' } // object id with a value to use as id
+        },
+        {
+          resourceType: 'StructureDefinition',
+          id: { extension: [{ valueString: 'do not display this as an id' }] } // object without a value to use as id
+        }
+      ],
+      extensions: [],
+      logicals: [],
+      resources: [],
+      instances: [],
+      valueSets: [],
+      codeSystems: []
+    };
+    const { getByText } = render(
+      <JSONEditor
+        showNewText={true}
+        setShowNewText={() => {}}
+        isWaiting={false}
+        updateTextValue={() => {}}
+        text={JSON.stringify(profileWithObjectId, null, 2)}
+      />,
+      container
+    );
+
+    const structureDef = getByText('example-object-id');
+    expect(structureDef).toBeInTheDocument();
+    const exampleLM = getByText('Instance of StructureDefinition');
+    expect(exampleLM).toBeInTheDocument();
+  });
+
   it('sorts a definition to Unknown Type if a definition does not have a resourceType', () => {
     const profileWithoutId = {
       profiles: [
