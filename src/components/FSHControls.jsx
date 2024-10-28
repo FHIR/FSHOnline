@@ -177,6 +177,11 @@ export default function FSHControls(props) {
     props.setIsLineWrapped(isLineWrappedChecked);
   };
 
+  const updateConsoleMessageLevel = (event) => {
+    const isDebugConsoleChecked = event.target.checked;
+    props.setIsDebugConsoleChecked(isDebugConsoleChecked);
+  };
+
   async function handleSUSHIClick() {
     if (props.isWaiting) {
       // If SUSHI or GoFSH is in the middle of processes, don't do anything
@@ -193,7 +198,12 @@ export default function FSHControls(props) {
       FSHOnly: true,
       fhirVersion: fhirVersion ? [fhirVersion] : ['4.0.1']
     };
-    const outPackage = await runSUSHI(props.fshText, config, parsedDependencies);
+    const outPackage = await runSUSHI(
+      props.fshText,
+      config,
+      parsedDependencies,
+      props.isDebugConsoleChecked ? 'debug' : 'info'
+    );
     let jsonOutput = JSON.stringify(outPackage, replacer, 2);
     if (outPackage && outPackage.codeSystems) {
       if (
@@ -239,7 +249,7 @@ export default function FSHControls(props) {
     }
 
     const options = { dependencies: parsedDependencies, indent: isGoFSHIndented };
-    const { fsh, config } = await runGoFSH(gofshInputStrings, options);
+    const { fsh, config } = await runGoFSH(gofshInputStrings, options, props.isDebugConsoleChecked ? 'debug' : 'info');
     props.onGoFSHClick(fsh, false);
     setIsGoFSHRunning(false);
     if (canonical === '' && config.canonical) setCanonical(config.canonical);
@@ -401,6 +411,14 @@ export default function FSHControls(props) {
             onChange={updateLineWrapping}
           />
           <FormHelperText>If set, FSH Online will display code with line wrapping</FormHelperText>
+          <FormControlLabel
+            id="debugLevelConsole"
+            margin="dense"
+            control={<Checkbox checked={props.isDebugConsoleChecked} color="primary" />}
+            label="Debug level console messages"
+            onChange={updateConsoleMessageLevel}
+          />
+          <FormHelperText>If set, FSH Online will display debug level messages within the console</FormHelperText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfig} color="primary">
