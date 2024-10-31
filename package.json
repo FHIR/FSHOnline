@@ -8,7 +8,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "browserify-zlib": "^0.2.0",
-    "codemirror": "^5.65.17",
+    "codemirror": "^5.65.18",
     "file-saver": "^2.0.5",
     "fsh-sushi": "^3.12.0",
     "gofsh": "^2.3.1",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.25.9",
     "@babel/preset-react": "^7.25.9",
-    "@testing-library/jest-dom": "^6.6.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^12.1.0",
     "@testing-library/user-event": "^14.5.2",
     "@vitejs/plugin-react": "^4.3.3",
