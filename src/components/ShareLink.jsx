@@ -16,7 +16,6 @@ import {
   TextField,
   Box
 } from '@material-ui/core';
-import { generateLink } from '../utils/BitlyWorker';
 import theme from '../theme';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,13 +29,29 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold'
   },
   copyBox: {
-    backgroundColor: theme.palette.common.lightGrey,
+    backgroundColor: theme.palette.common.lightestGrey,
     borderRadius: 2,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingLeft: '3%',
+    paddingLeft: '15px',
+    paddingRight: '5px'
+  },
+  linkBox: {
+    // Padding on the linkBox so scroll bar doesn't cover text
+    paddingTop: '15px',
+    paddingBottom: '15px',
+    paddingRight: '5px',
+    whiteSpace: 'nowrap',
+    overflow: 'scroll',
     textOverflow: 'ellipsis'
+  },
+  copyButton: {
+    padding: '8px',
+    borderRadius: 0,
+    '&:hover': {
+      background: theme.palette.common.lightGrey
+    }
   }
 }));
 
@@ -117,14 +132,11 @@ export default function ShareLink(props) {
       encoded = deflateSync(props.shareText).toString('base64');
     }
     const longLink = `https://fshonline.fshschool.org/#/share/${encoded}`;
-    const bitlyLink = await generateLink(longLink);
-    if (bitlyLink.errorNeeded === true) {
+    if (longLink.length > 2048) {
+      // Generally URLs should be shorter than 2048 characters
       handleShareError();
     } else {
-      // Removes the encoded data from the end of the url, starting at index 15
-      const bitlySlice = bitlyLink.link.slice(15);
-      const displayLink = `https://fshonline.fshschool.org/#/share/${bitlySlice}`;
-      setLink(displayLink);
+      setLink(longLink);
       setOpenShare(true);
       setCopyTip('Copy to Clipboard');
       setshowCreateGistButton(true);
@@ -152,15 +164,17 @@ export default function ShareLink(props) {
         <DialogContent>
           <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
           <Box className={classes.copyBox}>
-            <Box maxWidth="90%" textOverflow="ellipsis" overflow="hidden">
-              {link}
-            </Box>
+            <Box className={classes.linkBox}>{link}</Box>
             <Tooltip title={copyTip} placement="top" arrow>
-              <CopyToClipboard text={link} onCopy={() => setCopyTip('Link Copied')}>
-                <IconButton style={{ borderRadius: '0%' }}>
-                  <FileCopy />
-                </IconButton>
-              </CopyToClipboard>
+              <IconButton className={classes.copyButton}>
+                <CopyToClipboard
+                  text={`<a id="share-link" href="${link}">FSH Online Link</a>`}
+                  onCopy={() => setCopyTip('Link Copied')}
+                  options={{ format: 'text/html' }}
+                >
+                  <FileCopy fontSize="small" />
+                </CopyToClipboard>
+              </IconButton>
             </Tooltip>
           </Box>
         </DialogContent>

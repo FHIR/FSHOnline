@@ -7,7 +7,6 @@ import { debounce, partition } from 'lodash';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, ThemeProvider } from '@material-ui/core';
-import { expandLink } from './utils/BitlyWorker';
 import TopBar from './components/TopBar';
 import JSONEditor from './components/JSONEditor';
 import FSHEditor from './components/FSHEditor';
@@ -118,17 +117,30 @@ async function getManifestFromGit() {
 }
 
 export async function decodeFSH(encodedFSH) {
-  if (encodedFSH === undefined) {
+  if (encodedFSH == null || encodedFSH == '') {
     return '';
   } else {
-    const promisedURL = await expandLink(encodedFSH);
-    const encodedData = promisedURL.long_url?.match(
-      /^https?:\/\/(fshonline\.fshschool\.org|fshschool\.org\/FSHOnline)\/#\/share\/(.*)/
-    )?.[2];
-    if (!encodedData || encodedData === '') {
+    if (encodedFSH.length === 7) {
+      // Check to see if it was a previously shortened link
+      const longUrl = await fetch(`/shares/${encodedFSH}`, {
+        headers: { Accept: 'application/text' }
+      })
+        .then((result) => {
+          if (result.ok) {
+            return result.text();
+          } else {
+            return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+      if (longUrl != null) {
+        return inflateSync(Buffer.from(longUrl, 'base64')).toString('utf-8');
+      }
       return '';
     } else {
-      return inflateSync(Buffer.from(encodedData, 'base64')).toString('utf-8');
+      return inflateSync(Buffer.from(encodedFSH, 'base64')).toString('utf-8');
     }
   }
 }
@@ -171,7 +183,7 @@ export default function App(props) {
   useEffect(() => {
     async function waitForFSH() {
       if (props.path === 'share') {
-        const text = await decodeFSH(params.id);
+        const text = await decodeFSH(params['*']);
         const splitIndex = text.indexOf('\n');
         const config = text.slice(0, splitIndex);
         let parsedConfig;

@@ -5,7 +5,8 @@ import App from './App';
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/share/:id" element={<App path="share" />} />
+      {/* use a splat for share because compressed URL string may have / in it */}
+      <Route path="/share/*" element={<App path="share" />} />
       <Route path="/gist/:id" element={<App path="gist" />} />
       <Route path="/*" element={<App />} />
     </Routes>
