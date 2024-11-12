@@ -168,9 +168,9 @@ export default function ShareLink(props) {
             <Tooltip title={copyTip} placement="top" arrow>
               <IconButton className={classes.copyButton}>
                 <CopyToClipboard
-                  text={`<a id="share-link" href="${link}">FSH Online Link</a>`}
+                  text={`[FSH Online Link](${link})`}
                   onCopy={() => setCopyTip('Link Copied')}
-                  options={{ format: 'text/html' }}
+                  options={{ format: 'text/plain' }}
                 >
                   <FileCopy fontSize="small" />
                 </CopyToClipboard>
