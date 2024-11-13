@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '15px',
     paddingRight: '5px',
     whiteSpace: 'nowrap',
-    overflow: 'scroll',
+    overflowX: 'scroll',
     textOverflow: 'ellipsis'
   },
   copyButton: {
@@ -168,7 +168,7 @@ export default function ShareLink(props) {
           <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
           <Box className={classes.copyBox}>
             <Box className={classes.linkBox}>{link}</Box>
-            <Box>
+            <Box sx={{ display: 'flex', flexWrap: 'nowrap' }}>
               <Tooltip title={copyTip} placement="top" arrow>
                 <IconButton className={classes.copyButton}>
                   <CopyToClipboard text={link} onCopy={() => setCopyTip('Link Copied')}>
