@@ -17,8 +17,6 @@ jobs:
           node-version: '20'
       - run: npm install
       - run: npm run build
-        env:
-          VITE_BITLY_KEY: ${{ secrets.VITE_BITLY_KEY }}
       - name: Publish build to github pages
         uses: peaceiris/actions-gh-pages@v4
         with:

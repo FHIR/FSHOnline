@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { deflateSync } from 'browserify-zlib';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link as LinkIcon, FileCopy } from '@material-ui/icons';
+import { Link as LinkIcon, FileCopy, Code } from '@material-ui/icons';
 import {
   Button,
   Dialog,
@@ -16,7 +16,6 @@ import {
   TextField,
   Box
 } from '@material-ui/core';
-import { generateLink } from '../utils/BitlyWorker';
 import theme from '../theme';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,13 +29,29 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold'
   },
   copyBox: {
-    backgroundColor: theme.palette.common.lightGrey,
+    backgroundColor: theme.palette.common.lightestGrey,
     borderRadius: 2,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingLeft: '3%',
+    paddingLeft: '15px',
+    paddingRight: '5px'
+  },
+  linkBox: {
+    // Padding on the linkBox so scroll bar doesn't cover text
+    paddingTop: '15px',
+    paddingBottom: '15px',
+    paddingRight: '5px',
+    whiteSpace: 'nowrap',
+    overflowX: 'scroll',
     textOverflow: 'ellipsis'
+  },
+  copyButton: {
+    padding: '8px',
+    borderRadius: 0,
+    '&:hover': {
+      background: theme.palette.common.lightGrey
+    }
   }
 }));
 
@@ -47,6 +62,7 @@ export default function ShareLink(props) {
   const [openGist, setOpenGist] = useState(false);
   const [openGistError, setOpenGistError] = useState(false);
   const [copyTip, setCopyTip] = useState('Copy to Clipboard');
+  const [formattedCopyTip, setFormattedCopyTip] = useState('Copy Formatted Link to Clipboard');
   const [{ fshCopied, fshCopyButton }, setFshCopied] = useState({
     fshCopied: false,
     fshCopyButton: 'Copy FSH to Clipboard'
@@ -85,6 +101,7 @@ export default function ShareLink(props) {
       setLink(gistLink);
       setOpenShare(true);
       setCopyTip('Copy to Clipboard');
+      setFormattedCopyTip('Copy Formatted Link to Clipboard');
       setshowCreateGistButton(false);
     } else {
       setOpenGistError(true);
@@ -117,16 +134,14 @@ export default function ShareLink(props) {
       encoded = deflateSync(props.shareText).toString('base64');
     }
     const longLink = `https://fshonline.fshschool.org/#/share/${encoded}`;
-    const bitlyLink = await generateLink(longLink);
-    if (bitlyLink.errorNeeded === true) {
+    if (longLink.length > 2048) {
+      // Generally URLs should be shorter than 2048 characters
       handleShareError();
     } else {
-      // Removes the encoded data from the end of the url, starting at index 15
-      const bitlySlice = bitlyLink.link.slice(15);
-      const displayLink = `https://fshonline.fshschool.org/#/share/${bitlySlice}`;
-      setLink(displayLink);
+      setLink(longLink);
       setOpenShare(true);
       setCopyTip('Copy to Clipboard');
+      setFormattedCopyTip('Copy Formatted Link to Clipboard');
       setshowCreateGistButton(true);
     }
   };
@@ -152,16 +167,27 @@ export default function ShareLink(props) {
         <DialogContent>
           <DialogContentText>Use this link to share your FSH with others!</DialogContentText>
           <Box className={classes.copyBox}>
-            <Box maxWidth="90%" textOverflow="ellipsis" overflow="hidden">
-              {link}
-            </Box>
-            <Tooltip title={copyTip} placement="top" arrow>
-              <CopyToClipboard text={link} onCopy={() => setCopyTip('Link Copied')}>
-                <IconButton style={{ borderRadius: '0%' }}>
-                  <FileCopy />
+            <Box className={classes.linkBox}>{link}</Box>
+            <Box sx={{ display: 'flex', flexWrap: 'nowrap' }}>
+              <Tooltip title={copyTip} placement="top" arrow>
+                <IconButton className={classes.copyButton}>
+                  <CopyToClipboard text={link} onCopy={() => setCopyTip('Link Copied')}>
+                    <FileCopy fontSize="small" />
+                  </CopyToClipboard>
                 </IconButton>
-              </CopyToClipboard>
-            </Tooltip>
+              </Tooltip>
+              <Tooltip title={formattedCopyTip} placement="top" arrow>
+                <IconButton className={classes.copyButton}>
+                  <CopyToClipboard
+                    text={`[FSH Online Link](${link})`}
+                    onCopy={() => setFormattedCopyTip('Link Copied')}
+                    options={{ format: 'text/plain' }}
+                  >
+                    <Code fontSize="small" />
+                  </CopyToClipboard>
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

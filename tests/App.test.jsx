@@ -1,62 +1,41 @@
 import React from 'react';
-import { waitFor, render, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import App, { decodeFSH } from '../src/App';
-import * as bitlyWorker from '../src/utils/BitlyWorker';
 
-it('basic app renders', () => {
+it('should render the basic app', () => {
   const { getByText } = render(<App match={{}} />);
   const linkElement = getByText(/FSH Online/i);
   expect(linkElement).toBeInTheDocument();
 });
 
-it('decodeFSH will return a properly decoded string from base64', async () => {
-  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
-    long_url: 'https://fshonline.fshschool.org/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
-  });
-  const base64 = '2Lpe5ZL';
+it('decodeFSH will return a properly decoded string from full base64 encoding', async () => {
+  const base64 = 'eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU=';
   const decoded = await decodeFSH(base64);
   const expectedDecoded = 'Hi, this is a test for decoding.';
-  await waitFor(() => {
-    expect(decoded).toEqual(expectedDecoded);
-    expect(expandLinkSpy).toHaveBeenCalled();
-  });
+  expect(decoded).toEqual(expectedDecoded);
 });
 
-it('decodeFSH will return a properly decoded string for old FSH Online links', async () => {
-  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
-    long_url: 'https://fshschool.org/FSHOnline/#/share/eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU='
+it('decodeFSH will return a properly decoded string from an existing short link', async () => {
+  global.fetch = vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    text: () => Promise.resolve('eJzzyNRRKMnILFYAokSFktTiEoW0/CKFlNTk/JTMvHQ9ALALCwU=')
   });
-  const base64 = '2Lpe5ZL';
+  const base64 = 'fakeurl';
   const decoded = await decodeFSH(base64);
   const expectedDecoded = 'Hi, this is a test for decoding.';
-  await waitFor(() => {
-    expect(decoded).toEqual(expectedDecoded);
-    expect(expandLinkSpy).toHaveBeenCalled();
-  });
+  expect(decoded).toEqual(expectedDecoded);
 });
 
-it('decodeFSH will return an empty string if there is no encoded content in URL', async () => {
-  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
-    long_url: 'https://fshonline.fshschool.org/#/share/'
-  });
+it('decodeFSH will return an empty string if no existing short URL can be found but 7 character encoding passed in', async () => {
   const base64 = '2Lpe5ZL';
   const decoded = await decodeFSH(base64);
-  await waitFor(() => {
-    expect(decoded).toEqual('');
-    expect(expandLinkSpy).toHaveBeenCalled();
-  });
+  expect(decoded).toEqual('');
 });
 
-it('decodeFSH will return an empty string for a non-FSHOnline link', async () => {
-  const expandLinkSpy = vi.spyOn(bitlyWorker, 'expandLink').mockReset().mockResolvedValue({
-    long_url: 'https://hl7.org/fhir/'
-  });
-  const base64 = '2Lpe5ZL';
-  const decoded = await decodeFSH(base64);
-  await waitFor(() => {
-    expect(decoded).toEqual('');
-    expect(expandLinkSpy).toHaveBeenCalled();
-  });
+it('decodeFSH will return an empty string when no encoded text provided', async () => {
+  const emptyShare = '';
+  const decoded = await decodeFSH(emptyShare);
+  expect(decoded).toEqual('');
 });
 
 it('line wrapping selection is reflected in parent on selection of checkbox', async () => {

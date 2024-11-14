@@ -3,7 +3,6 @@ import { render, waitFor, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import ShareLink from '../../src/components/ShareLink';
-import * as bitlyWorker from '../../src/utils/BitlyWorker';
 
 // Mock copy to clipboard since we don't need to test the component itself
 vi.mock('copy-to-clipboard', () => ({
@@ -18,15 +17,10 @@ vi.mock('browserify-zlib', () => ({
 }));
 
 let container = null;
-let generateLinkSpy;
 
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  generateLinkSpy = vi
-    .spyOn(bitlyWorker, 'generateLink')
-    .mockReset()
-    .mockResolvedValue({ link: 'success', errorNeeded: false });
 });
 
 afterEach(() => {
@@ -36,19 +30,21 @@ afterEach(() => {
 });
 
 it('generates direct link when sharing', async () => {
-  const { getByRole } = render(<ShareLink shareText={'Profile: A'} />, container);
+  const { getByRole, getByText } = render(<ShareLink shareText={'Profile: A'} />, container);
 
   act(() => {
     const shareButton = getByRole('button', { name: /Share FSH/i });
     fireEvent.click(shareButton);
   });
   await waitFor(() => {
-    expect(generateLinkSpy).toHaveBeenCalled();
+    expect(deflateSpy).toHaveBeenCalledWith('Profile: A');
+    const linkText = getByText('https://fshonline.fshschool.org/#/share/foo');
+    expect(linkText).toBeInTheDocument();
   });
 });
 
 it('generates direct link with configuration when direct link button is clicked', async () => {
-  const { getByRole } = render(
+  const { getByRole, getByText } = render(
     <ShareLink shareText={'Profile: A'} config={{ canonical: 'http://example.org' }} />,
     container
   );
@@ -59,7 +55,8 @@ it('generates direct link with configuration when direct link button is clicked'
   });
   await waitFor(() => {
     expect(deflateSpy).toHaveBeenCalledWith('{"c":"http://example.org"}\nProfile: A');
-    expect(generateLinkSpy).toHaveBeenCalledWith('https://fshonline.fshschool.org/#/share/foo');
+    const linkText = getByText('https://fshonline.fshschool.org/#/share/foo');
+    expect(linkText).toBeInTheDocument();
   });
 });
 
@@ -71,7 +68,7 @@ it('generates gist link when generate gist link button is clicked', async () => 
     fireEvent.click(shareButton);
   });
   await waitFor(() => {
-    expect(generateLinkSpy).toHaveBeenCalled();
+    expect(deflateSpy).toHaveBeenCalled();
   });
   act(() => {
     const gistBtn = getByText(/Create Link with Gist/i);
@@ -94,7 +91,7 @@ it('generates gist link when generate gist link button is clicked', async () => 
 });
 
 it('routes to Gist dialog with error when the FSH file is too long to share', async () => {
-  generateLinkSpy.mockResolvedValue({ link: undefined, errorNeeded: true });
+  deflateSpy.mockImplementationOnce(() => 'example'.padEnd('2049', '.'));
 
   const { getByRole, getByText } = render(<ShareLink shareText={'Profile: AVeryLongProfile'} />, container);
   act(() => {
@@ -106,6 +103,6 @@ it('routes to Gist dialog with error when the FSH file is too long to share', as
     expect(gistButton).toBeInTheDocument();
     const errorMessage = getByText(/Your FSH content is too long to share directly/);
     expect(errorMessage).toBeInTheDocument();
-    expect(generateLinkSpy).toHaveBeenCalled();
+    expect(deflateSpy).toHaveBeenCalled();
   });
 });
