@@ -179,6 +179,7 @@ export default function App(props) {
   const [sharedConfig, setSharedConfig] = useState({});
   const [isLineWrapped, setIsLineWrapped] = useState(false);
   const [isDebugConsoleChecked, setIsDebugConsoleChecked] = useState(false);
+  const [timeToSayAhoy, setTimeToSayAhoy] = useState(false);
 
   useEffect(() => {
     async function waitForFSH() {
@@ -252,6 +253,10 @@ export default function App(props) {
 
   function handleConfigChange(config) {
     setConfigToShare(config);
+    if (!timeToSayAhoy && config.canonical === 'ahoy to fsh') {
+      console.log('🐟 ahoy to you too! thanks for using FSH ONLINE!');
+      setTimeToSayAhoy(true);
+    }
   }
 
   function handleResetWidth() {
@@ -367,7 +372,7 @@ export default function App(props) {
     <ThemeProvider theme={theme}>
       <div className="root" style={{ height: '100vh' }}>
         <div className={classes.top}>
-          <TopBar />
+          <TopBar sayAhoy={timeToSayAhoy} />
           <FSHControls
             onSUSHIClick={handleSUSHIControls}
             onGoFSHClick={handleGoFSHControls}
