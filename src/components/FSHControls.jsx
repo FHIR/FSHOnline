@@ -235,7 +235,7 @@ export default function FSHControls(props) {
     props.onGoFSHClick('', true);
     setIsGoFSHRunning(true);
     const gofshInputStrings = props.gofshText.map((def) => def.def).filter((d) => d);
-    const parsedDependencies = dependencies === '' ? [] : dependencies.split(',');
+    const parsedDependencies = dependencies === '' ? [] : dependencies.split(',').map((d) => d.trim());
     // Create small ImplementationGuide resource to send canonical and version information
     if (canonical || version || fhirVersion !== '') {
       const igResource = {

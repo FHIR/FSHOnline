@@ -1,4 +1,4 @@
-import { runSUSHI, runGoFSH, getCoreFHIRPackageIdentifier } from '../../src/utils/FSHHelpers';
+import { runSUSHI, runGoFSH } from '../../src/utils/FSHHelpers';
 import * as processing from '../../src/utils/Processing';
 import Patient from './fixtures/StructureDefinition-Patient.json';
 import StructureDefinition from './fixtures/StructureDefinition-StructureDefinition.json';
@@ -270,22 +270,5 @@ describe('#runGoFSH', () => {
 
     expect(loadAndCleanDBSpy).toHaveBeenCalled();
     expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
-  });
-});
-
-describe('getCoreFHIRPackageIdentifier', () => {
-  it('should recognize FHIR R4 version', () => {
-    const packageId = getCoreFHIRPackageIdentifier('4.0.1');
-    expect(packageId).toBe('hl7.fhir.r4.core');
-  });
-
-  it('should recognize FHIR R4B version', () => {
-    const packageId = getCoreFHIRPackageIdentifier('4.3.0');
-    expect(packageId).toBe('hl7.fhir.r4b.core');
-  });
-
-  it('should recognize FHIR R5 version', () => {
-    const packageId = getCoreFHIRPackageIdentifier('5.0.0');
-    expect(packageId).toBe('hl7.fhir.r5.core');
   });
 });
