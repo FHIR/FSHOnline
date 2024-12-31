@@ -5,6 +5,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  assetsInclude: ['sql.js/dist/sql-wasm.wasm'],
   base: '/',
   build: {
     chunkSizeWarningLimit: 4000,

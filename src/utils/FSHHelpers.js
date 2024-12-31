@@ -3,7 +3,7 @@ import { fhirdefs, sushiExport, sushiImport, utils } from 'fsh-sushi';
 import { gofshExport, processor, utils as gofshUtils } from 'gofsh';
 import { BrowserBasedPackageCache, FHIRRegistryClient, SQLJSPackageDB } from 'fhir-package-loader';
 import initSqlJs from 'sql.js';
-import workletURL from '/sql-wasm.wasm?url';
+import workletURL from 'sql.js/dist/sql-wasm.wasm?url';
 import { fshOnlineLogger as logger, setCurrentLogger } from './logger';
 
 const FSHTank = sushiImport.FSHTank;
@@ -72,7 +72,7 @@ export async function runGoFSH(input, options, loggerLevel) {
   const configuration = fhirProcessorTemp.processConfig(goFSHDependencies ?? []); // The created IG files includes the user specified FHIR Version
 
   // Get all dependencies, including those inferred from an IG file, and those given as input
-  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, useHttps: true });
+  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, isBrowserEnvironment: true });
   const allDependencies = await getAllDependencies(
     configuration.config.dependencies ?? [],
     configuration.config.fhirVersion[0],
@@ -125,7 +125,7 @@ export async function runSUSHI(input, config, dependencies = [], loggerLevel) {
     logger.log(level, message);
   };
 
-  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, useHttps: true });
+  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, isBrowserEnvironment: true });
   const allDependencies = await getAllDependencies(dependencies, config.fhirVersion[0], registryClient);
   const formattedDependencies = allDependencies.map((d) => ({
     name: d.packageId,

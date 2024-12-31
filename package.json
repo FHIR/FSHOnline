@@ -47,7 +47,6 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "postinstall": "cp node_modules/sql.js/dist/sql-wasm.wasm ./public/sql-wasm.wasm",
     "preview": "vite preview",
     "lint": "eslint \"./src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"./src/**/*.{js,jsx}\" --fix",
