@@ -6,20 +6,19 @@ import initSqlJs from 'sql.js';
 import workletURL from 'sql.js/dist/sql-wasm.wasm?url';
 import { fshOnlineLogger as logger, setCurrentLogger } from './logger';
 
-const FSHTank = sushiImport.FSHTank;
-const RawFSH = sushiImport.RawFSH;
-const exportFHIR = sushiExport.exportFHIR;
-const sushiStats = utils.stats;
-const gofshStats = gofshUtils.stats;
-const getRandomPun = utils.getRandomPun;
-const Type = utils.Type;
-const FHIRDefinitions = fhirdefs.FHIRDefinitions;
-const createFHIRDefinitions = fhirdefs.createFHIRDefinitions;
-const getFHIRVersionInfo = utils.getFHIRVersionInfo;
-const loadExternalDependenciesSUSHI = utils.loadExternalDependencies;
-const loadExternalDependenciesGoFSH = gofshUtils.loadExternalDependencies;
-const AUTOMATIC_DEPENDENCIES = utils.AUTOMATIC_DEPENDENCIES;
-const fillTank = utils.fillTank;
+const { FSHTank, RawFSH } = sushiImport;
+const { exportFHIR } = sushiExport;
+const { createFHIRDefinitions, FHIRDefinitions } = fhirdefs;
+const {
+  AUTOMATIC_DEPENDENCIES,
+  fillTank,
+  getFHIRVersionInfo,
+  getRandomPun,
+  loadExternalDependencies: loadExternalDependenciesSUSHI,
+  stats: sushiStats,
+  Type
+} = utils;
+const { loadExternalDependencies: loadExternalDependenciesGoFSH, stats: gofshStats } = gofshUtils;
 
 /**
  * Run GoFSH
