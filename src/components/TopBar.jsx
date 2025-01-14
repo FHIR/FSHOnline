@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Button, Typography, Box } from '@material-ui/core';
 import { StylesProvider } from '@material-ui/core/styles';
@@ -18,6 +19,18 @@ const useStyles = makeStyles((theme) => ({
   logo: {
     height: '55px',
     width: '63px'
+  },
+  '@keyframes spin-once': {
+    '0%': {
+      rotate: '0deg'
+    },
+    '100%': {
+      rotate: '360deg'
+    }
+  },
+  logoSpin: {
+    animation: '$spin-once 1000ms',
+    animationIterationCount: 1
   },
   toolbarBox: {
     alignItems: 'center'
@@ -43,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TopBar() {
+export default function TopBar(props) {
   const classes = useStyles();
   return (
     <AppBar className={classes.root}>
@@ -51,7 +64,7 @@ export default function TopBar() {
         <Box className={classes.toolbarBox} display="flex" flexGrow={1} flexDirection="row">
           <Box order={1} display="flex" flexGrow={1} flexDirection="row">
             <Box order={1} alignSelf="center" display="flex">
-              <img src={logo} alt="logo" className={classes.logo} />
+              <img src={logo} alt="logo" className={clsx(classes.logo, { [classes.logoSpin]: props.sayAhoy })} />
             </Box>
             <Box order={2} alignSelf="center" m={1}>
               <StylesProvider injectFirst>
