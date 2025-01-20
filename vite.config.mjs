@@ -5,6 +5,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  assetsInclude: ['sql.js/dist/sql-wasm.wasm'],
   base: '/',
   build: {
     chunkSizeWarningLimit: 4000,
@@ -53,6 +54,7 @@ export default defineConfig({
       // avoid loading file system specific packages that we don't need
       'fs-extra': path.resolve('./src/stubs/empty.js'),
       'readline-sync': path.resolve('./src/stubs/empty.js'),
+      'stream/promises': path.resolve('./src/stubs/empty.js'),
       tar: path.resolve('./src/stubs/empty.js')
     }
   },
