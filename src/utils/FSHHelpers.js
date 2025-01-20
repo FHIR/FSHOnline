@@ -54,45 +54,12 @@ export async function runGoFSH(input, options, loggerLevel) {
     }
   });
 
-  const log = (level, message) => {
-    logger.log(level, message);
-  };
-
-  // Set up a temporary FHIRProcessor to get any dependencies from an IG resource
   const lake = new processor.LakeOfFHIR(docs);
   await lake.prepareDefs();
-  let defsTemp = new FHIRDefinitions();
-  await defsTemp.initialize();
-  const fisherTemp = new gofshUtils.MasterFisher(lake, defsTemp);
-  const fhirProcessorTemp = new processor.FHIRProcessor(lake, fisherTemp);
-
-  // Process the configuration
-  const goFSHDependencies = options.dependencies.map((d) => d.replace('#', '@')); // GoFSH expects a different format
-  const configuration = fhirProcessorTemp.processConfig(goFSHDependencies ?? []); // The created IG files includes the user specified FHIR Version
-
-  // Get all dependencies, including those inferred from an IG file, and those given as input
-  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, isBrowserEnvironment: true });
-  const allDependencies = await getAllDependencies(
-    configuration.config.dependencies ?? [],
-    configuration.config.fhirVersion[0],
-    registryClient
-  );
-  const formattedDependencies = allDependencies.map((d) => ({
-    name: d.packageId,
-    version: d.version
-  }));
-
-  const sql = await initSqlJs({ locateFile: () => workletURL });
-  const packageDB = new SQLJSPackageDB();
-  await packageDB.initialize(sql);
-  const packageCache = new BrowserBasedPackageCache('FSHOnline Dependencies', { log });
-  await packageCache.initialize(formattedDependencies);
-  const defs = new FHIRDefinitions(false, null, { packageCache, packageDB, registryClient, options: { log } });
-  await defs.initialize();
+  const configuration = await getGoFSHConfiguration(lake, options.dependencies);
+  const defs = await getFSHOnlineFHIRDefs(configuration.config.dependencies, configuration, false);
   const fisher = new gofshUtils.MasterFisher(lake, defs);
   const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
-  await loadExternalDependenciesGoFSH(defs, configuration);
-  defs.optimize();
 
   // Process the FHIR to rules, and then export to FSH
   const pkg = await gofshUtils.getResources(fhirProcessor, configuration, { indent: options.indent });
@@ -120,25 +87,7 @@ export async function runSUSHI(input, config, dependencies = [], loggerLevel) {
   sushiStats.reset();
   setCurrentLogger('sushi', loggerLevel);
 
-  const log = (level, message) => {
-    logger.log(level, message);
-  };
-
-  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, isBrowserEnvironment: true });
-  const allDependencies = await getAllDependencies(dependencies, config.fhirVersion[0], registryClient);
-  const formattedDependencies = allDependencies.map((d) => ({
-    name: d.packageId,
-    version: d.version
-  }));
-  const sql = await initSqlJs({ locateFile: () => workletURL });
-  const packageDB = new SQLJSPackageDB();
-  await packageDB.initialize(sql);
-  const packageCache = new BrowserBasedPackageCache('FSHOnline Dependencies', { log });
-  await packageCache.initialize(formattedDependencies);
-  const defs = await createFHIRDefinitions(false, null, { packageCache, packageDB, registryClient, options: { log } });
-  config.dependencies = dependencies;
-  await loadExternalDependenciesSUSHI(defs, config);
-  defs.optimize();
+  const defs = await getFSHOnlineFHIRDefs(dependencies, config, true);
 
   // Load and fill FSH Tank
   let tank = FSHTank;
@@ -271,6 +220,50 @@ function printGoFSHresults(pkg) {
 
   console.log(' ');
   results.forEach((r) => console.log(r));
+}
+
+async function getFSHOnlineFHIRDefs(dependencies, config, isSUSHI) {
+  const log = (level, message) => {
+    logger.log(level, message);
+  };
+  const registryClient = new FHIRRegistryClient('https://packages.fhir.org', { log, isBrowserEnvironment: true });
+  const allDependencies = await getAllDependencies(
+    isSUSHI ? dependencies : (config.config.dependencies ?? []),
+    isSUSHI ? config.fhirVersion[0] : config.config.fhirVersion[0],
+    registryClient
+  );
+  const formattedDependencies = allDependencies.map((d) => ({
+    name: d.packageId,
+    version: d.version
+  }));
+  const sql = await initSqlJs({ locateFile: () => workletURL });
+  const packageDB = new SQLJSPackageDB();
+  await packageDB.initialize(sql);
+  const packageCache = new BrowserBasedPackageCache('FSHOnline Dependencies', { log });
+  await packageCache.initialize(formattedDependencies);
+  const defs = await createFHIRDefinitions(false, null, { packageCache, packageDB, registryClient, options: { log } });
+  if (isSUSHI) {
+    config.dependencies = dependencies;
+    await loadExternalDependenciesSUSHI(defs, config);
+  } else {
+    await loadExternalDependenciesGoFSH(defs, config);
+  }
+  defs.optimize();
+  return defs;
+}
+
+async function getGoFSHConfiguration(lake, dependencies) {
+  // Set up a temporary FHIRProcessor to get any dependencies from an IG resource
+  const defs = new FHIRDefinitions();
+  await defs.initialize();
+  const fisher = new gofshUtils.MasterFisher(lake, defs);
+  const fhirProcessor = new processor.FHIRProcessor(lake, fisher);
+
+  // Process the configuration
+  const goFSHDependencies = dependencies.map((d) => d.replace('#', '@')); // GoFSH expects a different format
+  const configuration = fhirProcessor.processConfig(goFSHDependencies ?? []); // The created IG files includes the user specified FHIR Version
+
+  return configuration;
 }
 
 async function getAllDependencies(configuredDependencies, coreFHIRVersion, registryClient) {
