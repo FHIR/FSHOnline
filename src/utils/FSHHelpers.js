@@ -54,6 +54,8 @@ export async function runGoFSH(input, options, loggerLevel) {
     }
   });
 
+  // Initialize sql.js for the browser
+  await initSqlJs({ locateFile: () => workletURL });
   const lake = new processor.LakeOfFHIR(docs);
   await lake.prepareDefs();
   const configuration = await getGoFSHConfiguration(lake, options.dependencies);
@@ -87,6 +89,8 @@ export async function runSUSHI(input, config, dependencies = [], loggerLevel) {
   sushiStats.reset();
   setCurrentLogger('sushi', loggerLevel);
 
+  // Initialize sql.js for the browser
+  await initSqlJs({ locateFile: () => workletURL });
   const defs = await getFSHOnlineFHIRDefs(dependencies, config, true);
 
   // Load and fill FSH Tank
@@ -236,9 +240,8 @@ async function getFSHOnlineFHIRDefs(dependencies, config, isSUSHI) {
     name: d.packageId,
     version: d.version
   }));
-  const sql = await initSqlJs({ locateFile: () => workletURL });
   const packageDB = new SQLJSPackageDB();
-  await packageDB.initialize(sql);
+  await packageDB.initialize();
   const packageCache = new BrowserBasedPackageCache('FSHOnline Dependencies', { log });
   await packageCache.initialize(formattedDependencies);
   const defs = await createFHIRDefinitions(false, null, { packageCache, packageDB, registryClient, options: { log } });
