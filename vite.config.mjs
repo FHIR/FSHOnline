@@ -7,7 +7,7 @@ import path from 'path';
 export default defineConfig({
   base: '/',
   build: {
-    chunkSizeWarningLimit: 4000,
+    chunkSizeWarningLimit: 4200,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
