@@ -7,7 +7,7 @@ import path from 'path';
 export default defineConfig({
   base: '/',
   build: {
-    chunkSizeWarningLimit: 4000,
+    chunkSizeWarningLimit: 4200,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -53,6 +53,7 @@ export default defineConfig({
       // avoid loading file system specific packages that we don't need
       'fs-extra': path.resolve('./src/stubs/empty.js'),
       'readline-sync': path.resolve('./src/stubs/empty.js'),
+      'stream/promises': path.resolve('./src/stubs/empty.js'),
       tar: path.resolve('./src/stubs/empty.js')
     }
   },
