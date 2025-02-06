@@ -246,9 +246,12 @@ async function getFSHOnlineFHIRDefs(dependencies, config, isSUSHI) {
   await packageCache.initialize(formattedDependencies);
   const defs = await createFHIRDefinitions(false, null, { packageCache, packageDB, registryClient, options: { log } });
   if (isSUSHI) {
-    config.dependencies = dependencies;
+    config.dependencies = dependencies.filter(hasVersion);
     await loadExternalDependenciesSUSHI(defs, config);
   } else {
+    if (config.config.dependencies != null) {
+      config.config.dependencies = config.config.dependencies.filter(hasVersion);
+    }
     await loadExternalDependenciesGoFSH(defs, config);
   }
   defs.optimize();
@@ -294,6 +297,15 @@ async function getAllDependencies(configuredDependencies, coreFHIRVersion, regis
     }
   }
   return allDependencies;
+}
+
+function hasVersion(dependency) {
+  if (dependency.version == null) {
+    logger.warn(
+      `Skipping ${dependency.packageId} because it does not include a version. Use format packageId#version.`
+    );
+  }
+  return dependency.version != null;
 }
 
 function hasDependency(dependenciesList, currentDependency, ignoreVersion = false) {

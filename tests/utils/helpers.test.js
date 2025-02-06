@@ -15,10 +15,4 @@ describe('#sliceDependency()', () => {
     const dependencies = sliceDependency(input);
     expect(dependencies).toEqual([]);
   });
-
-  it('should filter out dependencies that do not specify a version', () => {
-    const input = 'hl7.fhir.example.typo@1.0.0, hl7.fhir.us.core#3.1.1, hl7.fhir.example.noversion';
-    const dependencies = sliceDependency(input);
-    expect(dependencies).toEqual([{ packageId: 'hl7.fhir.us.core', version: '3.1.1' }]);
-  });
 });

@@ -94,6 +94,25 @@ describe('#runSUSHI', () => {
     expect(outPackage.instances).toHaveLength(1);
     mocks.mockLoad.mockRestore();
   });
+
+  it('should not include dependencies that did not include a version', async () => {
+    const dependencies = [
+      { packageId: 'hl7.fhir.example.typo$1.0.0', version: undefined },
+      { packageId: 'hl7.fhir.us.core', version: '3.1.1' },
+      { packageId: 'hl7.fhir.example.noversion', version: undefined }
+    ];
+    const testLoad = vi.fn(async (defs) => {
+      await loadTestDefinitions(defs);
+    });
+    mocks.mockLoad.mockImplementation(testLoad);
+    const text =
+      'Profile: FishPatient\nParent: Patient\nId: fish-patient\nTitle: "Fish Patient"\n Description: "A patient that is a type of fish."';
+    const outPackage = await runSUSHI(text, defaultConfig, dependencies);
+    expect(testLoad).toHaveBeenCalled();
+    expect(outPackage.profiles).toHaveLength(1);
+    expect(outPackage.config.dependencies).toEqual([{ packageId: 'hl7.fhir.us.core', version: '3.1.1' }]); // only dependency with a version
+    mocks.mockLoad.mockRestore();
+  });
 });
 
 describe('#runGoFSH', () => {
@@ -145,6 +164,38 @@ describe('#runGoFSH', () => {
       applyExtensionMetadataToRoot: false,
       canonical: 'http://example.org',
       fhirVersion: ['4.0.1'],
+      id: 'example',
+      name: 'Example'
+    };
+
+    const outputFSH = await runGoFSH(goFSHDefs, { dependencies });
+
+    expect(testLoad).toHaveBeenCalled();
+    expect(outputFSH).toEqual({ fsh: expectedFSH, config: expectedConfig });
+    mocks.mockLoad.mockRestore();
+  });
+
+  it('should not include dependencies that did not include a version', async () => {
+    const dependencies = ['hl7.fhir.example.typo$1.0.0', 'hl7.fhir.us.core#3.1.1', 'hl7.fhir.example.noversion'];
+    const testLoad = vi.fn(async (defs) => {
+      await loadTestDefinitions(defs);
+    });
+    mocks.mockLoad.mockImplementation(testLoad);
+
+    const expectedFSH = [
+      'Instance: MyPatient',
+      'InstanceOf: Patient',
+      'Usage: #example',
+      '* name.family = "Smith"',
+      '* name.given = "Jane"',
+      '* gender = #female'
+    ].join(EOL);
+    const expectedConfig = {
+      FSHOnly: true,
+      applyExtensionMetadataToRoot: false,
+      canonical: 'http://example.org',
+      fhirVersion: ['4.0.1'],
+      dependencies: [{ packageId: 'hl7.fhir.us.core', version: '3.1.1' }], // only dependency with a version
       id: 'example',
       name: 'Example'
     };
