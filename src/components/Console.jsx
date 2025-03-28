@@ -20,25 +20,18 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'scroll',
     boxSizing: 'border-box'
   },
-  button: {
-    marginRight: '10px',
-    color: theme.palette.common.white,
-    textTransform: 'none',
-    padding: 0
-  },
-  problemsButton: {
-    padding: 0,
-    color: theme.palette.common.white,
-    textTransform: 'none'
-  },
+  button: { marginRight: '10px', color: theme.palette.common.white, textTransform: 'none', padding: 0 },
+  problemsButton: { padding: 0, color: theme.palette.common.white, textTransform: 'none' },
   expandIcon: {
     width: '29px', // Lines up with padding,
     color: theme.palette.common.white,
     padding: 0
   },
-  pre: {
-    margin: '0px'
-  },
+  pre: { margin: '0px' },
+  error: { background: theme.palette.common.red, paddingRight: '0.4em', paddingLeft: '0.2em' },
+  warn: { background: theme.palette.common.orange, paddingRight: '1em', paddingLeft: '0.2em' },
+  info: { background: theme.palette.common.green, paddingRight: '1em', paddingLeft: '0.2em' },
+  debug: { background: theme.palette.common.blue, paddingRight: '0.4em', paddingLeft: '0.2em' },
   circle: {
     'border-radius': '50%',
     'border-style': 'solid',
@@ -59,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Console(props) {
   const classes = useStyles();
   const [problemsView, setProblemsView] = useState(false);
+  const [messages, setMessages] = useState([]);
   const { problemCount, setExpandConsole } = props;
 
   useEffect(() => {
@@ -69,6 +63,23 @@ export default function Console(props) {
       setExpandConsole(true);
     }
   }, [problemCount, setExpandConsole]);
+
+  useEffect(() => {
+    const updatedMessages = (problemsView ? props.problemMessages : props.consoleMessages).map((message) => {
+      if (message.startsWith('error')) {
+        return { logLevel: 'error', consoleMessage: message.slice(5) };
+      } else if (message.startsWith('warn')) {
+        return { logLevel: 'warn', consoleMessage: message.slice(4) };
+      } else if (message.startsWith('info')) {
+        return { logLevel: 'info', consoleMessage: message.slice(4) };
+      } else if (message.startsWith('debug')) {
+        return { logLevel: 'debug', consoleMessage: message.slice(5) };
+      } else {
+        return { logLevel: '', consoleMessage: message };
+      }
+    });
+    setMessages(updatedMessages);
+  }, [props.consoleMessages, props.problemMessages, problemsView]);
 
   const toggleExpandConsole = () => {
     props.setExpandConsole(!props.expandConsole);
@@ -84,6 +95,15 @@ export default function Console(props) {
     props.setExpandConsole(true);
   };
 
+  const renderMessage = (message, i) => {
+    return (
+      <pre key={i} className={classes.pre}>
+        {message.logLevel && <span className={classes[message.logLevel]}>{message.logLevel}</span>}
+        {message.consoleMessage}
+      </pre>
+    );
+  };
+
   return (
     <>
       <Box className={classes.consoleControls}>
@@ -95,12 +115,7 @@ export default function Console(props) {
           {props.expandConsole ? <ExpandMore /> : <ExpandLess />}
         </IconButton>
         <Button onClick={setMessagesConsole} className={classes.button}>
-          <p
-            style={{
-              borderBottom: props.expandConsole && !problemsView ? '1px solid white' : 'none',
-              margin: '0'
-            }}
-          >
+          <p style={{ borderBottom: props.expandConsole && !problemsView ? '1px solid white' : 'none', margin: '0' }}>
             Console
           </p>
         </Button>
@@ -125,21 +140,7 @@ export default function Console(props) {
         </Button>
       </Box>
       <Box style={{ display: props.expandConsole ? 'block' : 'none' }} className={classes.box}>
-        {problemsView
-          ? props.problemMessages.map((message, i) => {
-              return (
-                <pre key={i} className={classes.pre}>
-                  {message}
-                </pre>
-              );
-            })
-          : props.consoleMessages.map((message, i) => {
-              return (
-                <pre key={i} className={classes.pre}>
-                  {message}
-                </pre>
-              );
-            })}
+        {messages.map((message, i) => renderMessage(message, i))}
       </Box>
     </>
   );

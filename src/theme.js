@@ -11,7 +11,9 @@ const colors = {
   grey: '#575B5C',
   darkerGrey: '#3D4345',
   darkestGrey: '#121D21',
-  red: '#FD6668'
+  red: '#FD6668',
+  green: '#50C878',
+  orange: '#FFB347'
 };
 
 const theme = createTheme({
